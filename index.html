@@ -54,11 +54,41 @@
   .pauseCard button{width:100%;min-height:48px;margin:8px 0;background:#ff8a1f;color:#1a0d00;font-family:inherit;font-weight:700;font-size:16px;border:0;border-radius:7px;cursor:pointer}
   .pauseCard button:focus-visible,#pauseButton:focus-visible{outline:3px solid #4fe3ff;outline-offset:3px}
   .setting{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid #2a3848}.setting input{accent-color:#ff8a1f;max-width:60%}
+
+  :root{--panel:#111f2a;--line:#32434e;--ink:#f7eddc;--dim:#adbdc5;--or:#ffac57}
+  #ov{background:rgba(3,11,17,.65);backdrop-filter:blur(5px)}
+  #dlg{position:relative;max-width:650px;padding:28px;background:linear-gradient(145deg,rgba(27,44,56,.98),rgba(10,23,33,.98));border-color:#ffffff22;border-top:3px solid #ffad5d;border-radius:16px;box-shadow:0 25px 90px #0009,inset 0 1px 0 #ffffff12;scrollbar-width:thin;scrollbar-color:#c98848 #122632}
+  #kick{color:#ffb76c;font-size:10px;letter-spacing:.2em;margin-bottom:12px;line-height:1.6}
+  #ttl{color:#fff0d9;font-size:clamp(25px,4vw,38px);line-height:1.05;letter-spacing:-.035em;text-shadow:0 2px 12px #0005}
+  #body{font-size:14px;color:#aebfc9;line-height:1.55}#body b{color:#f7e7d1}
+  #btn,.buy{background:linear-gradient(125deg,#ffbd75,#f68b3b);color:#26190e;box-shadow:0 5px 20px #ed873a20;font-size:14px;letter-spacing:.08em;min-height:48px;border-radius:8px}
+  #btn:hover,.buy:hover{background:#ffd298;transform:translateY(-1px)}
+  #btn2,#btn3,#btn4{min-height:44px;border-color:#50616c;font-size:12px;letter-spacing:.09em;border-radius:8px;margin-top:9px}
+  #btn3{color:#8ce9df;border-color:#468c88}#btn4{color:#d3b4f2;border-color:#6f5a86}
+  #body .q{background:#0b19234d;border-left:3px solid #ffae65;border-radius:0 8px 8px 0;padding:12px 15px;font-size:16px;line-height:1.5}
+  #body .job{background:#0a1821;border:1px solid #a4ccdb22;border-radius:10px;padding:16px}#body .job small{margin-top:7px}
+  .edition{font-size:9px;color:#8ee4d8;letter-spacing:.14em;margin:15px 0}.titleIntro{font-size:16px!important}.titleIntro b{display:block;margin-top:9px}
+  .featureGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:20px 0}.featureGrid div{background:#08172288;border:1px solid #ffffff13;border-radius:9px;padding:13px 5px;text-align:center}.featureGrid strong{display:block;font-size:26px;color:#ffc181;font-family:'Chakra Petch',sans-serif}.featureGrid span{font-size:8px;letter-spacing:.07em;color:#a4bac5}
+  .titleNote{font-size:11px;border-left:2px solid #ffb367;padding-left:11px;color:#cbbfae}.controlNote{font-size:9px;letter-spacing:.06em;margin-top:16px;color:#7f99a7}
+  #ov.titleScene{background:linear-gradient(90deg,#06121a00,#06121a55);backdrop-filter:none}
+  .arcadeGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+  .arcadeCard{text-align:left;position:relative;display:flex;flex-direction:column;gap:8px;min-height:150px;padding:16px;background:linear-gradient(145deg,#203441,#0e202c);border:1px solid #415562;border-radius:11px;color:#f3e6d2;cursor:pointer;transition:transform .15s,border-color .15s;font-family:inherit}
+  .arcadeCard:hover,.arcadeCard:focus-visible{transform:translateY(-3px);border-color:#ffbd75;outline:2px solid #ffbd7544;outline-offset:2px}.arcadeCard b{font-size:14px;line-height:1.25}.arcadeCard small{font:12px/1.4 'Segoe UI',sans-serif;color:#a9bbc6}.cardNumber{color:#ffb96b;font-size:11px;letter-spacing:.1em}.cardGenre{font-size:8px;letter-spacing:.12em;color:#7cd6cb}.newGame{border-color:#628a80;background:linear-gradient(145deg,#213f42,#0d232e)}
+  .comicCast{color:#7be1d2;font-size:10px;letter-spacing:.13em;text-transform:uppercase;margin:12px 0}.previousLine{font-size:12px;opacity:.75;padding:8px 0 12px}.previousLine b{color:#f3b66e;margin-right:8px}
+  .comicFrame{position:relative;min-height:260px;display:flex;align-items:flex-end;overflow:hidden;background:linear-gradient(#283c46,#142831);border:2px solid #71828a;border-radius:9px;padding:12px;isolation:isolate}.comicSet{position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(0deg,transparent,transparent 29px,#ffffff06 30px),linear-gradient(90deg,#ffffff04 50%,transparent 50%)}.wallSign{position:absolute;left:18px;top:15px;background:#d8c38b;color:#282825;padding:7px;font-size:8px;line-height:1.4;transform:rotate(-5deg);border:3px solid #444a45}.shopClock{position:absolute;right:18px;top:20px;color:#ffab79;font-size:13px;background:#0d1b23;border:3px solid #57646a;padding:6px 13px}.comicPerson{width:36%;max-width:175px;flex-shrink:0;align-self:flex-end;margin-bottom:-15px}.comicPerson svg{width:100%;display:block;filter:drop-shadow(0 8px 3px #0005)}
+  .speech{position:relative;align-self:center;background:#f3e7ce;color:#172830;font-size:clamp(14px,2.7vw,20px);font-weight:650;line-height:1.45;padding:20px;margin:60px 0 14px 12px;border-radius:14px 14px 14px 0;box-shadow:4px 5px 0 #0004}.speech:before{content:'';position:absolute;left:-14px;bottom:12px;border:8px solid transparent;border-right-color:#f3e7ce}.speaker{display:block;color:#9d4727;font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:.14em;margin-bottom:8px}.punchline{color:#ffe0a6;border-left:3px solid #ffb96b;padding:10px 14px;margin-top:15px;background:#ffb96b0b;font-style:italic;font-size:13px}.comicDots{display:flex;gap:5px;justify-content:center;margin:15px}.comicDots i{width:21px;height:3px;background:#3b505b}.comicDots .lit{background:#ffad60}
+  .pauseCard{background:linear-gradient(135deg,#203745,#0c1b25);border-radius:15px;border-color:#ffffff22;border-top-color:#ffb86e;box-shadow:0 25px 80px #0009}.pauseCard h2{color:#ffd39d}.setting{border-color:#ffffff18}
+  @media(min-width:1001px){#ov.titleScene{justify-content:flex-end;padding-right:6vw}#ov.titleScene #dlg{max-width:450px}#ov.wideScene #dlg{max-width:900px}.wideScene .arcadeGrid{grid-template-columns:repeat(3,minmax(0,1fr))}#ov.comicScene #dlg{max-width:700px}}
+  @media(max-width:500px){#ov{padding:12px}#dlg{padding:20px;max-height:94vh;border-radius:12px}#ttl{font-size:29px}.arcadeGrid{gap:7px}.arcadeCard{padding:12px;min-height:152px}.arcadeCard b{font-size:12px}.arcadeCard small{font-size:11px}.comicFrame{min-height:230px;padding:7px}.speech{padding:13px;font-size:15px;margin-top:70px}.comicPerson{width:33%;margin-left:-8px}#ov.titleScene{background:#07141d88}.featureGrid{margin:15px 0}}
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+#rotatePanel{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:25px;text-align:center;background:#0b1c28;color:#f8dfbe}#rotatePanel span{font-size:45px;color:#ffb266}#rotatePanel h2{font-size:24px}#rotatePanel p{color:#aabdc8;font:15px/1.7 system-ui,sans-serif}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="toast"></div>
+<div id="rotatePanel" role="status" hidden><div><span>↻</span><h2>GIVE THIS MESS SOME ROOM</h2><p>Rotate your phone or make the window taller.<br>Your game is paused. Tap Resume when you are ready.</p></div></div>
 <button id="pauseButton" aria-label="Pause and settings" hidden>II</button>
 <div id="pausePanel" role="dialog" aria-modal="true" aria-labelledby="pauseTitle" hidden>
  <div class="pauseCard"><h2 id="pauseTitle">PAUSED</h2><p>Your clock is stopped.</p>
@@ -91,12 +121,12 @@ const sfx={click(){tone('square',420,300,.04,.03)},amber(){tone('sine',520,520,.
   win(){tone('triangle',523,523,.1,.07);tone('triangle',659,659,.1,.07,.1);tone('triangle',784,784,.1,.07,.2);tone('triangle',1047,1047,.25,.07,.3)},
   smack(){tone('square',110,40,.18,.12)},bite(){tone('sine',880,440,.12,.08)},lose(){tone('sawtooth',220,70,.4,.07)},radio(){tone('square',900,700,.06,.03);tone('square',700,900,.06,.03,.08)}};
 let best=0,pb=0;try{best=+localStorage.getItem('problemSolverBest')||0;pb=+localStorage.getItem('problemSolverPB')||0}catch(e){}
-function saveBest(){if(S.rep>best){best=S.rep;try{localStorage.setItem('problemSolverBest',String(best))}catch(e){}}}
+function saveBest(){if(arcadeMode)return;if(S.rep>best){best=S.rep;try{localStorage.setItem('problemSolverBest',String(best))}catch(e){}}}
 
 /* ---------- content ---------- */
 const DAYS=[{nm:'MONDAY',diff:2,calls:2,n:5},{nm:'TUESDAY',diff:4,calls:3,n:5},{nm:'WEDNESDAY',diff:6,calls:3,n:6},
             {nm:'THURSDAY',diff:8,calls:4,n:6},{nm:'FRIDAY',diff:10,calls:3,n:7}];
-const TOWNS=['Lawrenceville','Dacula','Grayson','Snellville','Loganville','Monroe','Buford','Lilburn'];
+const TOWNS=['Copper Creek','Bent Pines','Dusty Hollow','Filter Falls','Wrenchwood','Last Chance','Short Circuit','Rattle Ridge'];
 const BOSS=[
   "Crew's been staring at this thing for two hours. Go do your thing.",
   "They swear they tried everything. They didn't try shit. Go look.",
@@ -214,12 +244,12 @@ const LIMITS=[5,7,9,11,14];
 const RIVALS=['Small-block street car','Turbo import','Big-tire monster'];
 
 /* ---------- state ---------- */
-const S0=()=>({scene:'title',week:1,day:0,call:0,min:0,rep:0,cash:0,streak:0,done:0,under:0,failed:0,smacks:1,dayRep:0,perfects:0,lbs:0,limits:0,stripWins:0,extracts:0,micros:0,mlost:0,reds:0,dent:0,moon:0,seen:[],wkStart:0,buff:{},today:{},junkN:0,buzz:false,lunch:false,mdeck:[],edeck:[],gar:null,kinds:[],strip:null});
+const S0=()=>({scene:'title',week:1,day:0,call:0,min:0,rep:0,cash:0,streak:0,done:0,under:0,failed:0,smacks:1,dayRep:0,perfects:0,lbs:0,limits:0,stripWins:0,extracts:0,micros:0,mlost:0,reds:0,dent:0,moon:0,seen:[],wkStart:0,buff:{},today:{},junkN:0,buzz:false,lunch:false,mdeck:[],edeck:[],gar:null,kinds:[],strip:null,skit:null,skitsSeen:[]});
 const S=S0();
 const U={smack:0,tires:0,coffee:0,tips:0,rod:0,hooks:0,luck:0};
 const UPG=[{id:'smack',nm:'Bigger wrench',ds:'+1 Smack It per day',max:3,cost:[600,1400,2800]},{id:'tires',nm:'Sticky tires',ds:'4 min off every drive',max:3,cost:[400,1000,2000]},
   {id:'coffee',nm:'Thermos the size of a fire extinguisher',ds:'Clock runs 6% slower',max:3,cost:[700,1600,3200]},{id:'tips',nm:'Tip jar on the dash',ds:'+10% rep from calls',max:3,cost:[800,1800,3600]},
-  {id:'rod',nm:'Fresh line on the Curado',ds:'Fish weigh 15% more',max:3,cost:[400,1000,2000]},{id:'hooks',nm:'Sharper hooks',ds:'Wider sweet spot in a fight',max:2,cost:[600,1500]},
+  {id:'rod',nm:'Fresh line on the baitcaster',ds:'Fish weigh 15% more',max:3,cost:[400,1000,2000]},{id:'hooks',nm:'Sharper hooks',ds:'Wider sweet spot in a fight',max:2,cost:[600,1500]},
   {id:'luck',nm:'Lucky hat',ds:'Blowing a micro-game costs 5 min, not 10',max:1,cost:[1000]}];
 const SHOPQ=["The cashier knows your truck by sound.","You came in for one fitting. You have a cart.","Tool aisle. Nobody can hurt you here.","You do not need another flashlight. You are holding another flashlight."];
 const ACH=[['first','On the clock','Close your first call'],['streak5','On a roll','Five under-par calls in a row'],['nosmack',"Didn't need it",'Close out a day without smacking anything'],
@@ -249,7 +279,7 @@ function runAction(id,data,value){
  else if(id==='nextDay'){if(S.day>=DAYS.length-1)weekend();else{S.day++;startDay()}}
  else if(id==='nextWeek'){S.week++;S.day=0;S.done=0;S.under=0;S.failed=0;S.perfects=0;S.lbs=0;S.wkStart=S.rep;S.limits=0;S.stripWins=0;S.extracts=0;S.micros=0;if(S.week>=3)unlock('week3');startDay()}
 }
-function save(){if(!ready||S.scene==='title'||S.scene==='ach')return false;
+function save(){if(!ready||arcadeMode||S.scene==='title'||S.scene==='ach')return false;
  try{const runtime={P,D,F,G,M:M?{...M,cb:callbackKey(M.cb)}:null,job,T,mx,my,touch,dialog:dlgOpen?lastDialog:null,shopNext:callbackKey(shopNext),shopMsg,shopFree};
  localStorage.setItem('problemSolverSave',JSON.stringify({version:2,S,U,runtime},(_,v)=>ArrayBuffer.isView(v)?Array.from(v):v));return true}catch(e){return false}}
 function restoreGame(sv){
@@ -262,11 +292,15 @@ function restoreGame(sv){
  clearInput();last=0;
 }
 function clearInput(){if(S.scene==='micro'&&M&&M.ph==='play'&&M.go&&['filter','coffee','smore'].includes(M.kind))M.awaitHold=true;down=false;pressed=false;click=null;for(const k in keys)keys[k]=false}
-function pauseGame(){if(paused||S.scene==='title'||S.scene==='ach')return;paused=true;clearInput();returnFocus=document.activeElement;$('pausePanel').hidden=false;$('soundEnabled').checked=!muted;$('soundVolume').value=Math.round(volume*100);$('saveStatus').textContent=save()?'Progress saved.':'Could not save. Keep this tab open to preserve progress.';$('resumeGame').focus()}
+function pauseGame(){if(paused||['title','ach','arcade','skitgallery'].includes(S.scene))return;paused=true;clearInput();returnFocus=document.activeElement;$('pausePanel').hidden=false;$('soundEnabled').checked=!muted;$('soundVolume').value=Math.round(volume*100);$('saveQuit').textContent=arcadeMode?'BACK TO ARCADE':'SAVE & QUIT TO TITLE';$('saveStatus').textContent=arcadeMode?'Practice session. Your workweek is safe.':save()?'Progress saved.':'Could not save. Keep this tab open to preserve progress.';$('resumeGame').focus()}
 function resumeGame(){paused=false;$('pausePanel').hidden=true;clearInput();last=0;if(returnFocus&&returnFocus.focus)returnFocus.focus()}
 function saveSettings(){try{localStorage.setItem('problemSolverSettings',JSON.stringify({muted,volume}))}catch(e){}}
 
-function loadSave(){try{return JSON.parse(localStorage.getItem('problemSolverSave')||'null')}catch(e){return null}}
+function fictionalSave(v){
+ if(typeof v==='string'){const names={alpine0_0:'THE FIXER',lawrenceville:'Copper Creek',dacula:'Bent Pines',grayson:'Dusty Hollow',snellville:'Filter Falls',loganville:'Wrenchwood',monroe:'Last Chance',buford:'Short Circuit',lilburn:'Rattle Ridge','collins hill park':'BACKLASH LAKE',curado:'baitcaster'};return v.replace(/alpine0_0|lawrenceville|dacula|grayson|snellville|loganville|monroe|buford|lilburn|collins hill park|curado/gi,t=>names[t.toLowerCase()])}
+ if(Array.isArray(v))return v.map(fictionalSave);if(v&&typeof v==='object')return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,fictionalSave(x)]));return v;
+}
+function loadSave(){try{return fictionalSave(JSON.parse(localStorage.getItem('problemSolverSave')||'null'))}catch(e){return null}}
 function fresh(){Object.assign(S,S0());for(const k in U)U[k]=0}
 let P=null,D=null,F=null,G=null,job=null,T=0,mx=0,my=0,touch=false;const keys={};
 let down=false,pressed=false,click=null,dlgOpen=false,dlgCb=null,dlgCb2=null,dlgCb3=null,dlgCb4=null;
@@ -278,21 +312,17 @@ function clockStr(m){m=Math.min(600,Math.floor(m));let h=6+Math.floor(m/60),mm=m
 /* ---------- dialog ---------- */
 function dialog(o){$('kick').textContent=o.kick||'';$('ttl').textContent=o.title;$('body').innerHTML=o.html;$('btn').textContent=o.btn;
   $('btn2').textContent=o.btn2||'';$('btn2').className=o.btn2?'on':'';dlgCb2=o.cb2||null;$('btn3').textContent=o.btn3||'';$('btn3').className=o.btn3?'on':'';dlgCb3=o.cb3||null;$('btn4').textContent=o.btn4||'';$('btn4').className=o.btn4?'on':'';dlgCb4=o.cb4||null;
-  $('ov').className=o.low?'low':'';dlgOpen=true;dlgCb=o.cb;down=false;pressed=false;lastDialog={...o};for(const k of ['cb','cb2','cb3','cb4'])lastDialog[k]=callbackKey(o[k]);}
+  $('ov').className=(o.low?'low':'')+(S.scene==='title'?' titleScene':'')+(S.scene==='arcade'||S.scene==='skitgallery'?' wideScene':'')+(S.scene==='skit'?' comicScene':'');dlgOpen=true;dlgCb=o.cb;down=false;pressed=false;lastDialog={...o};for(const k of ['cb','cb2','cb3','cb4'])lastDialog[k]=callbackKey(o[k]);}
 function closeDlg(alt){if(paused||!dlgOpen)return;initAudio();if(ac&&ac.state==='suspended'){try{ac.resume()}catch(e){}}
   dlgOpen=false;$('ov').className='hide';const cb=alt===4&&dlgCb4?dlgCb4:alt===3&&dlgCb3?dlgCb3:alt===true&&dlgCb2?dlgCb2:dlgCb;dlgCb=null;dlgCb2=null;dlgCb3=null;dlgCb4=null;pressed=false;down=false;if(cb)cb()}
 $('btn').addEventListener('click',()=>closeDlg());$('btn2').addEventListener('click',()=>closeDlg(true));$('btn3').addEventListener('click',()=>closeDlg(3));$('btn4').addEventListener('click',()=>closeDlg(4));
 
 /* ---------- flow ---------- */
-function title(){S.scene='title';const sv=loadSave(),has=!!(sv&&sv.S&&(sv.S.week>1||sv.S.day>0||sv.S.rep>0||sv.version===2));
-  dialog({kick:'ALPINE0_0  ·  25 YEARS IN THE TRADE',title:'THE PROBLEM SOLVER',
-  html:"<p>You're <b>Alpine0_0</b>, install supervisor. When a crew can't figure it out, the radio goes off and it's your problem now.</p>"+
-  "<ul><li><b>Launch</b> the truck off the line to get there fast.</li><li><b>Fix it</b> before the clock runs out. Seven kinds of calls, and Friday ends with the Nightmare Job.</li>"+
-  "<li><b>Random bullshit</b> happens between calls. That's the job.</li><li><b>4:00 PM</b>, you're off: fish, race, squad up, or wrench on the project car.</li>"+
-  "<li><b>Spend what you earn</b> at the hardware store on the way home.</li></ul><p>Monday's a warm-up. Friday is difficulty 10. There are secrets. I'm not telling you where.</p>"+
-  (best?"<p>Best rep: <b>"+best.toLocaleString()+"</b></p>":"")+"<p style='font-size:13px'>Space / click / tap does everything. H to smack it. M to mute.</p>",
+function title(){arcadeMode=false;S.scene='title';const sv=loadSave(),has=!!(sv&&sv.S&&(sv.S.week>1||sv.S.day>0||sv.S.rep>0||sv.version===2));
+  dialog({kick:'THE FIXER  ·  25 YEARS IN THE TRADE',title:'THE PROBLEM SOLVER',
+  html:'<div class="edition">THE CLOCKED-IN & FED-UP EDITION</div><p class="titleIntro">The crew gave up. The customer has a cousin. Your boss needs a graphics card. <b>Congratulations. You are the adult.</b></p><div class="featureGrid"><div><strong>07</strong><span>REPAIR PUZZLES</span></div><div><strong>'+Object.keys(MICRO).length+'</strong><span>QUICK DISASTERS</span></div><div><strong>'+SKITS.length+'</strong><span>COMEDY SKITS</span></div></div><p>Race the work truck. Untangle somebody else&#39;s bullshit. Survive until 4. Then fish, race, game, or hide in the garage.</p><div class="titleNote">One week. Zero competent helpers. A worrying amount of caffeine.</div><p class="controlNote">CLICK / TAP / SPACE · H: SMACK IT · ESC: PAUSE</p>',
   btn:has?'CONTINUE  ·  WEEK '+sv.S.week+'  ·  '+DAYS[clamp(sv.S.day|0,0,4)].nm:'CLOCK IN  ·  6:00 AM',cb:()=>{if(has)restoreGame(sv);else{fresh();startDay()}},
-  btn2:has?'NEW GAME':'',cb2:()=>{fresh();startDay()},btn3:'ACHIEVEMENTS  ·  '+ACHV.size+' / '+ACH.length,cb3:achScreen})}
+  btn2:has?'NEW GAME':'',cb2:()=>{fresh();startDay()},btn3:'AFTER-HOURS ARCADE',cb3:arcadeScreen,btn4:'BREAK ROOM THEATER',cb4:skitGallery})}
 function achScreen(){S.scene='ach';dialog({kick:ACHV.size+' OF '+ACH.length+' UNLOCKED',title:'Achievements',html:ACH.map(a=>{const h=ACHV.has(a[0]);
     return '<div class="ach'+(h?'':' no')+'"><span>'+(h?'🏆':'🔒')+'</span><div><b>'+(h||!a[3]?a[1]:'???')+'</b><small>'+(h||!a[3]?a[2]:'Secret. Go find it.')+'</small></div></div>'}).join(''),btn:'BACK',cb:title})}
 let shopNext=null,shopMsg='',shopFree=false;
@@ -342,7 +372,7 @@ function radio(){S.scene='radio';const d=day(),kd=S.kinds[S.call%7],j=pick(Math.
   btn:'ROLL OUT',cb:startDrag})}
 function gain(n){S.rep=Math.max(0,S.rep+n);S.dayRep+=n;if(n>0)S.cash+=n;if(n&&!dlgOpen)floater((n>0?'+':'')+n,W-70,78+FL.length*20,n>0?'#ff8a1f':'#ff5468')}
 function nextCall(){S.call++;if(S.call>=day().calls)endDay(false);else between()}
-function between(){const r=Math.random();
+function between(){if(!S.skitsSeen?.length||Math.random()<.22){startSkit();return}const r=Math.random();
   if(!S.lunch&&S.min>=270){S.lunch=true;startMicro('slots',radio,false,'LUNCH BREAK');return}
   const rare=RARE.filter(e=>!S.seen.includes(e.ach));
   if(rare.length&&r<.12){const e=pick(rare);S.seen.push(e.ach);event(e);return}
@@ -368,7 +398,7 @@ function endDay(late){S.scene='dayend';const d=day();let h='';if(!late){if(S.day
   h+='<div class="row"><span>Rep today</span><span>'+(S.dayRep>=0?'+':'')+S.dayRep.toLocaleString()+'</span></div>'+
      '<div class="row"><span>Under-par streak</span><span>'+S.streak+'</span></div><div class="row"><span>Days since the new guy broke something</span><span>0</span></div>'+
      '<p style="margin-top:14px;font-size:13px">Text from the wife:</p><div class="txt">'+pick(WIFE)+'</div>';
-  saveBest();dialog({kick:d.nm+'  ·  OFF THE CLOCK',title:late?'Out of daylight':'Day handled',html:h,btn:'GRAB THE CURADO  ·  GO FISHING',cb:startFish,btn2:'TEST & TUNE NIGHT  ·  HIT THE STRIP',cb2:startStrip,btn3:'GAME NIGHT  ·  SQUAD UP',cb3:startGame,btn4:'GARAGE NIGHT  ·  5 RANDOM-ASS GAMES',cb4:startGarage})}
+  saveBest();dialog({kick:d.nm+'  ·  OFF THE CLOCK',title:late?'Out of daylight':'Day handled',html:h,btn:'GRAB THE BAITCASTER  ·  GO FISHING',cb:startFish,btn2:'TEST & TUNE NIGHT  ·  HIT THE STRIP',cb2:startStrip,btn3:'GAME NIGHT  ·  SQUAD UP',cb3:startGame,btn4:'GARAGE NIGHT  ·  5 RANDOM-ASS GAMES',cb4:startGarage})}
 function afterEvening(){const go=action('openShop');if(S.day>=DAYS.length-1)payday(go);else go()}
 function payday(next){S.scene='payday';const gross=Math.max(0,S.rep-S.wkStart),tax=Math.round(gross*.24),tool=Math.round(gross*.3),gas=Math.round(gross*.2),net=Math.max(25,gross-tax-tool-gas-25);S.cash+=net;
   const r=(a,b)=>'<div class="row"><span>'+a+'</span><span>'+b+'</span></div>';
@@ -381,7 +411,7 @@ function endFish(){S.scene='fishend';const c=F.catches;let h='';
   h+='<div class="row"><span>Daily limit</span><span>'+F.total.toFixed(1)+' / '+F.limit+' lb</span></div>';
   h+=F.hit?'<p><b>Limit beat. +200 rep.</b></p>':'<p>Short of the limit by '+(F.limit-F.total).toFixed(1)+' lb. Long casts pull bigger fish.</p>';
   if(F.newPb)h+='<p><b>New personal best: '+pb.toFixed(1)+' lb.</b></p>';else if(pb)h+='<p style="font-size:13px">Personal best: '+pb.toFixed(1)+' lb</p>';
-  saveBest();dialog({kick:'COLLINS HILL PARK  ·  SUNDOWN',title:F.hit?'Beat the lake':c.length?c.length+' in the boat':'Nothing biting',html:h,
+  saveBest();dialog({kick:'BACKLASH LAKE  ·  SUNDOWN',title:F.hit?'Beat the lake':c.length?c.length+' in the boat':'Nothing biting',html:h,
     btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
 function startStrip(){S.strip={round:0,wins:0,rep:0};nextRace()}
 function nextRace(){startDrag();D.race=true;D.rv=[rnd(.55,.9),rnd(.35,.6),rnd(.22,.4)][S.strip.round];D.rn=RIVALS[S.strip.round]}
@@ -423,11 +453,15 @@ function updDrag(dt){const d=D;d.t+=dt;d.lblT=Math.max(0,d.lblT-dt);
   else if(d.ph==='slip'){d.st+=dt;if(pressed&&d.st>.5){if(d.race){if(d.win&&++S.strip.round<3)nextRace();else endStrip()}else{S.min+=d.drive;if(S.min>=600)endDay(true);else startJob()}}}
 }
 function truck(x,y,s){g.save();g.translate(x,y);g.scale(s,s);
-  g.fillStyle='#e9eef2';g.fillRect(-70,-46,92,40);g.fillRect(22,-34,44,28);g.fillStyle='#9fd4ee';g.fillRect(28,-30,24,13);
-  g.fillStyle='#ff8a1f';g.fillRect(-70,-22,92,5);g.fillStyle='#1a2430';g.font=F0(11);g.textAlign='center';g.textBaseline='middle';g.fillText('HEATING & AIR',-24,-34);
-  g.strokeStyle='#8a97a5';g.lineWidth=3;g.beginPath();g.moveTo(-66,-52);g.lineTo(16,-52);g.moveTo(-58,-52);g.lineTo(-58,-46);g.moveTo(8,-52);g.lineTo(8,-46);g.stroke();
-  g.fillStyle='#11161c';for(const wx of[-44,40]){g.beginPath();g.arc(wx,-4,13,0,TAU);g.fill()}
-  g.fillStyle='#8a97a5';for(const wx of[-44,40]){g.beginPath();g.arc(wx,-4,5,0,TAU);g.fill()}g.restore()}
+  const body=g.createLinearGradient(0,-65,0,4);body.addColorStop(0,'#f2e8ce');body.addColorStop(.45,'#d7d8ce');body.addColorStop(1,'#a9b7b7');
+  g.fillStyle='#0b1720';g.beginPath();g.ellipse(0,9,81,11,0,0,TAU);g.fill();g.fillStyle=body;g.beginPath();g.moveTo(-75,-10);g.lineTo(-75,-59);g.lineTo(19,-59);g.lineTo(22,-48);g.lineTo(49,-48);g.lineTo(65,-28);g.lineTo(76,-24);g.lineTo(78,-5);g.lineTo(-75,-5);g.closePath();g.fill();
+  g.strokeStyle='#7f969d';g.lineWidth=1;g.stroke();g.fillStyle='#20404d';g.beginPath();g.moveTo(28,-44);g.lineTo(46,-44);g.lineTo(58,-29);g.lineTo(28,-29);g.closePath();g.fill();g.fillStyle='#9ccfcb88';g.beginPath();g.moveTo(31,-43);g.lineTo(43,-43);g.lineTo(31,-32);g.fill();
+  g.fillStyle='#e7873f';g.fillRect(-75,-25,94,9);g.fillStyle='#203849';g.fillRect(-75,-15,94,3);g.fillStyle='#254052';g.font=F0(11);g.textAlign='center';g.textBaseline='middle';g.fillText('LAST RESORT',-28,-44);g.font=F0(6);g.fillText('HEAT • AIR • QUESTIONABLE HOURS',-28,-33);
+  g.strokeStyle='#607781';g.lineWidth=1;g.strokeRect(23,-47,39,38);g.fillStyle='#46616a';g.fillRect(29,-23,8,2);g.fillRect(71,-14,7,9);g.fillStyle='#ffdb9f';g.fillRect(68,-24,9,7);g.fillStyle='#df5e42';g.fillRect(-77,-18,4,9);g.fillStyle='#81979e';g.fillRect(64,-5,17,5);g.fillRect(-78,-5,12,4);
+  g.strokeStyle='#91a5a6';g.lineWidth=3;g.beginPath();g.moveTo(-68,-65);g.lineTo(15,-65);g.moveTo(-58,-65);g.lineTo(-58,-59);g.moveTo(8,-65);g.lineTo(8,-59);g.stroke();g.strokeStyle='#bfcbc3';g.lineWidth=2;for(let k=0;k<7;k++){g.beginPath();g.moveTo(-65+k*12,-69);g.lineTo(-65+k*12,-62);g.stroke()}
+  for(const wx of[-45,46]){g.fillStyle='#0a141b';g.beginPath();g.arc(wx,-3,14,0,TAU);g.fill();g.strokeStyle='#53666d';g.lineWidth=2;g.beginPath();g.arc(wx,-3,10,0,TAU);g.stroke();g.fillStyle='#95aab0';g.beginPath();g.arc(wx,-3,6,0,TAU);g.fill();g.fillStyle='#233943';g.beginPath();g.arc(wx,-3,2,0,TAU);g.fill()}
+  g.fillStyle='#51666a';g.fillRect(-67,-9,13,2);g.fillRect(0,-10,9,2);g.restore()}
+
 function car(x,y,s,col){g.save();g.translate(x,y);g.scale(s,s);g.fillStyle=col;g.beginPath();g.moveTo(-70,-8);g.lineTo(-66,-26);g.lineTo(-34,-30);g.lineTo(-18,-46);g.lineTo(22,-46);g.lineTo(40,-30);g.lineTo(68,-24);g.lineTo(70,-8);g.closePath();g.fill();
   g.fillStyle='#9fd4ee';g.beginPath();g.moveTo(-14,-42);g.lineTo(20,-42);g.lineTo(32,-30);g.lineTo(-26,-30);g.closePath();g.fill();
   g.fillStyle='#11161c';g.beginPath();g.arc(-42,-6,15,0,TAU);g.fill();g.beginPath();g.arc(44,-6,12,0,TAU);g.fill();g.fillStyle='#8a97a5';g.beginPath();g.arc(-42,-6,6,0,TAU);g.fill();g.beginPath();g.arc(44,-6,5,0,TAU);g.fill();g.restore()}
@@ -805,6 +839,210 @@ const MICRO={
   init(m){m.n=0},upd(m){if(pressed){m.n++;tone('sine',500+m.n*12,700+m.n*12,.1,.04);floater('❤️',W/2+rnd(-90,90),H/2-60,'#ff5468')}if(m.t>=6.7)mdone(true)},
   draw(m){em('🐕',W/2+Math.sin(T*14)*(pressed?10:3),H/2+10,Math.min(170,W*.36));em('Pets: '+m.n,W/2,H-60,20)}}
 };
+/* Six responsive, deterministic-clue micro-games. Insert after MICRO. */
+const ngC={ink:'#111c29',card:'#1b2c3d',edge:'#38536b',cyan:'#61e1ef',green:'#92f1b2',red:'#ff7d83',gold:'#ffd273',muted:'#afc1d3'};
+function ngBox(x,y,w,h,c,edge){g.fillStyle=c;g.fillRect(x,y,w,h);if(edge){g.strokeStyle=edge;g.lineWidth=2;g.strokeRect(x,y,w,h)}}
+function ngLayout(){return{x:Math.max(14,(W-640)/2),y:158,w:Math.min(W-28,640),h:Math.max(260,H-268)}}
+function ngHit(c,x,y,w,h){return c&&c.x>=x&&c.x<=x+w&&c.y>=y&&c.y<=y+h}
+function ngButton(label,x,y,w,h,on,color){ngBox(x,y,w,h,on?'#284d4f':ngC.card,on?ngC.green:ngC.edge);wrap(label,x+w/2,y+h/2,w-12,17,Math.min(17,W*.041),color||'#fff')}
+function ngNote(m,l){wrap(m.msg||'',W/2,l.y+l.h+26,l.w,18,Math.min(16,W*.039),m.bad?ngC.red:ngC.green)}
+function ngFeedback(m,msg,bad){m.msg=msg;m.bad=!!bad;bad?sfx.red():sfx.good()}
+Object.assign(MICRO,{
+ drift:{bg:'garage',t:'CONTROLLER EXORCISM',i:'Tap the trim arrows. Center the idle stick, then SAVE.',lim:22,
+ w:['Zero drift. Your fictional warranty remains absolutely fucking fictional.','Calibrated. The boss can blame his aim again.'],l:['Still drifting. It has become a tiny, expensive shopping cart.'],
+ init(m){m.ox=pick([-2,-1,1,2]);m.oy=pick([-2,-1,1,2]);m.tx=0;m.ty=0;m.msg='Idle stick must read X 0, Y 0.'},
+ upd(m){if(!click)return;const l=ngLayout(),s=Math.min(54,l.w/5),cx=W/2,cy=l.y+l.h*.71;const btns=[[-s*1.6,0,-1,0],[s*.6,0,1,0],[-s*.5,-s*1.1,0,-1],[-s*.5,s*1.1,0,1]];for(const[x,y,dx,dy]of btns)if(ngHit(click,cx+x,cy+y,s,s)){m.tx=clamp(m.tx+dx,-3,3);m.ty=clamp(m.ty+dy,-3,3);sfx.click();return}if(ngHit(click,l.x+l.w*.78,l.y+l.h*.72,l.w*.20,54)){const ok=m.ox+m.tx===0&&m.oy+m.ty===0;if(ok)mdone(true);else ngFeedback(m,'Still off-center. Read the damn coordinates.',true)}},
+ draw(m){const l=ngLayout(),r=Math.min(l.w*.22,l.h*.23),cx=W/2,cy=l.y+l.h*.26,x=m.ox+m.tx,y=m.oy+m.ty;g.strokeStyle=ngC.edge;g.lineWidth=2;g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.moveTo(cx-r,cy);g.lineTo(cx+r,cy);g.moveTo(cx,cy-r);g.lineTo(cx,cy+r);g.stroke();g.fillStyle='#92f1b233';g.beginPath();g.arc(cx,cy,12,0,Math.PI*2);g.fill();g.strokeStyle=ngC.cyan;g.lineWidth=6;g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+x*r/7,cy+y*r/7);g.stroke();g.fillStyle=ngC.cyan;g.beginPath();g.arc(cx+x*r/7,cy+y*r/7,10,0,Math.PI*2);g.fill();em('X '+x+'   Y '+y,cx,l.y+l.h*.49,22,x||y?ngC.gold:ngC.green);const s=Math.min(54,l.w/5),by=l.y+l.h*.71;[['←',-1.6,0],['→',.6,0],['↑',-.5,-1.1],['↓',-.5,1.1]].forEach(([t,a,b])=>ngButton(t,cx+s*a,by+s*b,s,s,false));ngButton('SAVE',l.x+l.w*.78,l.y+l.h*.72,l.w*.20,54,!(x||y));ngNote(m,l)}},
+ pcbuild:{bg:'garage',t:'GPU CABLE SHITSHOW',i:'Tap a PSU lead, then its matching socket. Read the pin labels.',lim:23,
+ w:['Booted first try. Do not say that out loud; the machine can hear you.'],l:['No boot. The RGB is now an expensive fucking nightlight.'],
+ init(m){m.sel=-1;m.links=[-1,-1,-1];m.order=pick([[2,0,1],[1,2,0],[2,1,0]]);m.msg='CPU → CPU / GPU → GPU / SATA → DRIVE';},
+ upd(m){if(!click)return;const l=ngLayout(),rh=l.h*.22;for(let j=0;j<3;j++){const y=l.y+30+j*rh;if(ngHit(click,l.x,y,l.w*.32,rh*.72)){if(m.links[j]<0){m.sel=j;sfx.click()}return}if(ngHit(click,l.x+l.w*.68,y,l.w*.32,rh*.72)&&m.sel>=0){const jright=m.order[j];if(m.sel===jright){m.links[m.sel]=j;m.sel=-1;ngFeedback(m,'Keyed correctly. No smoke. Nice.');if(m.links.every(v=>v>=0))mdone(true)}else ngFeedback(m,'Wrong key. Do not force that shit.',true);return}}},
+ draw(m){const l=ngLayout(),rh=l.h*.22,labels=['CPU 4+4','GPU 6+2','SATA 15'],sockets=['CPU 8','GPU 8','DRIVE 15'];em('PSU LEADS',l.x+l.w*.16,l.y+8,15,ngC.muted);em('SOCKETS',l.x+l.w*.84,l.y+8,15,ngC.muted);m.links.forEach((v,j)=>{if(v<0)return;g.strokeStyle=[ngC.gold,ngC.cyan,ngC.green][j];g.lineWidth=5;g.beginPath();g.moveTo(l.x+l.w*.32,l.y+30+j*rh+rh*.36);g.bezierCurveTo(l.x+l.w*.48,l.y+j*rh,l.x+l.w*.52,l.y+v*rh,l.x+l.w*.68,l.y+30+v*rh+rh*.36);g.stroke()});for(let j=0;j<3;j++){const y=l.y+30+j*rh;ngButton(labels[j],l.x,y,l.w*.32,rh*.72,m.sel===j||m.links[j]>=0);ngButton(sockets[m.order[j]],l.x+l.w*.68,y,l.w*.32,rh*.72,m.links.includes(j))}wrap('8 pins ≠ same wiring. Follow CPU / GPU labels.',W/2,l.y+l.h*.86,l.w,19,16,ngC.gold);ngNote(m,l)}},
+ blame:{bg:'wall',t:'QUIT BLAMING THE STAT',i:'Read the service evidence. Tap the only diagnosis it supports.',lim:24,
+ w:['You followed evidence. Management is deeply fucking uncomfortable.'],l:['You blamed the stat. The stat requests a different technician.'],
+ init(m){m.case=ri(3);m.badChoices=[];m.msg='All three clues point to ONE cause.';},
+ upd(m){if(!click)return;const l=ngLayout(),ys=l.y+l.h*.56,h=l.h*.12;for(let j=0;j<3;j++)if(ngHit(click,l.x,ys+j*(h+8),l.w,h)){if(j===m.case)mdone(true);else{m.badChoices.push(j);ngFeedback(m,'That contradicts the evidence. Try reading, professor.',true)}return}},
+ draw(m){const l=ngLayout(),cases=[['Room 80° / setpoint 72°','Stat requests cooling: YES','24V at Y; contactor coil is OPEN'],['Room 80° / setpoint 72°','Stat requests cooling: YES','24V at stat Y; 0V at unit Y'],['Room 80° / setpoint 72°','Stat requests cooling: NO','Stat sensor reports 65°; reference reads 80°']];ngBox(l.x,l.y,l.w,l.h*.48,'#e7e6d9');em('SERVICE EVIDENCE',W/2,l.y+22,17,'#263b45');cases[m.case].forEach((t,j)=>wrap(t,W/2,l.y+l.h*(.14+j*.12),l.w-24,18,Math.min(17,W*.041),'#263b45'));const ys=l.y+l.h*.56,h=l.h*.12;['Open contactor coil','Broken Y field wire','Bad thermostat sensor'].forEach((t,j)=>ngButton((m.badChoices.includes(j)?'✕ ':'')+t,l.x,ys+j*(h+8),l.w,h,false,m.badChoices.includes(j)?ngC.red:'#fff'));ngNote(m,l)}},
+ backlash:{bg:'camp',t:'BAITCASTER BIRDS NEST',i:'Pull only a FREE loop. Clear the loops covering it first.',lim:23,
+ w:['Untangled. Five minutes fishing, six hours repairing your fucking hobby.'],l:['You tightened the knot into a maritime artifact.'],
+ init(m){m.done=[];m.msg='A is free. B needs A. C needs B. D needs A + C.';},
+ upd(m){if(!click)return;const l=ngLayout(),r=Math.min(l.w*.18,l.h*.16);for(let j=0;j<4;j++){const x=l.x+l.w*(j%2?.73:.27),y=l.y+l.h*(j<2?.3:.7);if(Math.hypot(click.x-x,click.y-y)<r+7&&!m.done.includes(j)){const need=[[],[0],[1],[0,2]][j];if(need.every(n=>m.done.includes(n))){m.done.push(j);ngFeedback(m,'Loop '+String.fromCharCode(65+j)+' released. Easy, you angry bastard.');if(m.done.length===4)mdone(true)}else ngFeedback(m,'Pinned loop! Release '+need.filter(n=>!m.done.includes(n)).map(n=>String.fromCharCode(65+n)).join(' + ')+' first.',true);return}}},
+ draw(m){const l=ngLayout(),r=Math.min(l.w*.18,l.h*.16),need=[[],[0],[1],[0,2]];for(let j=0;j<4;j++){const x=l.x+l.w*(j%2?.73:.27),y=l.y+l.h*(j<2?.3:.7),done=m.done.includes(j),free=need[j].every(n=>m.done.includes(n));g.strokeStyle=done?'#3c5359':free?ngC.green:ngC.gold;g.lineWidth=7;g.beginPath();g.ellipse(x,y,r,r*.65,j%2?.4:-.4,0,Math.PI*2);g.stroke();em(done?'✓':String.fromCharCode(65+j),x,y,28,done?ngC.muted:'#fff');em(done?'CLEARED':free?'FREE':'NEEDS '+need[j].map(n=>String.fromCharCode(65+n)).join('+'),x,y+r+16,14,free?ngC.green:ngC.gold)}ngNote(m,l)}},
+ pressure:{bg:'attic',t:'DUCT PRESSURE POLITICS',i:'Tap dampers to route the exact flow. Then TEST the manifold.',lim:22,
+ w:['Balanced. Even the conference room full of hot air is comfortable.'],l:['Wrong flow. The boss has blamed the thermostat by reflex.'],
+ init(m){m.valves=[false,false,false];m.target=pick([3,5,6]);m.msg='Parallel branches ADD. Closed branch = zero flow.'},
+ upd(m){if(!click)return;const l=ngLayout(),rh=l.h*.22;for(let j=0;j<3;j++)if(ngHit(click,l.x+l.w*.38,l.y+25+j*rh,l.w*.3,rh*.65)){m.valves[j]=!m.valves[j];sfx.click();return}if(ngHit(click,l.x,l.y+l.h*.8,l.w,48)){const flow=m.valves.reduce((a,v,j)=>a+(v?[1,2,4][j]:0),0);if(flow===m.target)mdone(true);else ngFeedback(m,flow+' units. Target '+m.target+'. Move a damper, not the goalposts.',true)}},
+ draw(m){const l=ngLayout(),rh=l.h*.22,flow=m.valves.reduce((a,v,j)=>a+(v?[1,2,4][j]:0),0);em('TARGET '+m.target+'    FLOW '+flow,W/2,l.y,21,flow===m.target?ngC.green:ngC.gold);g.strokeStyle='#607b8c';g.lineWidth=14;g.beginPath();g.moveTo(l.x+l.w*.12,l.y+45);g.lineTo(l.x+l.w*.12,l.y+25+rh*2.4);g.moveTo(l.x+l.w*.86,l.y+45);g.lineTo(l.x+l.w*.86,l.y+25+rh*2.4);g.stroke();for(let j=0;j<3;j++){const y=l.y+25+j*rh,on=m.valves[j];g.strokeStyle=on?ngC.cyan:'#415363';g.lineWidth=9;g.beginPath();g.moveTo(l.x+l.w*.12,y+rh*.325);g.lineTo(l.x+l.w*.86,y+rh*.325);g.stroke();ngButton((on?'OPEN ':'SHUT ')+[1,2,4][j],l.x+l.w*.38,y,l.w*.3,rh*.65,on)}ngButton('TEST FLOW',l.x,l.y+l.h*.8,l.w,48,flow===m.target);ngNote(m,l)}},
+ toolmath:{bg:'store',t:'TOOL TRUCK ACCOUNTING',i:'Add EVERY payment and fee. Tap the cheapest total cost.',lim:25,
+ w:['You kept your money. The shiny truck calls this a fucking tragedy.'],l:['You financed a wrench like a waterfront mansion.'],
+ init(m){m.variant=ri(2);m.badChoices=[];m.msg='Same fictional tool. No tax. No interest beyond shown fees.';},
+ upd(m){if(!click)return;const l=ngLayout(),h=l.h*.24;for(let j=0;j<3;j++)if(ngHit(click,l.x,l.y+28+j*(h+10),l.w,h)){if(j===(m.variant?1:0))mdone(true);else{m.badChoices.push(j);ngFeedback(m,'Count all payments + the fee. Shiny paint is not math.',true)}return}},
+ draw(m){const l=ngLayout(),h=l.h*.24,offers=m.variant?[['PAY TODAY','$210 cash'],['SHOP PLAN','4 × $45 + $10 fee'],['TRUCK SPECIAL','8 × $25 + $20 fee']]:[['PAY TODAY','$180 cash'],['SHOP PLAN','4 × $45 + $15 fee'],['TRUCK SPECIAL','10 × $20 + $10 fee']];em('LOW WEEKLY PRICE. HIGH BULLSHIT.',W/2,l.y,Math.min(17,W*.039),ngC.gold);offers.forEach(([name,terms],j)=>{const y=l.y+28+j*(h+10);ngBox(l.x,y,l.w,h,ngC.card,m.badChoices.includes(j)?ngC.red:ngC.edge);em(name,l.x+l.w*.5,y+h*.28,15,ngC.muted);em(terms,l.x+l.w*.5,y+h*.66,Math.min(25,W*.06),m.badChoices.includes(j)?ngC.red:'#fff')});ngNote(m,l)}}
+});
+
+/* Fictional workplace comedy expansion. Outcome tuples: [text, reputation, minutes]. */
+BOSS.push(
+"Crew diagnosed a bad attitude. On the compressor. Go get a second opinion.",
+"They've narrowed it down to electricity, air, or the equipment. We're closing in.",
+"Need you at a callback. Bring gauges and whatever expression makes people stop helping.",
+"My new case has twelve fans. Before you ask: no, the service truck still doesn't have AC.",
+"Quick question: is liquid cooling worth it? Separate question: how quickly can you stop a ceiling from doing that?",
+"The rookie put 'customer declined physics' on the invoice. Go translate.",
+"I assigned three guys. They formed a committee. I need one mechanic.",
+"Customer wants our best tech. I said he's busy correcting our other techs. So you're late already.",
+"Everybody says it's intermittent. It has been continuously broken since breakfast.",
+"If I upgrade the processor, will dispatch load faster? You know what, just take this address on a napkin.",
+"Crew's waiting on a part. The part is a decision. Please deliver it.",
+"Tonight we play on the hardest difficulty. Today you work with the same squad.",
+"Rookie says he has stick drift in his screwdriver hand. Apparently that's why everything's stripped.",
+"Customer's cousin has an opinion. Your job is to bring measurements to the opinion fight.",
+"They said the manual was confusing. It's still sealed in the plastic. Strong review from them.",
+"I bought illuminated memory. Looks incredible. Anyway, can you work through lunch?",
+"Need you to untangle this install. Think baitcaster backlash, except the line costs more and somebody put a ceiling over it.",
+"The tool truck's outside. Walk with purpose. He can smell an available credit limit.",
+"Crew says they need another hour. They've been billing time like a subscription service.",
+"The attic hatch is tiny. Good news: so is the crew's sense of responsibility.",
+"They completed the checklist. Every box says 'probably.' Go improve the paperwork with facts.",
+"I'm putting you in charge of training. By training I mean discovering what they did after I told them not to.",
+"My game runs at two hundred frames. Our scheduling software runs at one panic per second.",
+"I promised the customer we would send a specialist. I didn't mention your specialty is our mistakes."
+);
+EXCUSE.push(
+"We were waiting for it to fail more clearly.",
+"The manual describes a version of us that pays attention.",
+"I tightened it until it got loose again. That's usually done, right?",
+"We took a before picture. This is somehow worse than the before picture.",
+"The meter beeped and we felt that was encouraging.",
+"Nobody said the arrows were instructions.",
+"I thought 'common' meant any terminal everybody liked.",
+"We checked it as a team. Everybody assumed somebody checked it.",
+"That screw was already emotionally stripped.",
+"We were troubleshooting. Mostly shooting.",
+"The customer said their cousin does it this way. He sounded employed.",
+"I didn't lose the fitting. I relocated it into the insulation permanently.",
+"I rebooted it. Then I rebooted lunch. Then you got here.",
+"The boss said make it clean, so we threw away the diagram."
+);
+CUST.push(
+"Customer has prepared a printed timeline. It begins before you were hired.",
+"Customer introduces the broken unit as 'our little troublemaker.' It weighs four hundred pounds.",
+"Customer's cousin is on speakerphone. The cousin's expertise has background bowling noises.",
+"Customer says money is no object, then follows you around switching off your flashlight.",
+"Customer wants the old part returned. It's going in the evidence drawer.",
+"Customer installed a chair exactly where your ladder needs to go. Calls it the observation deck.",
+"Customer has renamed every room after its current temperature.",
+"Customer keeps asking if the invoice is per person or per household.",
+"Customer offers lunch. You are now emotionally obligated to save the system.",
+"Customer says the thermostat is too complicated. Their remote has forty-seven buttons and a velvet case.",
+"Customer has marked the noise on a calendar. The noise has better attendance than the crew.",
+"Customer asks if your boss is the guy who called yesterday to explain his graphics card.",
+"Customer has already told the dog you're here to fix summer.",
+"Customer opens every door to help the AC catch up."
+);
+HECK.push(
+'"My cousin does HVAC. Mostly comments, but he does them every day."',
+'"Can you make it colder without using any more cold?"',
+'"If I hold this flashlight, is there a labor discount?"',
+'"Is that part necessary or is it one of the fancy ones?"',
+'"I cleaned the filter. With the leaf blower. Inside."',
+'"Can we use the upstairs cool downstairs? Like rollover minutes?"',
+'"You look calm. Does that cost extra?"',
+'"Could this wait until winter, when I stop noticing?"',
+'"The cousin says to bypass it. He has not said what it is yet."',
+'"I set it to fifty so it would understand I was serious."',
+'"Why do you need a meter? The last guy diagnosed it with a sigh."',
+'"Would it work better if I stop standing directly in your way?"',
+'"You fixed it quickly. Can you uncharge me for the part where you knew how?"',
+'"My cousin is sending a link. It says unavailable, but the principle stands."'
+);
+REV_GOOD.push(
+'★★★★★ "Found the problem before my cousin finished saying compressor."',
+'★★★★★ "Explained the repair without making me feel like the repair."',
+'★★★★★ "The other crew brought theories. This guy brought a meter."',
+'★★★★★ "My house is cool and his boss is apparently buying a computer."',
+'★★★★★ "Taught the apprentice something. I learned it too. The apprentice may need another visit."',
+'★★★★★ "Said the price before doing the work. Apparently that is allowed."',
+'★★★★★ "Respected the house. Disrespected the previous wiring. Both appropriate."',
+'★★★★★ "My cousin has stopped replying. Air works great."',
+'★★★★★ "He found a tiny fault and fixed it. No dramatic music or financing application."'
+);
+REV_MEH.push(
+'★★★☆☆ "Air is fixed. He called my attic a tax on being alive."',
+'★★★☆☆ "Would have given five stars, but now my cousin is upset."',
+'★★★★☆ "Excellent work. Very tense relationship with one particular screw."',
+'★★★☆☆ "His boss called three times. None sounded related to my house."',
+'★★★☆☆ "Everything works. I still think fifty degrees should cool faster."',
+'★★★★☆ "Professional. Told the helper to stop generating side quests."',
+'★★★☆☆ "He returned my old part. I did ask, but now I have to own it."',
+'★★★☆☆ "Fixed in twelve minutes. Spent twenty explaining why twelve minutes was good."',
+'★★★★☆ "He stared into the ductwork like it owed him an apology."'
+);
+DAY_GOOD.push(
+"You cleared the board. Dispatch immediately mistook that for spare capacity.",
+"No callbacks. The group chat has been reduced to arguing about mouse pads.",
+"Every house is cold. Every rookie learned something. We'll test the second claim tomorrow.",
+"The boss called you invaluable. Payroll still considers you highly measurable.",
+"Clock out. Tonight's hardest difficulty has a pause menu. Enjoy the luxury.",
+"You earned a quiet evening and one cast that doesn't turn into a fiber arts project.",
+"Zero open tickets. The printer tried to celebrate and jammed. Leave it."
+);
+DAY_BAD.push(
+"Some days you fix equipment. Today you supervised the consequences of confidence.",
+"The board's still full. Your water bottle isn't. One of those is easy to fix.",
+"You can't carry the whole squad if they keep running back into the tutorial fire.",
+"Rough shift. Do not let a baitcaster conduct the performance review.",
+"The boss says we'll regroup tomorrow. Hopefully into a group that reads labels.",
+"You're out of hours, patience, and dry shirts. Dispatch says two out of three ain't bad.",
+"Go home. The callbacks will still be here after a shower. They're very committed."
+);
+WIFE.push(
+"Dinner's covered. You just have to arrive as a person instead of a troubleshooting flowchart. ❤️",
+"If the boss calls about computer fans, tell him yours has retired for the evening. 😂",
+"Go fish. If the reel backlashes, that's the lake assigning you paperwork. 🎣",
+"Bought snacks for co-op. Our official strategy is blaming the controller together. ❤️",
+"You can talk about the attic for ten minutes. Then I get to tell you about my day. Fair trade. ❤️",
+"Please bring home your good mood. If unavailable, tacos are an approved substitute.",
+"The tool truck is not a retirement plan. Yes, even if the drawer closes really nice. 😂",
+"I put your drink in the fridge. Nobody has offered it a side job. Come home. ❤️",
+"Hardest difficulty tonight? Fine. If you say 'one more try' seven times, I'm changing the difficulty to bedtime.",
+"Your controller walks left by itself. Very independent. We should stop letting it choose our route. 😂"
+);
+SHOPQ.push(
+"The ratchet has seventy-two teeth. Your financing agreement has more.",
+"The tool truck driver calls this an investment. So does every man selling a boat.",
+"You came for batteries. A salesman has asked how serious you are about torque.",
+"The premium flashlight lets you see exactly how much money is leaving.",
+"You already own this socket. Somewhere. That's how they get you.",
+"The drawer closes softly. The payment lands hard.",
+"The bargain bin contains a tool invented to solve a problem the tool created.",
+"The sticker says lifetime warranty. The payment schedule took that personally."
+);
+EVENTS.push(
+{t:"The liquid-cooling emergency",h:"Boss sends a PC parts list marked URGENT while you're balancing a service schedule.",a:{l:"SEND A SHORT ANSWER",o:[["You recommend checking compatibility. He discovers the parts have numbers for a reason. Back to work.",25,3]]},b:{l:"BECOME HIS BUILD CONSULTANT",o:[["You design an immaculate machine. He will use it to open the same twelve tabs. The afternoon suffers.",55,18]]}},
+{t:"Cousin on speaker",h:"The homeowner's cousin says your diagnosis is wrong. His proof is 'I've seen these before.'",a:{l:"SHOW THE READINGS",o:[["You explain the measurements. The speakerphone goes quiet except for someone opening chips.",60,8]]},b:{l:"BOOK THE COUSIN A SHIFT",o:[["The homeowner laughs. The cousin hangs up. You still have to explain the diagnosis afterward.",15,4]]}},
+{t:"The rookie's notebook",h:"The rookie finally brought a notebook. Page one says 'ask the fixer.'",a:{l:"BUILD A CHECKLIST",o:[["You walk him through a real process. He writes actual words. Tomorrow may contain one fewer phone call.",65,12]]},b:{l:"WRITE YOUR NUMBER AGAIN",o:[["He calls it a reference manual. You have authored your own recurring problem.",-15,1]]}},
+{t:"Truck-shaped payment plan",h:"The tool guy unveils a ratchet in a fitted case. He says your initials can go on the debt.",a:{l:"USE THE ONE YOU OWN",o:[["Your old ratchet works perfectly. The salesman looks personally betrayed by maintenance.",20,0]]},b:{l:"TRY THE DEMO",o:[["Excellent clicks. Twenty minutes of excellent clicks. You escape with a catalog and a new vulnerability.",35,15]]}},
+{t:"Backlash in the parking lot",h:"On break, you show the rookie your baitcaster. He makes one cast. The spool becomes a knitted hat.",a:{l:"TEACH THUMB CONTROL",o:[["You untangle it together. He learns restraint. You attempt to apply the lesson to dispatch.",40,12]]},b:{l:"RESTRING AND MOVE ON",o:[["Fresh line, fresh start. The rookie now respects the reel as a small hostile machine.",15,5]]}},
+{t:"The difficulty vote",h:"Boss asks whether tonight's co-op should be set to maximum difficulty. The crew hasn't survived today's instructions.",a:{l:"DEMAND A PRACTICE RUN",o:[["You schedule a warmup. Somebody asks which button revives teammates. Important progress.",35,4]]},b:{l:"MAXIMUM. NO EXCUSES.",o:[["Morale spikes. Competence holds steady. The boss appoints you designated reviver again.",50,9]]}},
+{t:"Stick drift defense",h:"Rookie blames crooked labels on controller stick drift. He is holding a marker.",a:{l:"REDO THE LABELS",o:[["Five minutes, legible labels. The marker receives a clean bill of health.",40,5]]},b:{l:"MAKE HIM EXPLAIN THAT",o:[["His explanation develops branching timelines. You lose ten minutes and still redo the labels.",10,10]]}},
+{t:"Attic office hours",h:"Customer wants a detailed progress update through the hatch. You're due for a water break.",a:{l:"TALK DOWNSTAIRS",o:[["You cool off, drink water, and explain the repair clearly. Nobody needs to shout into a ceiling.",55,8]]},b:{l:"SEND A QUICK PHOTO",o:[["A labeled photo answers the question. You take your break in peace. Beautiful use of a phone.",25,3]]}},
+{t:"Parts counter archaeology",h:"Parts guy has the right part, but the inventory says it lives in an aisle that no longer exists.",a:{l:"HELP SEARCH THE SHELVES",o:[["Found behind discontinued promotional hats. You both pretend this was the system working.",50,12]]},b:{l:"ORDER IT FOR TOMORROW",o:[["Schedule moves, customer gets an honest update. The part remains ruler of its forgotten kingdom.",15,4]]}},
+{t:"The RGB work order",h:"Boss wants colored lights under the dispatch desk. The crew wants better job notes.",a:{l:"FIX THE JOB NOTES FIRST",o:[["Addresses, symptoms, access details. Suddenly fewer calls begin with 'where the hell are you?'",70,15]]},b:{l:"MAKE DISPATCH PURPLE",o:[["The room glows like a gaming dungeon. Everyone still asks where the keys are.",10,6]]}},
+{t:"The invisible repair",h:"The fault is a loose connection. Customer expects something bigger for the service charge.",a:{l:"EXPLAIN THE DIAGNOSIS",o:[["You show what failed and what you checked. Customer pays for the knowledge that found the little bastard.",55,7]]},b:{l:"GIVE A BRIEF SUMMARY",o:[["You keep it concise and document the work. Customer remains unimpressed, but informed.",20,2]]}},
+{t:"The shop cat's promotion",h:"Shop cat sits on the callback forms. For the first time today, somebody has stopped new work entering the system.",a:{l:"MOVE THE CAT. SORT FORMS.",o:[["The paperwork gets handled. The cat files a grievance directly into your tool bag.",40,8]]},b:{l:"TAKE A MORALE PHOTO",o:[["Crew names the cat operations director. You still sort the forms, now under supervision.",55,13]]}},
+{t:"A miracle called documentation",h:"You solved a fault nobody else could find. Dispatch wants you on the next call immediately.",a:{l:"WRITE DOWN THE FIX",o:[["The next tech gets symptoms, readings, and the answer. Your future self sends silent thanks.",60,9]]},b:{l:"GIVE A QUICK HANDOFF",o:[["You explain it directly and hit the road. The rookie writes 'ask the fixer' underneath three useful notes.",30,3]]}}
+);
+const SKITS=[
+{id:"pc-priority",title:"Critical Cooling",cast:["BOSS","FIXER"],lines:[{who:"BOSS",text:"We have a serious cooling emergency."},{who:"FIXER",text:"Which customer?"},{who:"BOSS",text:"My graphics card. It's running hot."},{who:"FIXER",text:"Did you check airflow?"},{who:"BOSS",text:"I ordered a glass panel so I could watch it suffer."}],punchline:"FIXER: Finally, management with transparency."},
+{id:"cousin-certified",title:"Remote Expert",cast:["HOMEOWNER","FIXER","ROOKIE"],lines:[{who:"HOMEOWNER",text:"My cousin says it needs a compressor."},{who:"FIXER",text:"Has he checked it?"},{who:"HOMEOWNER",text:"He saw the picture I sent."},{who:"ROOKIE",text:"That was a picture of our van."},{who:"FIXER",text:"To be fair, that needs a compressor too."}],punchline:"HOMEOWNER: He's two for two, then."},
+{id:"elite-squad",title:"Hardest Difficulty",cast:["BOSS","FIXER","ROOKIE"],lines:[{who:"BOSS",text:"Tonight, maximum difficulty. Same crew."},{who:"ROOKIE",text:"Who carries the squad?"},{who:"FIXER",text:"Who carried the ladder?"},{who:"ROOKIE",text:"You."},{who:"FIXER",text:"Who carried the diagnosis?"},{who:"ROOKIE",text:"Also you."}],punchline:"BOSS: Great. Everyone already knows their role."},
+{id:"drift",title:"Hardware Issue",cast:["ROOKIE","FIXER"],lines:[{who:"ROOKIE",text:"My controller drifts. That's why I keep walking into walls."},{who:"FIXER",text:"Understandable."},{who:"ROOKIE",text:"Thanks."},{who:"FIXER",text:"Now explain the truck mirror."}],punchline:"ROOKIE: That might need a firmware update."},
+{id:"ratchet-equity",title:"Own a Little More",cast:["TOOL GUY","FIXER","ROOKIE"],lines:[{who:"TOOL GUY",text:"This ratchet could be yours for easy weekly payments."},{who:"FIXER",text:"When does it become fully mine?"},{who:"TOOL GUY",text:"How old are you?"},{who:"ROOKIE",text:"Does it have a lifetime warranty?"},{who:"TOOL GUY",text:"It has lifetime involvement."}],punchline:"FIXER: I've had relationships with less commitment and more drawer space."},
+{id:"backlash",title:"Line Management",cast:["ROOKIE","FIXER"],lines:[{who:"ROOKIE",text:"Why does your fishing reel look like that?"},{who:"FIXER",text:"I cast into the wind without adjusting the brakes."},{who:"ROOKIE",text:"So what do you call all those loops?"},{who:"FIXER",text:"A backlash."},{who:"ROOKIE",text:"Same thing the boss calls our customer feedback."}],punchline:"FIXER: This one I can fix by cutting the line."},
+{id:"attic-calendar",title:"Open Office",cast:["BOSS","FIXER","HOMEOWNER"],lines:[{who:"BOSS",text:"Can you take a quick call?"},{who:"FIXER",text:"I'm in an attic."},{who:"BOSS",text:"Perfect. No distractions."},{who:"HOMEOWNER",text:"Can you see the leak?"},{who:"FIXER",text:"Yes. It's me. Through my shirt."}],punchline:"BOSS: While you're up there, how many case fans is too many?"},
+{id:"parts-availability",title:"Computer Says Yes",cast:["PARTS GUY","FIXER","SHOP CAT"],lines:[{who:"PARTS GUY",text:"Computer says we have six."},{who:"FIXER",text:"Shelf says we have an empty box."},{who:"PARTS GUY",text:"Inventory is more of an aspiration."},{who:"SHOP CAT",text:"Mrrp."},{who:"FIXER",text:"He's the first one here to give me a straight answer."}],punchline:"PARTS GUY: Don't encourage him. He's already asking for counter pay."}
+];
+
 const BG={
  yard(){const y=H*.6,k=g.createLinearGradient(0,0,0,y);k.addColorStop(0,'#1c3550');k.addColorStop(1,'#56789a');g.fillStyle=k;g.fillRect(0,0,W,y);g.fillStyle='#8f9488';for(let x=0;x<W;x+=34){g.fillRect(x+4,y-62,22,62)}g.fillRect(0,y-40,W,7);g.fillStyle='#1f3a24';g.fillRect(0,y,W,H-y);g.fillStyle='#27492d';for(let i=0;i<40;i++)g.fillRect((i*197)%W,y+((i*89)%(H-y)),14,3)},
  street(){const y=H*.6-16,k=g.createLinearGradient(0,0,0,y);k.addColorStop(0,'#1c3550');k.addColorStop(1,'#56789a');g.fillStyle=k;g.fillRect(0,0,W,y);g.fillStyle='#22384a';for(let i=0;i<5;i++){const x=i*W/5+20;g.fillRect(x,y-110,W/5-50,110);g.beginPath();g.moveTo(x-12,y-110);g.lineTo(x+(W/5-50)/2,y-160);g.lineTo(x+W/5-38,y-110);g.fill()}g.fillStyle='#1f3a24';g.fillRect(0,y+96,W,H-y)},
@@ -830,8 +1068,8 @@ window.addEventListener('keydown',e=>{if(paused)return;const k=(e.key||'').toLow
   if(k.length===1){tbuf=(tbuf+k).slice(-4);if(tbuf==='10mm'){tbuf='';unlock('pocket');toast('It was in your pocket the whole time.')}}});
 function startMicro(kind,cb,free,lbl){S.scene='micro';M={kind,t:0,ph:'intro',intro:1.7,cb,free:!!free,lbl:lbl||'',won:false,q:'',dn:0,rw:0};MICRO[kind].init(M)}
 function mdone(w){const m=M;if(!m||m.ph!=='play')return;m.ph='done';m.won=w;m.dn=2.6;const d=MICRO[m.kind];if(!m.q)m.q=pick(w?d.w:d.l);
-  if(w){m.rw=60+dq()*6;gain(m.rw);S.micros++;sfx.win();confetti(W/2,H/2,50);if(m.kind==='tenmm')unlock('tenmm');if(m.kind==='petdog')unlock('goodboy')}
-  else{sfx.lose();if(++S.mlost>=10)unlock('shit');if(!m.free){if(m.kind==='slots'&&S.today.tums){m.nopen=true;toast('Antacids. Your stomach filed a complaint and it was denied.')}else if(S.today.vit){S.today.vit=0;m.nopen=true;toast('Vitamin I kicked in. No time lost.')}else S.min=Math.min(599,S.min+(U.luck?5:10))}}}
+  if(w){m.rw=arcadeMode?0:60+dq()*6;if(!arcadeMode){gain(m.rw);S.micros++}sfx.win();confetti(W/2,H/2,50);if(m.kind==='tenmm')unlock('tenmm');if(m.kind==='petdog')unlock('goodboy')}
+  else{sfx.lose();if(!arcadeMode&&++S.mlost>=10)unlock('shit');if(!m.free){if(m.kind==='slots'&&S.today.tums){m.nopen=true;toast('Antacids. Your stomach filed a complaint and it was denied.')}else if(S.today.vit){S.today.vit=0;m.nopen=true;toast('Vitamin I kicked in. No time lost.')}else S.min=Math.min(599,S.min+(U.luck?5:10))}}}
 function updMicro(dt){const m=M,d=MICRO[m.kind];
   if(m.ph==='intro'){m.intro-=dt;if(m.intro<=0)m.ph='play'}
   else if(m.ph==='play'){if(m.awaitHold){if(!down)return;m.awaitHold=false}m.t+=dt;d.upd(m,dt);if(m.ph==='play'&&m.t>=d.lim)mdone(false)}
@@ -840,7 +1078,7 @@ function drawMicro(){const m=M,d=MICRO[m.kind];g.fillStyle='#10161e';g.fillRect(
   if(m.ph==='intro'){em('RANDOM BULLSHIT',W/2,H*.3,14,'#ff8a1f');em(d.t,W/2,H*.4,Math.min(46,W*.075));wrap(d.i,W/2,H*.52,Math.min(W-40,620),26,Math.min(19,W*.042),'#93a3b5');return}
   if(BG[d.bg])BG[d.bg]();d.draw(m);g.fillStyle='rgba(6,9,13,.6)';g.fillRect(0,55,W,68);em(d.t,W/2,76,Math.min(16,W*.036),'#ff8a1f');wrap(m.awaitHold?'HOLD TO CONTINUE':d.i,W/2,101,W-16,14,Math.max(11,Math.min(13,W*.03)),'#eef3f7');g.fillStyle='#ff8a1f';g.fillRect(0,50,W*clamp(1-m.t/d.lim,0,1),5);
   if(m.ph==='done'){g.fillStyle='rgba(6,9,13,.82)';g.fillRect(0,H/2-100,W,200);em(m.won?'NAILED IT':'WELL, SHIT',W/2,H/2-56,Math.min(46,W*.09),m.won?'#7dffa0':'#ff5468');
-    wrap(m.q,W/2,H/2+4,Math.min(W-40,640),25,Math.min(18,W*.04));em(m.won?'+'+m.rw+' REP':m.free||m.nopen?'':'+'+(U.luck?5:10)+' MIN ON THE CLOCK',W/2,H/2+70,15,'#ff8a1f')}}
+    wrap(m.q,W/2,H/2+4,Math.min(W-40,640),25,Math.min(18,W*.04));em(m.won?(arcadeMode?'PRACTICE / NO CLOCK, NO DAMAGE':'+'+m.rw+' REP'):m.free||m.nopen?'':'+'+(U.luck?5:10)+' MIN ON THE CLOCK',W/2,H/2+70,15,'#ff8a1f')}}
 
 /* ---------- game night ---------- */
 function startGame(){S.scene='game';G={t:45,x:W/2,y:H/2,hp:3,inv:0,b:[],e:[],pt:[],k:0,rep:0,sp:.5,ft:0,aim:0,over:0,win:false}}
@@ -895,15 +1133,62 @@ function camp(){const sk=g.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050
   for(let i=0;i<5;i++){const a=T*6+i*1.7,h=34+Math.sin(a)*12-i*4;g.fillStyle=['#ff5a1f','#ff8a1f','#ffb13d','#ffd84a','#fff3b0'][i];g.beginPath();g.moveTo(fx-20+i*4,fy);g.quadraticCurveTo(fx+Math.sin(a*.7)*10,fy-h*1.7,fx+20-i*4,fy);g.fill()}
   for(let i=0;i<8;i++){const q=(T*.5+i/8)%1;g.globalAlpha=1-q;g.fillStyle='#ffb13d';g.fillRect(fx+Math.sin(i*3+T)*26*q,fy-40-q*130,2,2)}g.globalAlpha=1}
 function hud(){const d=day();g.fillStyle='rgba(6,9,13,.85)';g.fillRect(0,0,W,48);g.fillStyle='#ff8a1f';g.fillRect(0,48,W,2);g.textBaseline='middle';
-  g.font=F0(13);g.textAlign='left';g.fillStyle='#93a3b5';g.fillText(W>640?'ALPINE0_0  ·  WK '+S.week+'  ·  '+d.nm+'  ·  DIFFICULTY '+d.diff:d.nm.slice(0,3)+'  ·  D'+d.diff,14,25);
-  g.textAlign='center';g.font=F0(22);g.fillStyle=S.min>510?'#ff5468':'#eef3f7';g.fillText(S.scene==='fish'?Math.ceil(F.t)+'s  ·  '+F.total.toFixed(1)+' / '+F.limit+' LB':S.scene==='game'?Math.ceil(G.t)+'s  ·  '+G.k+' KILLS':S.scene==='micro'&&M.lbl?M.lbl:S.scene==='drag'&&D.race?'ROUND '+(S.strip.round+1)+' OF 3':clockStr(S.min),W/2,25);
+  g.font=F0(13);g.textAlign='left';g.fillStyle='#93a3b5';g.fillText(W>640?'THE FIXER  ·  WK '+S.week+'  ·  '+d.nm+'  ·  DIFFICULTY '+d.diff:d.nm.slice(0,3)+'  ·  D'+d.diff,14,25);
+  g.textAlign='center';g.font=F0(S.scene==='micro'&&M.lbl?(W<640?10:15):W<480?16:22);g.fillStyle=S.min>510?'#ff5468':'#eef3f7';g.fillText(S.scene==='fish'?Math.ceil(F.t)+'s  ·  '+F.total.toFixed(1)+' / '+F.limit+' LB':S.scene==='game'?Math.ceil(G.t)+'s  ·  '+G.k+' KILLS':S.scene==='micro'&&M.lbl?M.lbl:S.scene==='drag'&&D.race?'ROUND '+(S.strip.round+1)+' OF 3':clockStr(S.min),W/2,25);
   g.textAlign='right';g.font=F0(16);g.fillStyle='#ff8a1f';g.fillText(S.rep.toLocaleString()+' REP',W-14,25);
   if(S.scene==='fish'){g.fillStyle=F.hit?'#7dffa0':'#4fe3ff';g.fillRect(0,48,W*clamp(F.total/F.limit,0,1),2)}
   else if(S.scene==='game'){g.fillStyle='#4fe3ff';g.fillRect(0,48,W*clamp(1-G.t/45,0,1),2)}
   else if(!(S.scene==='drag'&&D.race)){g.fillStyle='#ff8a1f';g.fillRect(0,48,W*clamp(S.min/600,0,1),2);g.fillStyle='#2a3848';g.fillRect(W*clamp(S.min/600,0,1),48,W,2)}}
 
+/* ---------- break-room comics and after-hours arcade ---------- */
+let arcadeMode=false;
+const GAME_CATEGORIES={drift:'STEADY HANDS',pcbuild:'LOGIC / WIRING',blame:'DEDUCTIVE REASONING',backlash:'LINE / SEQUENCE',pressure:'FLOW / LOGIC',toolmath:'MENTAL MATH'};
+function face(role){
+ const n=['BOSS','FIXER','ROOKIE','HOMEOWNER','PARTS GUY','TOOL GUY','SHOP CAT'].indexOf(role),i=n<0?3:n;
+ const shirt=['#c75b32','#477589','#9fa855','#9a6c9d','#71808e','#734c38','#d89a53'][i];
+ if(role==='SHOP CAT')return '<svg viewBox="0 0 140 150" aria-hidden="true"><path d="M30 60 23 10 65 38 108 13 110 65Q133 131 70 140 6 125 30 60" fill="#d8a16a"/><path d="m28 23 6 32 20-14m45-14-19 18 21 9" fill="#986452"/><path d="M44 80h18m22 0h18" stroke="#14232a" stroke-width="8"/><path d="m67 96 8 0-4 7zm-30 8-27-5m29 15-31 6m88-16 32-7m-29 20 31 6" stroke="#342d29" stroke-width="3"/><text x="70" y="139" text-anchor="middle" fill="#18242c" font-size="10">UNION REPRESENTATIVE</text></svg>';
+ return '<svg viewBox="0 0 140 150" aria-hidden="true"><path d="M8 150q0-43 47-50h30q47 7 47 50" fill="'+shirt+'"/><path d="M58 88h24v31H58z" fill="#b87b58"/><path d="M35 43q0-26 35-26t35 26v35q-4 32-35 34-31-2-35-34" fill="#e0ae83"/><path d="M34 61V36Q39 9 72 13q34 3 35 27v21l-11-13-8-15q-25 19-43 9z" fill="#343338"/>'+(i===0||i===1?'<path d="M36 78q31 22 68-1-2 37-34 39-31-4-34-38" fill="#51423a"/><path d="m55 89 16 5 16-5" fill="none" stroke="#e0ae83" stroke-width="5"/>':'<path d="m58 91 25 0" stroke="#713f37" stroke-width="3"/>')+'<path d="M48 63h14m17 0h14" stroke="#282d30" stroke-width="4"/><path d="m69 66-5 15h11" stroke="#b87b58" stroke-width="3" fill="none"/>'+(i===0?'<path d="M43 59h23v15H43zm34 0h23v15H77zM66 65h11" stroke="#18232d" stroke-width="4" fill="none"/>':'')+(i===1||i===2?'<path d="M32 38V23Q67-4 108 25v18H29l-14-6z" fill="'+(i===1?'#e68238':'#c5b64c')+'"/><path d="M35 38h70" stroke="#603c2b" stroke-width="5"/>':'')+'<path d="m44 119 17 20 9-17 10 17 18-20" fill="none" stroke="#ffffff30" stroke-width="3"/><rect x="93" y="128" width="24" height="10" rx="2" fill="#142632"/><path d="m98 133 15 0" stroke="#eac9a3" stroke-width="2"/></svg>';
+}
+function startSkit(index){
+ const seen=S.skitsSeen||(S.skitsSeen=[]),pool=SKITS.map((_,i)=>i).filter(i=>!seen.includes(i));
+ const id=Number.isInteger(index)?index:pick(pool.length?pool:SKITS.map((_,i)=>i));
+ S.skit={id,beat:0};if(!arcadeMode&&!seen.includes(id))seen.push(id);showSkit();
+}
+function showSkit(){
+ S.scene='skit';const q=S.skit,d=SKITS[q.id],line=d.lines[q.beat],last=q.beat===d.lines.length-1;
+ const previous=q.beat?d.lines[q.beat-1]:null;
+ const panel='<div class="comicFrame"><div class="comicSet"><span class="wallSign">ZERO DAYS<br>SINCE SOME BULLSHIT</span><span class="shopClock">6:01</span></div><div class="comicPerson">'+face(line.who)+'</div><div class="speech"><span class="speaker">'+line.who+'</span>'+line.text+'</div></div>';
+ dialog({kick:'BREAK ROOM THEATER  /  '+String(q.id+1).padStart(2,'0')+'  /  '+(q.beat+1)+' OF '+d.lines.length,title:d.title,html:'<div class="comicCast">'+d.cast.join(' / ')+'</div>'+(previous?'<div class="previousLine"><b>'+previous.who+'</b> '+previous.text+'</div>':'')+panel+(last?'<div class="punchline">'+d.punchline+'</div>':'')+'<div class="comicDots">'+d.lines.map((_,i)=>'<i class="'+(i<=q.beat?'lit':'')+'"></i>').join('')+'</div>',btn:last?(arcadeMode?'BACK TO THE BREAK ROOM':'RIGHT. BACK TO WORK.'):'AND THEN…',cb:skitNext});
+}
+function skitNext(){if(++S.skit.beat<SKITS[S.skit.id].lines.length)showSkit();else if(arcadeMode)skitGallery();else{gain(35);radio()}}
+function skitGallery(){arcadeMode=true;S.scene='skitgallery';dialog({kick:'NO CLOCK. NO CUSTOMER. SOMEHOW STILL BULLSHIT.',title:'BREAK ROOM THEATER',html:'<p>Eight short workplace disasters. Any resemblance to competent management is purely accidental.</p><div class="arcadeGrid">'+SKITS.map((s,i)=>'<button class="arcadeCard" data-skit="'+i+'"><span class="cardNumber">'+String(i+1).padStart(2,'0')+'</span><b>'+s.title+'</b><small>'+s.cast.join(' / ')+'</small></button>').join('')+'</div>',btn:'BACK TO TITLE',cb:title})}
+function arcadeScreen(){arcadeMode=true;S.scene='arcade';dialog({kick:'AFTER HOURS / YOUR WORKWEEK IS SAFE',title:'THE BULLSHIT ARCADE',html:'<p>Pick your problem. Practice has no effect on campaign cash or reputation.</p><div class="arcadeGrid">'+Object.entries(MICRO).map(([id,d],i)=>'<button class="arcadeCard '+(GAME_CATEGORIES[id]?'newGame':'')+'" data-arcade="'+id+'"><span class="cardNumber">'+(GAME_CATEGORIES[id]?'NEW':String(i+1).padStart(2,'0'))+'</span><span class="cardGenre">'+(GAME_CATEGORIES[id]||'QUICK REFLEXES')+'</span><b>'+d.t+'</b><small>'+d.i+'</small></button>').join('')+'</div>',btn:'BACK TO TITLE',cb:title,btn2:'ACHIEVEMENTS',cb2:achScreen,btn3:'BREAK ROOM THEATER',cb3:skitGallery})}
+function arcadePlay(id){if(!MICRO[id])return;arcadeMode=true;dlgOpen=false;$('ov').className='hide';clearInput();startMicro(id,arcadeScreen,true,'PRACTICE')}
+$('body').addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-arcade]'),b=e.target.closest&&e.target.closest('[data-skit]');if(a)arcadePlay(a.getAttribute('data-arcade'));if(b){dlgOpen=false;startSkit(Number(b.getAttribute('data-skit')))}});
+
+/* ---------- illustrated depot ---------- */
+function depot(){
+ const horizon=H*.59,grad=g.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#091b2b');grad.addColorStop(.48,'#bd7050');grad.addColorStop(.62,'#e8a56c');grad.addColorStop(1,'#101e28');g.fillStyle=grad;g.fillRect(0,0,W,H);
+ const sx=W*.28,sy=H*.35;g.fillStyle='#f8c889';g.shadowColor='#f29a5a';g.shadowBlur=60;g.beginPath();g.arc(sx,sy,Math.min(W*.09,100),0,TAU);g.fill();g.shadowBlur=0;
+ for(let j=0;j<3;j++){g.fillStyle=['#54566b','#374957','#233d46'][j];g.beginPath();g.moveTo(0,horizon);for(let x=0;x<=W+40;x+=40)g.lineTo(x,horizon-60+j*24-Math.sin(x*.005+j*2)*45-Math.sin(x*.012+j)*18);g.lineTo(W,H);g.lineTo(0,H);g.fill()}
+ for(let i=0;i<18;i++){const x=i*W/17,y=horizon-8,sz=32+(i*73%57);g.fillStyle='#172f36';g.fillRect(x-3,y-sz,6,sz);for(let k=0;k<3;k++){g.beginPath();g.moveTo(x,y-sz-30+k*18);g.lineTo(x-15-k*8,y-sz+15+k*18);g.lineTo(x+15+k*8,y-sz+15+k*18);g.fill()}}
+ // Sheet-metal shop, lit service bays and lovingly questionable wiring.
+ const x=W*.04,y=horizon-98,w=Math.min(W*.48,650),h=180;g.fillStyle='#33424a';g.fillRect(x,y,w,h);g.fillStyle='#4e5b61';g.beginPath();g.moveTo(x-15,y);g.lineTo(x+w*.5,y-42);g.lineTo(x+w+15,y);g.fill();
+ g.strokeStyle='#243640';g.lineWidth=2;for(let xx=x+8;xx<x+w;xx+=18){g.beginPath();g.moveTo(xx,y+6);g.lineTo(xx,y+h);g.stroke()}
+ for(let i=0;i<2;i++){const bx=x+20+i*w*.46,bw=w*.4;g.fillStyle='#101e28';g.fillRect(bx,y+42,bw,h-42);g.fillStyle='#d6a15d';g.fillRect(bx,y+42,bw,5);g.fillStyle='#f0b46622';g.fillRect(bx,y+47,bw,h-47);g.fillStyle='#233744';for(let yy=y+57;yy<y+h;yy+=20)g.fillRect(bx,yy,bw,2)}
+ g.fillStyle='#121f2a';g.fillRect(x+w*.12,y-17,w*.76,36);g.strokeStyle='#cf884b';g.strokeRect(x+w*.12,y-17,w*.76,36);g.font=F0(Math.min(18,w*.045));g.fillStyle='#f4cf98';g.textAlign='center';g.fillText('LAST RESORT  /  HEAT & AIR',x+w*.5,y+7);
+ g.fillStyle='#152630';g.fillRect(0,horizon+80,W,H);g.strokeStyle='#36454b';g.lineWidth=2;for(let i=0;i<4;i++){g.beginPath();g.moveTo(W*.09+i*W*.2,horizon+80);g.lineTo(W*.02+i*W*.24,H);g.stroke()}
+ g.fillStyle='#e6ac5f';for(let i=0;i<8;i++)g.fillRect(i*W/6-10,H*.9,W*.08,4);
+ const tx=W>900?W*.28:W*.3,ty=H*.79,scale=Math.min(W/400,2.8);g.fillStyle='#00000045';g.beginPath();g.ellipse(tx,ty+18,90*scale,14*scale,0,0,TAU);g.fill();truck(tx,ty,scale);
+ // Windblown shop dust, power lines and a coffee nobody has time to finish.
+ g.strokeStyle='#172631';g.lineWidth=3;g.beginPath();g.moveTo(0,H*.15);g.quadraticCurveTo(W*.35,H*.26,W*.64,H*.12);g.stroke();
+ for(let i=0;i<22;i++){const px=(i*137+T*(6+i%5))%W,py=horizon-140+(i*83)%270;g.fillStyle='rgba(255,210,145,'+(.08+(i%4)*.035)+')';g.fillRect(px,py,2,2)}
+ const vg=g.createRadialGradient(W*.35,H*.48,20,W*.45,H*.5,W*.85);vg.addColorStop(0,'rgba(4,12,20,0)');vg.addColorStop(1,'rgba(4,12,20,.86)');g.fillStyle=vg;g.fillRect(0,0,W,H);
+ if(W>1000){g.textAlign='left';g.fillStyle='#ffb664';g.font=F0(12);g.fillText('LAST RESORT HEAT & AIR  /  EST. WHENEVER',W*.055,H*.105);g.fillStyle='#fff0d6';g.font=F0(Math.min(64,W*.045));g.fillText('A BAD DAY.',W*.055,H*.19);g.fillText('A BIG WRENCH.',W*.055,H*.265);g.font=F0(15,500);g.fillStyle='#e3c5a7';g.fillText('Everybody tried everything. Now it is your problem.',W*.058,H*.32)}
+}
+
 /* ---------- input / loop ---------- */
-window.addEventListener('keydown',e=>{if(paused)return;const k=e.key.toLowerCase();if(k===' '||k==='enter'){e.preventDefault();if(dlgOpen){if(!e.repeat)closeDlg();return}if(!e.repeat){down=true;pressed=true}}
+window.addEventListener('keydown',e=>{if(paused)return;const k=e.key.toLowerCase();if(k===' '||k==='enter'){e.preventDefault();if(dlgOpen){const active=document.activeElement;if(active&&active.id!=='btn'&&active.id!=='c'&&active.tagName==='BUTTON'){if(!e.repeat)active.click();return}if(!e.repeat)closeDlg();return}if(!e.repeat){down=true;pressed=true}}
   if(k==='m'){muted=!muted;saveSettings()}if(k==='h'&&S.scene==='puzzle'&&!dlgOpen)smack()});
 window.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')down=false;keys[e.key.toLowerCase()]=false});
 window.addEventListener('keydown',e=>{if(paused)return;const k=e.key.toLowerCase();keys[k]=true;if(k.startsWith('arrow'))e.preventDefault()});
@@ -917,25 +1202,27 @@ function frame(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;if(!paused)T
   if(!paused&&S.scene==='weekend'&&click&&Math.hypot(click.x-(W>900?W*.46:W*.8),click.y-H*.16)<50&&++S.moon===3){star=1.4;unlock('wish');toast('The moon heard you. It is thinking about it.')}
   pressed=false;click=null;
   g.setTransform(DPR,0,0,DPR,0,0);
+  const cramped=S.scene==='micro'&&M&&GAME_CATEGORIES[M.kind]&&H<500;
+  $('rotatePanel').hidden=!cramped;if(cramped&&!paused)pauseGame();
   if(S.scene==='drag'&&D){drawDrag();hud()}else if(S.scene==='puzzle'&&P){drawPuzzle();hud()}else if((S.scene==='fish'||S.scene==='fishend')&&F){drawFish();if(S.scene==='fish')hud()}
   else if((S.scene==='game'||S.scene==='gameend')&&G){drawGame();if(S.scene==='game')hud()}
   else if(S.scene==='micro'&&M){drawMicro();hud()}
-  else if(S.scene==='weekend')camp();else backdrop();
+  else if(S.scene==='weekend')camp();else if(['title','arcade','skitgallery','skit','ach'].includes(S.scene))depot();else backdrop();
   drawFX(paused?0:dt);
-  $('pauseButton').hidden=S.scene==='title'||S.scene==='ach';
+  $('pauseButton').hidden=['title','ach','arcade','skitgallery'].includes(S.scene);
   if(!paused){saveElapsed+=dt;if(saveElapsed>=.5){saveElapsed=0;save()}}
   requestAnimationFrame(frame)}
-const CALLBACKS={startDrag,radio,afterEvening,startFish,startStrip,startGame,startGarage,weekendStats,title};
+const CALLBACKS={skitNext,skitGallery,arcadeScreen,startDrag,radio,afterEvening,startFish,startStrip,startGame,startGarage,weekendStats,title};
 $('pauseButton').addEventListener('click',pauseGame);
 $('resumeGame').addEventListener('click',resumeGame);
-$('saveQuit').addEventListener('click',()=>{if(save()){resumeGame();title()}else $('saveStatus').textContent='Could not save. Keep this tab open to preserve progress.'});
+$('saveQuit').addEventListener('click',()=>{if(arcadeMode){resumeGame();arcadeScreen();return}if(save()){resumeGame();title()}else $('saveStatus').textContent='Could not save. Keep this tab open to preserve progress.'});
 $('soundEnabled').addEventListener('change',()=>{muted=!$('soundEnabled').checked;saveSettings()});
 $('soundVolume').addEventListener('input',()=>{volume=clamp(Number($('soundVolume').value)/100,0,1);saveSettings()});
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(paused)resumeGame();else pauseGame()}else if(paused&&e.key==='Tab'){const controls=[$('resumeGame'),$('soundEnabled'),$('soundVolume'),$('saveQuit')],i=controls.indexOf(document.activeElement);e.preventDefault();controls[(i+(e.shiftKey?-1:1)+controls.length)%controls.length].focus()}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame()});
 window.addEventListener('pagehide',save);
 ready=true;title();requestAnimationFrame(frame);
-void {S,get P(){return P},get D(){return D},get F(){return F},get open(){return dlgOpen},close:closeDlg,get T(){return T},get G(){return G},get M(){return M},mdone,U,buy,unlock,ACHV,shopIds:CNT.concat(JNK).map(x=>x.id),go:{payday(){S.rep=4200;payday(radio)},shop(){S.cash=1500;shop(radio)},ach:achScreen,title,job(k){job={town:'Dacula',nm:'Test',ds:'',kind:k};startJob()},micro(k){startMicro(k,radio)},fish:startFish,game:startGame,strip:startStrip,weekend,endDay,radio,between,event(i){event(EVENTS[i])},garage:startGarage,drag:startDrag},keys,dl:()=>dl(),pl:()=>pl(),aim(x,y){mx=x;my=y},press(h){pressed=true;down=!!h},hold(v){down=v},
+void {S,get P(){return P},get D(){return D},get F(){return F},get open(){return dlgOpen},close:closeDlg,get T(){return T},get G(){return G},get M(){return M},mdone,U,buy,unlock,ACHV,shopIds:CNT.concat(JNK).map(x=>x.id),go:{arcade:arcadeScreen,arcadePlay,skit:startSkit,payday(){S.rep=4200;payday(radio)},shop(){S.cash=1500;shop(radio)},ach:achScreen,title,job(k){job={town:'Bent Pines',nm:'Test',ds:'',kind:k};startJob()},micro(k){startMicro(k,radio)},fish:startFish,game:startGame,strip:startStrip,weekend,endDay,radio,between,event(i){event(EVENTS[i])},garage:startGarage,drag:startDrag},keys,dl:()=>dl(),pl:()=>pl(),aim(x,y){mx=x;my=y},press(h){pressed=true;down=!!h},hold(v){down=v},
   tap(x,y){click={x,y,b:0};pressed=true},lay:()=>lay(),smack};
 })();
 </script>
