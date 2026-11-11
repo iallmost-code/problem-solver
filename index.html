@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>The Problem Solver</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b1016;--panel:#121a24;--line:#2a3848;--ink:#eef3f7;--dim:#93a3b5;--or:#ff8a1f;--cu:#d98a4e;--cy:#4fe3ff;--gr:#7dffa0;--rd:#ff5468}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;color:var(--ink);
+    font-family:"Chakra Petch","Segoe UI",system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;z-index:5;background:rgba(6,9,13,.72)}
+  #ov.hide{display:none}
+  #ov.low{align-items:flex-end;background:linear-gradient(rgba(6,9,13,0) 30%,rgba(6,9,13,.9))}
+  #dlg{width:100%;max-width:600px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--or);
+    border-radius:10px;padding:22px 24px 24px;box-shadow:0 20px 60px rgba(0,0,0,.6);max-height:92vh;overflow:auto}
+  #kick{font-size:12px;letter-spacing:.18em;color:var(--or);font-weight:700;margin-bottom:6px}
+  #ttl{font-size:clamp(26px,5.5vw,42px);font-weight:700;line-height:1.05;margin:0 0 12px;letter-spacing:.02em}
+  #body{font-family:"Segoe UI",system-ui,sans-serif;font-size:15.5px;line-height:1.5;color:var(--dim)}
+  #body b{color:var(--ink)}
+  #body .q{color:var(--ink);font-size:17px;border-left:3px solid var(--cu);padding:4px 0 4px 12px;margin:4px 0 14px}
+  #body .job{background:#0c131b;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;color:var(--ink)}
+  #body .job small{display:block;color:var(--dim);margin-top:2px}
+  #body .txt{background:#17324a;color:#e6f3ff;border-radius:14px 14px 14px 4px;padding:8px 13px;display:inline-block;margin:10px 0 2px}
+  #body .row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--line)}
+  #body .row span:last-child{color:var(--ink);font-weight:600;text-align:right}
+  #body .big{font-family:"Chakra Petch",sans-serif;font-size:30px;font-weight:700;color:var(--or);margin:10px 0 2px}
+  #body ul{margin:8px 0;padding-left:20px}
+  #btn{margin-top:18px;font-family:inherit;font-weight:700;font-size:17px;letter-spacing:.12em;color:#1a0d00;background:var(--or);
+    border:0;border-radius:7px;padding:13px 26px;cursor:pointer;width:100%}
+  #btn:hover,#btn:focus-visible{background:#ffb05c;outline:none}
+  .up{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .up small{display:block;color:var(--dim)} .up .lv{color:var(--or);letter-spacing:2px;font-size:11px;margin-left:4px}
+  .buy{font-family:"Chakra Petch",sans-serif;font-weight:700;background:var(--or);border:0;border-radius:6px;padding:9px 12px;min-width:92px;cursor:pointer;color:#1a0d00;font-size:14px}
+  .buy:disabled{background:#2a3848;color:#93a3b5;cursor:default}
+  .sec{font-family:"Chakra Petch",sans-serif;font-weight:700;font-size:12px;letter-spacing:.18em;color:var(--or);margin:18px 0 2px}
+  .ach{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)} .ach.no{opacity:.45} .ach small{display:block}
+  #toast{position:fixed;bottom:84px;left:50%;transform:translate(-50%,20px);opacity:0;transition:.3s;z-index:9;background:#121a24;border:1px solid var(--or);border-radius:8px;
+    padding:10px 16px;font-size:14px;max-width:92vw;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.6);text-align:center}
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+  #ov.low{pointer-events:none} #ov.low #dlg{pointer-events:auto}
+  @media(min-width:900px){#ov.low{align-items:center;justify-content:flex-end;padding-right:5vw;background:linear-gradient(90deg,rgba(6,9,13,0) 35%,rgba(6,9,13,.85))}#ov.low #dlg{max-width:450px}}
+  #ttl{cursor:default}
+  #btn2,#btn3,#btn4{display:none;margin-top:10px;font-family:inherit;font-weight:700;font-size:17px;letter-spacing:.12em;color:var(--ink);background:transparent;border:1px solid var(--or);border-radius:7px;padding:12px 26px;cursor:pointer;width:100%}
+  #btn2.on,#btn3.on,#btn4.on{display:block}
+  #btn2:hover,#btn2:focus-visible,#btn3:hover,#btn3:focus-visible,#btn4:hover,#btn4:focus-visible{background:rgba(255,138,31,.15);outline:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="toast"></div>
+<div id="ov"><div id="dlg"><div id="kick"></div><h1 id="ttl"></h1><div id="body"></div><button id="btn"></button><button id="btn2"></button><button id="btn3"></button><button id="btn4"></button></div></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const cv=$('c'),g=cv.getContext('2d'),TAU=Math.PI*2;
+const rnd=(a,b)=>a+Math.random()*(b-a),ri=n=>Math.floor(Math.random()*n),clamp=(v,a,b)=>v<a?a:v>b?b:v,pick=a=>a[ri(a.length)];
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR)}
+window.addEventListener('resize',resize);resize();
+const F0=(s,w)=>(w||700)+' '+s+'px "Chakra Petch","Segoe UI",sans-serif';
+
+/* ---------- audio / storage ---------- */
+let ac=null,muted=false;
+function initAudio(){if(ac)return;try{const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}catch(e){ac=null}}
+function tone(type,f0,f1,dur,vol,delay){if(!ac||muted)return;try{const t=ac.currentTime+(delay||0),o=ac.createOscillator(),v=ac.createGain();
+  o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
+  v.gain.setValueAtTime(vol,t);v.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(v);v.connect(ac.destination);o.start(t);o.stop(t+dur+.02)}catch(e){}}
+const sfx={click(){tone('square',420,300,.04,.03)},amber(){tone('sine',520,520,.12,.06)},green(){tone('sine',1040,1040,.3,.07)},
+  red(){tone('square',140,90,.4,.08)},shift(){tone('sawtooth',300,120,.12,.06)},good(){tone('triangle',660,990,.14,.06)},
+  win(){tone('triangle',523,523,.1,.07);tone('triangle',659,659,.1,.07,.1);tone('triangle',784,784,.1,.07,.2);tone('triangle',1047,1047,.25,.07,.3)},
+  smack(){tone('square',110,40,.18,.12)},bite(){tone('sine',880,440,.12,.08)},lose(){tone('sawtooth',220,70,.4,.07)},radio(){tone('square',900,700,.06,.03);tone('square',700,900,.06,.03,.08)}};
+let best=0,pb=0;try{best=+localStorage.getItem('problemSolverBest')||0;pb=+localStorage.getItem('problemSolverPB')||0}catch(e){}
+function saveBest(){if(S.rep>best){best=S.rep;try{localStorage.setItem('problemSolverBest',String(best))}catch(e){}}}
+
+/* ---------- content ---------- */
+const DAYS=[{nm:'MONDAY',diff:2,calls:2,n:5},{nm:'TUESDAY',diff:4,calls:3,n:5},{nm:'WEDNESDAY',diff:6,calls:3,n:6},
+            {nm:'THURSDAY',diff:8,calls:4,n:6},{nm:'FRIDAY',diff:10,calls:3,n:7}];
+const TOWNS=['Lawrenceville','Dacula','Grayson','Snellville','Loganville','Monroe','Buford','Lilburn'];
+const BOSS=[
+  "Crew's been staring at this thing for two hours. Go do your thing.",
+  "They swear they tried everything. They didn't try shit. Go look.",
+  "I told the customer the problem solver's on the way. Don't make me a liar.",
+  "Line set looks like a damn plate of spaghetti. Nobody can make it work. So: you.",
+  "Twenty-five years in and they still call you first. Sucks to be good at it.",
+  "Fix this one and I'll tell you about the PC build I'm pricing out. Deal?",
+  "You squad up tonight? Cool. This first.",
+  "New guy says it's 'unfixable.' I said hold my coffee, I'm calling the one guy who can fix it.",
+  "I'd go myself but, you know. I'd rather not. Roll out.",
+  "Customer's hot, house is hotter. Get it cooling.",
+  "Did you see that patch? Hell of a nerf. Anyway, got a broken one for you.",
+  "If it was easy I wouldn't be calling you. Go be a wizard.",
+  "Got a weird one. And by weird I mean stupid. And by stupid I mean yours.",
+  "Crew says the unit is 'haunted.' Go perform an exorcism.",
+  "Homeowner says it's making a noise like 'a goose in a dryer.' Good luck.",
+  "They watched three videos and made it four times worse. Go.",
+  "Don't ask how it got like this. I asked. I regret asking.",
+  "I need my wizard. Wizard, the thing is broke.",
+  "I ran the numbers and you're the only one who can fix it. The numbers were me looking around the shop.",
+  "Quick one. Probably. Okay it's not quick. Go anyway.",
+  "New guy tried to fix it with zip ties. All of them. Every zip tie we own.",
+  "You're gonna laugh. Then you're gonna cuss. Then you're gonna fix it.",
+  "Customer asked for 'the tattooed one who fixed it last time.' That's you, sunshine.",
+  "It's hot, it's broke, and they want a discount. Have fun.",
+  "I'd explain it but I don't understand it either. That's why I have you.",
+  "Somebody wired it by vibes. Go un-vibe it.",
+  "My GPU's hitting 80 degrees, think it's the thermal paste? Oh, also, job for you.",
+  "You good? Cool. Don't care. Kidding. Mostly. Got a call.",
+  "The crew's exact words were 'we give up.' Their exact location is the truck, eating.",
+  "It worked fine until they touched it. Then it worked less. Now it works not."
+];
+const JOBS=[
+  ["New install, no cooling","Line set never got finished right."],
+  ["Changeout gone sideways","Half the piping's pointed the wrong damn way."],
+  ["Crew stuck in the attic","Nothing's connected to anything up there."],
+  ["Callback on last week's job","Somebody 'fixed' it. Now it's worse."],
+  ["Crawlspace special","Tight, dark, and none of it lines up."],
+  ["Rush job, homeowner watching","Get refrigerant from A to B. No pressure."],
+  ["Unit's 'haunted'","It turns on by itself. So do the lights. Probably unrelated."],
+  ["Goose-in-a-dryer noise","Customer's words. Accurate, though."],
+  ["DIY special","Homeowner 'helped.' You can tell."],
+  ["Zip tie situation","Structural zip ties. So many."],
+  ["Attic sauna","A hundred and something up there. Bring water."],
+  ["'It was like that when we got here'","It was not."],
+  ["Third callback this month","At this point it's personal."]
+];
+const JOBK={
+ line:[["Line set origami","Somebody ran the copper like they were mad at it."],["Copper spaghetti","Forty feet of line set in a ten-foot run. Nobody knows why."],["The scenic route","Line set goes up, over, around the chimney, and through a birdhouse."],["Kinked like a garden hose","They 'bent it by hand.' You can tell which hand."]],
+ wire:[["Thermostat's speaking in tongues","It says Lo and Hi at the same time. Homeowner thinks it's a sign."],["Color-blind install","Every wire is on a terminal. None of them are on the right one."],["'Smart' thermostat","It was smart until we touched it."],["Wire nuts and prayers","Mostly prayers."]],
+ leak:[["It's leaking. Somewhere.","Crew added four pounds. It's gone again. So is their confidence."],["The mystery hiss","Everybody can hear it. Nobody can find it. It stops when you look at it."],["Third recharge this year","At this point the customer is basically renting refrigerant."],["Soap bubbles everywhere","They sprayed the whole unit. It's very clean. Still leaking."]],
+ charge:[["Gauges say 'lol'","Crew's been adding and pulling charge for an hour like a seesaw."],["Charged by feel","The feel was wrong."],["Too much of a good thing","It's overcharged, then undercharged, then overcharged again. It's had a day."],["'Beer can cold'","That was the entire procedure."]],
+ braze:[["Bubblegum joints","The brazing looks like it was done with a birthday candle."],["The new guy found the torch","Nothing is on fire. Anymore."],["Pinhole city","Every joint leaks. Every single one. It's almost impressive."],["Solder. They used solder.","From a craft store."]],
+ duct:[["Arctic bedroom, sauna kitchen","One room's a meat locker. The other is the surface of the sun."],["All the air goes to the closet","The coat closet is a perfect 68. Nothing else is."],["The whistling vent","It plays one note. All night. The customer has named it."],["Duct tape on the ducts","The one thing it's not for."]],
+ seq:[["Won't start. Won't say why.","It clicks. It hums. It thinks about it. Then nothing."],["It only runs when you watch it","Crew says it works. Customer says it doesn't. They're both right."],["Startup's out of order","Fan comes on, compressor doesn't, and the thermostat's lying about all of it."],["Have you tried turning it off and on","They have. Forty times. That's the problem now."]]};
+const EXCUSE=["We didn't touch nothing.","It was like that when we got here.","The new guy did it. He says the other new guy did it.","We followed the instructions. Most of them. The ones with pictures.","We think it's haunted.","It worked in the truck.","We were about to figure it out.","Honestly? No idea. We've just been standing here.","Define 'broke.'","We fixed it twice already."];
+const CUST=["Customer's been watching from a lawn chair. With snacks.","Customer has a cousin who 'does HVAC.'","Customer wants to know if this is covered. It is not covered.","Customer's dog has already claimed your tool bag.","Customer keeps saying 'back in my day.'","Customer is filming. For the neighborhood page.","Customer fed the crew pizza. The crew is useless now.","Customer has offered you sweet tea four times.","Customer says the last company 'never had this problem.'"];
+const HECK=["\"My cousin does HVAC. He says you're doing it wrong.\"","\"Is it supposed to make that noise?\"","\"How much longer? I've got a thing.\"","\"The last guy just hit it.\"","\"You want a water? We've got tap.\"","\"I watched a video on this.\"","\"So is that the Freon?\"","\"My husband could've done this. He didn't. But he could've.\"","\"Don't mind the dog. He bites, but he's friendly.\"","\"Is this gonna be expensive? It looks expensive.\"","\"While you're here, can you look at the dryer?\"","\"I'm not rushing you. I'm just standing here. Rushing you.\"","\"You missed a spot.\"","\"Are you the boss or the helper?\"","\"It never did this before you got here.\""];
+const ZAPQ=["POPPED THE FUSE","THAT WAS THE TRANSFORMER","SPARKS. PRETTY ONES.","WRONG TERMINAL, SPARKY","LET THE SMOKE OUT"];
+const COLDQ=["COLD JOINT","YOU BRAZED THE AIR","THAT'S A BLOB","MISSED IT BY A MILE"];
+const WINQ=["FIGURED IT OUT","FIXED. NEXT.","WIZARD SHIT","THAT'S WHY THEY CALL YOU","TOLD YOU IT WASN'T HAUNTED","EASY MONEY"];
+const REV_GOOD=['★★★★★  "He hit it with a wrench and it worked. Ten out of ten."','★★★★★  "In and out before my coffee got cold."','★★★★★  "Did not judge my thermostat settings. Out loud."',
+  '★★★★★  "My dog likes him. My dog hates everyone."','★★★★★  "Fixed it, then explained it like I was smart."','★★★★★  "Had tattoos. Fixed my air. Would recommend."',
+  '★★★★★  "He looked at it for nine seconds and said \'oh.\' Then it worked."','★★★★★  "Other company quoted me a new system. This guy used a screwdriver."'];
+const REV_MEH=['★★★☆☆  "Fixed it. Took a while. He seemed mad at the unit."','★★★☆☆  "Works now. He said a lot of words I can\'t put in a review."',
+  '★★★★☆  "Good work but he kept staring at the old install and sighing."','★★★☆☆  "It\'s cold again. He muttered \'who did this\' eleven times."','★★★☆☆  "He asked the unit a question. Out loud. Then answered it."'];
+const DAY_GOOD=["Nobody called to complain. That's the highest praise this industry has.","You fixed every single one. I'm almost annoyed.","I'd give you a raise but then you'd expect things.","Go home. Or fish. Or whatever it is you do. You earned it.","Clean day. I had to find something else to worry about. I picked my GPU."];
+const DAY_BAD=["We'll call that a learning day. For the clock. The clock learned.","Hey, it'll all still be broke tomorrow. That's job security.","It happens. Even wizards run out of daylight.","Don't beat yourself up. That's the attic's job."];
+const JUNK=[['A single boot','🥾'],['Shopping cart','🛒'],["Somebody's phone",'📱'],['Traffic cone','🚧'],['A different, worse fishing rod','🎣'],['Lawn chair','🪑'],['One (1) flip flop','🩴'],['A graphics card. Still warm.','🖥️'],['The 10mm. No. Just a rock.','🪨']];
+const RARE=[
+ {ach:'ufo',t:"That's not a plane",h:"There's a light over the tree line. It's silent. It just made a right-angle turn.",a:{l:"FILM IT",o:[["The footage is blurry. It's always blurry. But you know what you saw.",40,5]]},b:{l:"KEEP WORKING",o:[["You've got a schedule. Whatever's up there respects that. Probably.",20,0]]}},
+ {ach:'squatch',t:"Missing ladder",h:"Your eight-footer is gone. There are footprints. Big ones. Barefoot ones.",a:{l:"FOLLOW THE TRACKS",o:[["Found it leaned against a pine. Something had been using it. Correctly. Three points of contact.",60,10]]},b:{l:"BUY A NEW LADDER",o:[["Some things you leave alone. It can have the ladder.",10,0]]}},
+ {ach:'mage',t:"The thousand-year filter",h:"The customer is tall. Pointed ears. Says she's lived here 'a short while, eight or nine hundred years.' She has never changed the filter.",a:{l:"CHANGE IT",o:[["It crumbled into something that may have been a civilization. She tipped you in coins you can't identify.",120,0]]},b:{l:"ASK ABOUT THE EARS",o:[["'Old family.' She gave you tea. You were there for either ten minutes or four years.",40,20]]}},
+ {ach:'raccoon',t:"The truck is moving",h:"The truck is rolling slowly down the driveway. There's a raccoon at the wheel. He looks confident.",a:{l:"CHASE IT",o:[["You got it stopped. He got your lunch. Call it even.",30,5]]},b:{l:"LET HIM COOK",o:[["He parallel parked it. Better than the new guy. You left a note offering him the job.",80,0]]}}
+];
+const BRK=["That was the fridge.","That was the garage door. It was halfway.","Somebody's kid just lost a game save. You heard the scream.","That was the Wi-Fi. A teenager is coming.","That was the treadmill. Someone was on it.","That was the fish tank. Flip it back. FLIP IT BACK.","That was the oven. Dinner is now a concept.","That was the neighbor's house, somehow."];
+const EVENTS=[
+ {t:"The new guy has a question",h:"He points at the condenser. \"Is the big silver box important?\"",a:{l:"EXPLAIN IT. AGAIN.",o:[["Twenty minutes. He nodded the whole time. He retained nothing.",40,15]]},b:{l:"\"IT'S A DECORATIVE FAN\"",o:[["He told the customer. The customer believed him. You're both idiots now.",-20,0]]}},
+ {t:"Sweet tea",h:"Homeowner comes out with a glass of sweet tea the size of a paint bucket.",a:{l:"TAKE THE TEA",o:[["It's ninety percent sugar and it's perfect. You can see through time.",60,10]]},b:{l:"\"NO TIME, MA'AM\"",o:[["She looked hurt. Her review will reflect it.",-30,0]]}},
+ {t:"Something's under the house",h:"You open the crawlspace door. Something in there breathes out.",a:{l:"GO IN ANYWAY",o:[["It was a possum. It hissed. You hissed back. It respected that.",80,0],["It was a cat. It was FOUR cats. You've been adopted.",50,10]]},b:{l:"SEND THE NEW GUY",o:[["He came out faster than he went in. Job's done though.",30,10]]}},
+ {t:"He watched a video",h:"Homeowner watched a four-minute video and has notes on your work.",a:{l:"NOD POLITELY",o:[["You nodded for ten straight minutes. Your neck hurts.",40,10]]},b:{l:"HAND HIM THE GAUGES",o:[["He handed them back in under a minute. Quietly.",70,0]]}},
+ {t:"Ladder situation",h:"The new guy set the ladder on a slope. On a bucket. On another bucket.",a:{l:"FIX IT",o:[["You fixed it and gave The Speech. He's heard The Speech. He'll hear it again.",30,5]]},b:{l:"FILM IT FIRST",o:[["Best day the group chat's had all year. Nobody died.",60,0]]}},
+ {t:"Lamp cord and optimism",h:"Previous installer wired this unit with lamp cord, electrical tape, and what appears to be hope.",a:{l:"REWIRE IT RIGHT",o:[["Took a while. It's beautiful now. Nobody will ever see it or thank you.",90,20]]},b:{l:"SMACK IT",o:[["It worked. It should not have worked. You don't ask questions.",20,0,1]]}},
+ {t:"Boss is calling",h:"It's not about work. He wants to know if he should buy the expensive GPU.",a:{l:"TALK HIM INTO IT",o:[["Forty minutes gone. He bought it mid-call. You're an enabler.",50,25]]},b:{l:"\"I'M IN AN ATTIC\"",o:[["\"Cool, so you can talk.\" You hung up. He called back. You talked.",10,10]]}},
+ {t:"Attic",h:"It is roughly one thousand degrees up there.",a:{l:"POWER THROUGH",o:[["You lost four pounds and briefly saw God. Job's done.",90,0]]},b:{l:"WATER BREAK",o:[["You drank a gallon and sat in the truck with the air on. No regrets.",20,10]]}},
+ {t:"Free shop vac",h:"Customer's throwing out a perfectly good shop vac. It's right there. By the curb.",a:{l:"YOINK",o:[["It works. It has always worked. People are insane.",20,0,1]]},b:{l:"LEAVE IT",o:[["You'll think about that shop vac for years.",0,0]]}},
+ {t:"Wrong house",h:"The crew installed the whole system. Beautifully. At the wrong address.",a:{l:"LAUGH FIRST",o:[["You laughed for a solid minute. Then you fixed it. The neighbors got a free tune-up.",60,15]]},b:{l:"SCREAM FIRST",o:[["You screamed into the truck's headliner. Then you fixed it.",40,15]]}},
+ {t:"The thermostat schedule",h:"Customer wants the thermostat schedule explained. For the third time.",a:{l:"EXPLAIN IT AGAIN",o:[["She wrote it down this time. On the back of her hand.",30,10]]},b:{l:"SET IT TO HOLD AND LEAVE",o:[["It'll stay 72 until the sun burns out. Everybody's happy.",50,0]]}},
+ {t:"The last screw",h:"You dropped the last screw into the unit. You heard it land. You will never see it again.",a:{l:"FISH FOR IT WITH A MAGNET",o:[["Got it. Also got three other screws that weren't yours. Bonus.",40,10]]},b:{l:"IT LIVES THERE NOW",o:[["It'll rattle forever. That's the next guy's problem. You are the next guy.",-10,0]]}},
+ {t:"Seat sandwich",h:"There's a sandwich under the truck seat. It's from a previous era.",a:{l:"EAT IT",o:[["It was fine. Somehow it was fine. You're built different.",40,0],["It was not fine. You know every gas station bathroom in the county now.",-20,20]]},b:{l:"DON'T",o:[["Wise. Hungry, but wise.",10,0]]}},
+ {t:"Snake",h:"There's a snake in the condenser. It's looking at you like you're the problem.",a:{l:"RELOCATE IT",o:[["You both pretended that went smoothly. It did not go smoothly.",70,5]]},b:{l:"NOPE",o:[["The new guy did it with a broom. He has not stopped talking about it.",10,10]]}},
+ {t:"\"While you're here\"",h:"\"While you're here, can you look at the dishwasher? And the garage door? And my nephew's car?\"",a:{l:"\"I DO AIR\"",o:[["She nodded. Then asked about the dishwasher again.",20,0]]},b:{l:"LOOK AT THE DISHWASHER",o:[["It was unplugged. You're a hero now. She's telling the whole street.",70,10]]}},
+ {t:"Estimate guy",h:"A guy from another company is in the driveway telling the customer they need a whole new system.",a:{l:"FIX IT IN FRONT OF HIM",o:[["Eleven minutes. One part. He left without saying goodbye.",100,10]]},b:{l:"JUST STARE AT HIM",o:[["You stared. He left. Nothing was said. Everything was understood.",60,0]]}},
+ {t:"Tool truck",h:"The tool truck guy just pulled up. You owe him four grand. You have always owed him four grand.",a:{l:"BUY ANOTHER RATCHET",o:[["It clicks so nice. You now owe him four grand and forty dollars.",30,10]]},b:{l:"HIDE IN THE ATTIC",o:[["He waited. He's very patient. He knows where you work.",0,15]]}},
+ {t:"6:02 AM group chat",h:"The boss sent a meme to the group chat. It's a raccoon holding a wrench. No caption.",a:{l:"REPLY WITH A BETTER MEME",o:[["The chat is on fire. Nobody's working. You did this.",50,10]]},b:{l:"\"k\"",o:[["He called to ask if you're mad at him.",10,5]]}},
+ {t:"Warranty",h:"Customer says the unit is still under warranty. The unit is older than the new guy.",a:{l:"SHOW HER THE DATE PLATE",o:[["She squinted at it. \"Well it FEELS new.\"",30,5]]},b:{l:"\"LET ME CALL IT IN\"",o:[["You called your own voicemail and nodded for two minutes. \"They said no.\"",60,0]]}},
+ {t:"HOA",h:"A woman with a clipboard says your condenser placement is \"visually aggressive.\"",a:{l:"APOLOGIZE TO THE CONDENSER",o:[["You told it not to listen to her. She left. You won.",70,0]]},b:{l:"ASK FOR IT IN WRITING",o:[["She's writing it. It's four pages so far. You've finished the job.",40,0]]}},
+ {t:"\"The other guy\"",h:"\"The other guy said he'd do it for half.\"",a:{l:"\"CALL THE OTHER GUY\"",o:[["Long pause. \"...He won't call me back.\" Yeah.",80,0]]},b:{l:"MATCH HIS PRICE IN SPIRIT",o:[["You gave her a discount on the conversation. She felt heard.",30,5]]}},
+ {t:"Wi-Fi password",h:"Customer wants the thermostat on Wi-Fi. The password is on a sticky note. In a drawer. At her sister's house.",a:{l:"TRY 'PASSWORD'",o:[["It was 'password1'. You're in. You're scared for her.",60,0]]},b:{l:"\"THAT'S AN IT PROBLEM\"",o:[["She said you ARE the IT. You are now the IT.",20,15]]}},
+ {t:"Ball",h:"You're mid-braze. The dog has placed a tennis ball on your boot. He is staring.",a:{l:"THROW THE BALL",o:[["You threw it nineteen times. Worth every second.",50,10]]},b:{l:"STAY PROFESSIONAL",o:[["He sighed. Out loud. You've never felt worse.",-10,0]]}},
+ {t:"Attic treasure",h:"Behind the air handler there's a box. Inside: a complete set of sockets. Every size. Even the 10mm.",a:{l:"TELL THE HOMEOWNER",o:[["\"Oh, those were my late husband's. He never could find the 10mm.\" You both stood there a second.",70,0]]},b:{l:"JUST LOOK AT IT",o:[["You looked at a 10mm in its natural habitat. Few ever do.",40,5]]}}
+];
+const WIFE=["Catch dinner ❤️","You fishing again? Bring something home this time 😂","Long day? Go throw a line. Love you ❤️","Don't let the boss keep you late. ❤️","Bass or it didn't happen 🎣","If you catch nothing we're having cereal. Again. 😂","Tell the fish I said hi ❤️","Bring home a fish or a pizza. Dealer's choice.","Don't sink the boat, don't break the car, don't rage quit. Love you ❤️","Proud of you. Now go touch water 🎣","Did you eat today? Real food. Not gas station food."];
+const FISH=[{n:'Largemouth bass',min:1,max:8,sp:.5,c:'#7fae5a'},{n:'Bluegill',min:.2,max:1,sp:.7,c:'#5aa0c8'},
+            {n:'Channel catfish',min:2,max:12,sp:.4,c:'#8d8f99'},{n:'Crappie',min:.4,max:2,sp:.6,c:'#c9c9b0'}];
+const KINDS={line:'Route the line set',wire:'Wire the thermostat',leak:'Find the leak',charge:'Dial in the charge',braze:'Braze the joints',duct:'Balance the ducts',seq:'Startup sequence'};
+const HINTS={line:'Click tiles to spin them. Connect the condenser to the air handler.',
+  wire:'Click a wire, then the terminal it lands on. Wrong one pops the fuse: 10 min.',
+  leak:'Each number is how many joints away the leak is, no diagonals. Every sniff costs 5 min.',
+  charge:'HOLD to open the valve. Park the needle in the green. It keeps climbing after you let go.',
+  braze:'Tap when the torch is on a joint. Miss and it is a cold joint: 6 min.',
+  duct:'Every room needs its share of the air. Get the dampers in the right ratio. Moving one changes them all.',
+  seq:'Watch the order it fires, then repeat it. Get it wrong and it runs again: 8 min.'};
+const LIMITS=[5,7,9,11,14];
+const RIVALS=['Small-block street car','Turbo import','Big-tire monster'];
+
+/* ---------- state ---------- */
+const S0=()=>({scene:'title',week:1,day:0,call:0,min:0,rep:0,cash:0,streak:0,done:0,under:0,failed:0,smacks:1,dayRep:0,perfects:0,lbs:0,limits:0,stripWins:0,extracts:0,micros:0,mlost:0,reds:0,dent:0,moon:0,seen:[],wkStart:0,buff:{},today:{},junkN:0,buzz:false,lunch:false,mdeck:[],edeck:[],gar:null,kinds:[],strip:null});
+const S=S0();
+const U={smack:0,tires:0,coffee:0,tips:0,rod:0,hooks:0,luck:0};
+const UPG=[{id:'smack',nm:'Bigger wrench',ds:'+1 Smack It per day',max:3,cost:[600,1400,2800]},{id:'tires',nm:'Sticky tires',ds:'4 min off every drive',max:3,cost:[400,1000,2000]},
+  {id:'coffee',nm:'Thermos the size of a fire extinguisher',ds:'Clock runs 6% slower',max:3,cost:[700,1600,3200]},{id:'tips',nm:'Tip jar on the dash',ds:'+10% rep from calls',max:3,cost:[800,1800,3600]},
+  {id:'rod',nm:'Fresh line on the Curado',ds:'Fish weigh 15% more',max:3,cost:[400,1000,2000]},{id:'hooks',nm:'Sharper hooks',ds:'Wider sweet spot in a fight',max:2,cost:[600,1500]},
+  {id:'luck',nm:'Lucky hat',ds:'Blowing a micro-game costs 5 min, not 10',max:1,cost:[1000]}];
+const SHOPQ=["The cashier knows your truck by sound.","You came in for one fitting. You have a cart.","Tool aisle. Nobody can hurt you here.","You do not need another flashlight. You are holding another flashlight."];
+const ACH=[['first','On the clock','Close your first call'],['streak5','On a roll','Five under-par calls in a row'],['nosmack',"Didn't need it",'Close out a day without smacking anything'],
+  ['d10','Difficulty 10','Close every call on a Friday'],['nightmare','Slept fine','Finish the Nightmare Job'],['week','Saturday','Survive a week'],['week3','Glutton','Clock in for week 3'],
+  ['solver','The Problem Solver','Earn the top rank for a week'],['perfect','Bracket racer','Run a perfect pass'],['sweep','Swept the strip','Win all three rounds'],['limit','Limit out','Beat a daily fishing limit'],
+  ['lunker','Lunker','Land a fish over 8 lb'],['monster','The Lake Monster','Land the thing that lives in there'],['boot',"One man's trash","Reel in something that isn't a fish"],['extract','Extracted','Survive a game night'],
+  ['garage','It runs','Sweep garage night'],['tenmm','Found the 10mm','Against all odds'],['shit','Well, shit','Blow ten micro-games'],['maxed','Fully kitted','Buy every upgrade'],
+  ['konami','Big wrench energy','You know the code',1],['clicker','Stop that','The title is not a button',1],['pocket','It was in your pocket','Say its name',1],['dent','Percussive overkill','Smack it with nothing left to smack with',1],
+  ['ufo','I know what I saw','That was not a plane',1],['squatch','Three points of contact','Something borrowed your ladder',1],['mage','A short while','Eight or nine hundred years',1],['raccoon','Let him cook','He looked confident',1],
+  ['goodboy','Good boy','Best part of the day',1],['wish','Make a wish','Bother the moon',1],['redlight','Colorblind','Three red lights',1],['hoarder','You have a problem','Buy five things you do not need',1],['jackpot','Retirement plan','Hit the scratch-off',1],['stretcher','Finally','You bought it. You actually bought it.',1]];
+let ACHV=new Set();try{ACHV=new Set(JSON.parse(localStorage.getItem('problemSolverAch')||'[]'))}catch(e){}
+const toastQ=[];let toastBusy=false;
+function toast(m){toastQ.push(m);if(!toastBusy)nextToast()}
+function nextToast(){const m=toastQ.shift();if(!m){toastBusy=false;return}toastBusy=true;const el=$('toast');el.textContent=m;el.className='on';setTimeout(()=>{el.className='';setTimeout(nextToast,350)},3000)}
+function unlock(id){if(ACHV.has(id))return;const a=ACH.find(x=>x[0]===id);if(!a)return;ACHV.add(id);try{localStorage.setItem('problemSolverAch',JSON.stringify([...ACHV]))}catch(e){}
+  toast('🏆 '+(a[3]?'SECRET  ·  ':'')+a[1]+'  ·  '+a[2]);tone('triangle',784,784,.12,.06);tone('triangle',1175,1175,.3,.06,.12)}
+const KEEP=['week','day','rep','cash','streak','done','under','failed','perfects','lbs','limits','stripWins','extracts','micros','mlost','reds','seen','buff','junkN','wkStart'];
+function save(){try{const o={};for(const k of KEEP)o[k]=S[k];localStorage.setItem('problemSolverSave',JSON.stringify({S:o,U}))}catch(e){}}
+function loadSave(){try{return JSON.parse(localStorage.getItem('problemSolverSave')||'null')}catch(e){return null}}
+function fresh(){Object.assign(S,S0());for(const k in U)U[k]=0}
+let P=null,D=null,F=null,G=null,job=null,T=0,mx=0,my=0,touch=false;const keys={};
+let down=false,pressed=false,click=null,dlgOpen=false,dlgCb=null,dlgCb2=null,dlgCb3=null,dlgCb4=null;
+const rate=()=>1.5*Math.pow(1.12,S.week-1)*(1-.06*U.coffee)*(S.buzz?.93:1)*(S.today.energy?.92:1);
+const fz=()=>.19+.03*U.hooks;
+const day=()=>DAYS[S.day];
+function clockStr(m){m=Math.min(600,Math.floor(m));let h=6+Math.floor(m/60),mm=m%60;const ap=h>=12?'PM':'AM';if(h>12)h-=12;return h+':'+(mm<10?'0':'')+mm+' '+ap}
+
+/* ---------- dialog ---------- */
+function dialog(o){$('kick').textContent=o.kick||'';$('ttl').textContent=o.title;$('body').innerHTML=o.html;$('btn').textContent=o.btn;
+  $('btn2').textContent=o.btn2||'';$('btn2').className=o.btn2?'on':'';dlgCb2=o.cb2||null;$('btn3').textContent=o.btn3||'';$('btn3').className=o.btn3?'on':'';dlgCb3=o.cb3||null;$('btn4').textContent=o.btn4||'';$('btn4').className=o.btn4?'on':'';dlgCb4=o.cb4||null;
+  $('ov').className=o.low?'low':'';dlgOpen=true;dlgCb=o.cb;down=false;pressed=false}
+function closeDlg(alt){if(!dlgOpen)return;initAudio();if(ac&&ac.state==='suspended'){try{ac.resume()}catch(e){}}
+  dlgOpen=false;$('ov').className='hide';const cb=alt===4&&dlgCb4?dlgCb4:alt===3&&dlgCb3?dlgCb3:alt===true&&dlgCb2?dlgCb2:dlgCb;dlgCb=null;dlgCb2=null;dlgCb3=null;dlgCb4=null;pressed=false;down=false;if(cb)cb()}
+$('btn').addEventListener('click',()=>closeDlg());$('btn2').addEventListener('click',()=>closeDlg(true));$('btn3').addEventListener('click',()=>closeDlg(3));$('btn4').addEventListener('click',()=>closeDlg(4));
+
+/* ---------- flow ---------- */
+function title(){S.scene='title';const sv=loadSave(),has=!!(sv&&sv.S&&(sv.S.week>1||sv.S.day>0||sv.S.rep>0));
+  dialog({kick:'ALPINE0_0  ·  25 YEARS IN THE TRADE',title:'THE PROBLEM SOLVER',
+  html:"<p>You're <b>Alpine0_0</b>, install supervisor. When a crew can't figure it out, the radio goes off and it's your problem now.</p>"+
+  "<ul><li><b>Launch</b> the truck off the line to get there fast.</li><li><b>Fix it</b> before the clock runs out. Seven kinds of calls, and Friday ends with the Nightmare Job.</li>"+
+  "<li><b>Random bullshit</b> happens between calls. That's the job.</li><li><b>4:00 PM</b>, you're off: fish, race, squad up, or wrench on the project car.</li>"+
+  "<li><b>Spend what you earn</b> at the hardware store on the way home.</li></ul><p>Monday's a warm-up. Friday is difficulty 10. There are secrets. I'm not telling you where.</p>"+
+  (best?"<p>Best rep: <b>"+best.toLocaleString()+"</b></p>":"")+"<p style='font-size:13px'>Space / click / tap does everything. H to smack it. M to mute.</p>",
+  btn:has?'CONTINUE  ·  WEEK '+sv.S.week+'  ·  '+DAYS[clamp(sv.S.day|0,0,4)].nm:'CLOCK IN  ·  6:00 AM',cb:()=>{if(has){Object.assign(S,S0(),sv.S);S.day=clamp(S.day|0,0,4);Object.assign(U,sv.U||{})}else fresh();startDay()},
+  btn2:has?'NEW GAME':'',cb2:()=>{fresh();startDay()},btn3:'ACHIEVEMENTS  ·  '+ACHV.size+' / '+ACH.length,cb3:achScreen})}
+function achScreen(){S.scene='ach';dialog({kick:ACHV.size+' OF '+ACH.length+' UNLOCKED',title:'Achievements',html:ACH.map(a=>{const h=ACHV.has(a[0]);
+    return '<div class="ach'+(h?'':' no')+'"><span>'+(h?'🏆':'🔒')+'</span><div><b>'+(h||!a[3]?a[1]:'???')+'</b><small>'+(h||!a[3]?a[2]:'Secret. Go find it.')+'</small></div></div>'}).join(''),btn:'BACK',cb:title})}
+let shopNext=null,shopMsg='',shopFree=false;
+const CNT=[{id:'energy',nm:'Energy drink, the tall one',ds:"Tomorrow's clock runs 8% slower. Heart does a thing.",c:120,q:"Cashier: \"That's your third this week.\" It's Tuesday."},
+  {id:'gas',nm:'Gas station coffee, 44 oz',ds:'Skip the morning pour. Show up already vibrating.',c:60,q:"It's been on the burner since the last oil change. Perfect."},
+  {id:'vit',nm:'Vitamin I (the 800 club)',ds:'The first micro-game you blow tomorrow costs no time.',c:90,q:"Knees: restored. Back: still negotiating."},
+  {id:'zyn',nm:'Tin of pouches',ds:'+3 seconds on every par tomorrow. Laser focus.',c:100,q:"Upper decky installed. You can now do math."},
+  {id:'powder',nm:'Headache powder',ds:'+1 Smack It tomorrow.',c:70,q:"Tastes like a battery. Works like a miracle."},
+  {id:'tums',nm:'Antacids, family size',ds:"Gas station lunch can't cost you time tomorrow.",c:40,q:"Fruit-flavored chalk. Breakfast of champions."}];
+const JNK=[{id:'bun',nm:'Honey bun',ds:'600 calories of morale. +25 rep, right now.',c:30,q:"Gone in two bites. +25 rep."},{id:'ticket',nm:'Scratch-off',ds:'Could be $500. Will be nothing.',c:20},
+  {id:'flash',nm:'A fourth flashlight',ds:"You have three. This one's different. It's not.",c:50,j:1,q:"Four flashlights now. All four have dead batteries."},
+  {id:'ten',nm:'10mm socket',ds:'It will be gone by morning.',c:15,j:1,q:"You set it on the bumper for one second. It's gone. It's already gone."},
+  {id:'stretch',nm:'Board stretcher',ds:'Finally.',c:200,j:1,q:"It's a 2x4 with a sticker on it. You've been had. The new guy is in on it."},
+  {id:'blinker',nm:'Blinker fluid',ds:'Full synthetic.',c:25,j:1,q:"The cashier rang it up with a straight face. Respect."},
+  {id:'steam',nm:'Bucket of steam',ds:'Keep the lid on.',c:25,j:1,q:"You opened it in the truck. It's gone. Buy another."},
+  {id:'lefty',nm:'Left-handed screwdriver',ds:'For the hard-to-reach ones.',c:25,j:1,q:"It's a regular screwdriver. The cashier winked."},
+  {id:'jerky',nm:'Jerky of unknown species',ds:'The label just says MEAT.',c:8,j:1,q:"It's fine. It's FINE. Do not read the back."},
+  {id:'fresh',nm:'Air freshener: New Truck',ds:'Smells like blue. Just blue.',c:5,j:1,q:"The truck now smells like blue and old fries."},
+  {id:'burner',nm:'Shop coffee',ds:'Free. Been on the burner since Tuesday.',c:0,q:"You can chew it. Beautiful, warm sludge. +10 rep."}];
+function shopRow(nm,ds,id,label,off,lv){return '<div class="up"><div><b>'+nm+'</b>'+(lv||'')+'<small>'+ds+'</small></div><button class="buy" data-buy="'+id+'"'+(off?' disabled':'')+'>'+label+'</button></div>'}
+function shop(next,keep){S.scene='shop';shopNext=next;if(!keep){shopMsg=pick(SHOPQ)+' Every bit of rep you earn is also cash here.';shopFree=false}
+  const up=UPG.map(u=>{const lv=U[u.id],mx=lv>=u.max,c=mx?0:u.cost[lv];return shopRow(u.nm,u.ds,u.id,mx?'MAXED':'$'+c.toLocaleString(),mx||S.cash<c,'<span class="lv">'+'●'.repeat(lv)+'○'.repeat(u.max-lv)+'</span>')}).join('');
+  const cn=CNT.map(u=>shopRow(u.nm,u.ds,u.id,S.buff[u.id]?'GOT IT':'$'+u.c,!!S.buff[u.id]||S.cash<u.c)).join('');
+  const jk=JNK.map(u=>shopRow(u.nm,u.ds,u.id,u.c?'$'+u.c:'FREE',S.cash<u.c||(u.id==='burner'&&shopFree))).join('');
+  dialog({kick:'ON THE WAY HOME  ·  HARDWARE STORE',title:'$'+S.cash.toLocaleString()+' to blow',html:'<div class="q">'+shopMsg+'</div><div class="sec">UPGRADES  ·  PERMANENT</div>'+up+
+    '<div class="sec">BEHIND THE COUNTER  ·  GOOD FOR TOMORROW</div>'+cn+'<div class="sec">STUFF YOU DO NOT NEED</div>'+jk,btn:'DONE SHOPPING',cb:()=>{save();next()}})}
+function buy(id){if(S.scene!=='shop')return;const u=UPG.find(x=>x.id===id),c=CNT.find(x=>x.id===id),j=JNK.find(x=>x.id===id);
+  if(u){const lv=U[id];if(lv>=u.max||S.cash<u.cost[lv])return;S.cash-=u.cost[lv];U[id]++;shopMsg='Good tools are an investment. That is what you will tell the wife.';if(UPG.every(x=>U[x.id]>=x.max))unlock('maxed')}
+  else if(c){if(S.buff[id]||S.cash<c.c)return;S.cash-=c.c;S.buff[id]=1;shopMsg=c.q}
+  else if(j){if(S.cash<j.c||(id==='burner'&&shopFree))return;S.cash-=j.c;shopMsg=j.q||'';
+    if(id==='bun')S.rep+=25;if(id==='burner'){shopFree=true;S.rep+=10}if(id==='ten')S.buff.ten=1;if(id==='stretch')unlock('stretcher');if(j.j&&++S.junkN>=5)unlock('hoarder');
+    if(id==='ticket'){const r=Math.random();if(r<.02){S.cash+=500;shopMsg='FIVE HUNDRED DOLLARS. You screamed. The cashier screamed. A stranger hugged you.';unlock('jackpot');confetti(W/2,H/2,160)}
+      else if(r<.14){S.cash+=50;shopMsg='Fifty bucks! You are basically a professional gambler now.'}else if(r<.4){S.cash+=10;shopMsg='Won ten bucks. Net profit: ten bucks minus your dignity.'}
+      else shopMsg=pick(["Nothing. The house always wins. The house is a gas station.","Two cherries and a SORRY.","So close. Not actually close. But it felt close."])}}
+  else return;sfx.good();shop(shopNext,true)}
+$('body').addEventListener('click',e=>{const b=e.target&&e.target.closest?e.target.closest('[data-buy]'):null;if(b)buy(b.getAttribute('data-buy'))});
+let ttlN=0;$('ttl').addEventListener('click',()=>{if(S.scene==='title'&&++ttlN===10){unlock('clicker');toast('Stop that.')}});
+function startDay(){S.call=0;S.min=0;S.dayRep=0;S.lunch=false;S.buzz=false;S.kinds=shuffle(['line','wire','leak','charge','braze','duct','seq']);save();S.today=S.buff||{};S.buff={};S.smacks=1+U.smack+(S.today.powder?1:0);
+  if(S.today.ten)toast('The 10mm you bought last night is already gone.');
+  if(S.today.gas){S.buzz=true;toast('44 ounces in. You can hear colors. Clock runs slower today.');radio();return}
+  startMicro('coffee',w=>{S.buzz=w;if(w)toast('Caffeinated. The clock runs 7% slower today.');radio()},true)}
+function radio(){S.scene='radio';const d=day(),kd=S.kinds[S.call%7],j=pick(Math.random()<.8?JOBK[kd]:JOBS);job={town:pick(TOWNS),nm:j[0],ds:j[1],kind:kd,ex:pick(EXCUSE),cu:pick(CUST)};let line=pick(BOSS);sfx.radio();
+  if(d.diff===10&&S.call===d.calls-1){job.multi=S.kinds.filter(k=>k!==job.kind).slice(0,2);job.night=true;job.nm='THE NIGHTMARE JOB';job.ds='The whole system is wrong. Three problems, one house, no breaks.';
+    line="This is the one. Everything that can be wrong is wrong. If anybody can fix it, it's you. If you can't, lie to me."}
+  dialog({kick:'WEEK '+S.week+'  ·  '+d.nm+'  ·  '+clockStr(S.min)+'  ·  CALL '+(S.call+1)+' OF '+d.calls,title:job.night?'☠️ The Nightmare Job':'📻 Boss on the radio',
+  html:'<div class="q">"'+line+'"</div><div class="job"><b>'+job.town+' — '+job.nm+'</b><small>'+job.ds+'</small><small>Crew: "'+job.ex+'"</small><small>'+job.cu+'</small><small>Difficulty '+d.diff+'  ·  '+(job.night?'Three jobs back to back  ·  +500 bonus':KINDS[job.kind])+'</small></div>',
+  btn:'ROLL OUT',cb:startDrag})}
+function gain(n){S.rep=Math.max(0,S.rep+n);S.dayRep+=n;if(n>0)S.cash+=n;if(n&&!dlgOpen)floater((n>0?'+':'')+n,W-70,78+FL.length*20,n>0?'#ff8a1f':'#ff5468')}
+function nextCall(){S.call++;if(S.call>=day().calls)endDay(false);else between()}
+function between(){const r=Math.random();
+  if(!S.lunch&&S.min>=270){S.lunch=true;startMicro('slots',()=>radio(),false,'LUNCH BREAK');return}
+  const rare=RARE.filter(e=>!S.seen.includes(e.ach));
+  if(rare.length&&r<.12){const e=pick(rare);S.seen.push(e.ach);event(e);return}
+  if(r<.52){if(Math.random()<.12){startMicro('petdog',()=>radio(),true);return}
+    if(!S.mdeck.length)S.mdeck=shuffle(Object.keys(MICRO).filter(k=>!MICRO[k].sp));startMicro(S.mdeck.pop(),()=>radio())}
+  else if(r<.92){if(!S.edeck.length)S.edeck=shuffle(EVENTS.map((_,i)=>i));event(EVENTS[S.edeck.pop()])}
+  else radio()}
+function evPick(opt,e){if(e&&e.ach)unlock(e.ach);const o=pick(opt.o);gain(o[1]||0);S.min=Math.min(599,S.min+(o[2]||0));S.smacks+=o[3]||0;
+  const bits=[];if(o[1])bits.push((o[1]>0?'+':'')+o[1]+' rep');if(o[2])bits.push('+'+o[2]+' min');if(o[3])bits.push('+1 smack');
+  dialog({kick:bits.join('  ·  ')||'NO HARM DONE',title:'Well.',html:'<p style="font-size:17px;color:#eef3f7">'+o[0]+'</p>',btn:'BACK TO IT',cb:radio})}
+function event(e){S.scene='event';dialog({kick:e.ach?'MEANWHILE  ·  ???':'MEANWHILE',title:e.t,html:'<p style="font-size:17px;color:#eef3f7">'+e.h+'</p>',btn:e.a.l,cb:()=>evPick(e.a,e),btn2:e.b.l,cb2:()=>evPick(e.b,e)})}
+function startGarage(){S.gar={i:0,w:0,deck:shuffle(Object.keys(MICRO).filter(k=>!MICRO[k].sp)).slice(0,5)};nextGar()}
+function nextGar(){const q=S.gar;if(q.i>=5){S.scene='garend';const all=q.w>=5;if(all){gain(200);unlock('garage')}saveBest();
+    dialog({kick:'GARAGE NIGHT  ·  THE PROJECT CAR',title:all?'It runs. IT RUNS.':q.w>=3?'Closer than yesterday':'It fought back',
+      html:'<div class="row"><span>Random bullshit handled</span><span>'+q.w+' / 5</span></div>'+(all?'<p><b>Clean sweep. +200 rep.</b> You revved it once. The neighbors know.</p>':'<p>Still on jack stands. It has been on jack stands since the last administration.</p>'),
+      btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
+  else startMicro(q.deck[q.i],w=>{q.w+=w?1:0;q.i++;nextGar()},true,'GARAGE NIGHT  ·  '+(q.i+1)+' OF 5')}
+function endDay(late){S.scene='dayend';const d=day();let h='';if(!late){if(S.day===4)unlock('d10');if(S.smacks>=1+U.smack)unlock('nosmack')}
+  if(late){const left=d.calls-S.call;S.failed+=left;S.streak=0;gain(-150*left);
+    h+='<p><b>4:00 PM.</b> '+left+' call'+(left>1?'s':'')+' rolled to tomorrow. That stings: <b>−'+(150*left)+' rep</b>.</p>'}
+  else h+='<p>Every call closed with <b>'+clockStr(S.min)+'</b> on the clock. Nobody else was fixing those.</p>';
+  h+='<div class="q">Boss: "'+pick(late?DAY_BAD:DAY_GOOD)+'"</div>';
+  h+='<div class="row"><span>Rep today</span><span>'+(S.dayRep>=0?'+':'')+S.dayRep.toLocaleString()+'</span></div>'+
+     '<div class="row"><span>Under-par streak</span><span>'+S.streak+'</span></div><div class="row"><span>Days since the new guy broke something</span><span>0</span></div>'+
+     '<p style="margin-top:14px;font-size:13px">Text from the wife:</p><div class="txt">'+pick(WIFE)+'</div>';
+  saveBest();dialog({kick:d.nm+'  ·  OFF THE CLOCK',title:late?'Out of daylight':'Day handled',html:h,btn:'GRAB THE CURADO  ·  GO FISHING',cb:startFish,btn2:'TEST & TUNE NIGHT  ·  HIT THE STRIP',cb2:startStrip,btn3:'GAME NIGHT  ·  SQUAD UP',cb3:startGame,btn4:'GARAGE NIGHT  ·  5 RANDOM-ASS GAMES',cb4:startGarage})}
+function afterEvening(){const go=()=>shop(()=>{if(S.day>=DAYS.length-1)weekend();else{S.day++;startDay()}});if(S.day>=DAYS.length-1)payday(go);else go()}
+function payday(next){S.scene='payday';const gross=Math.max(0,S.rep-S.wkStart),tax=Math.round(gross*.24),tool=Math.round(gross*.3),gas=Math.round(gross*.2),net=Math.max(25,gross-tax-tool-gas-25);S.cash+=net;
+  const r=(a,b)=>'<div class="row"><span>'+a+'</span><span>'+b+'</span></div>';
+  dialog({kick:'FRIDAY  ·  DIRECT DEPOSIT',title:'Payday',html:r('Gross pay','$'+gross.toLocaleString())+r('Taxes','−$'+tax.toLocaleString())+r('Tool truck guy (you still owe $4,000)','−$'+tool.toLocaleString())+
+    r('Gas station (you know what you did)','−$'+gas.toLocaleString())+r('"Uniform fee"','−$20')+r("Boss's GPU fund",'−$5')+'<div class="big">$'+net.toLocaleString()+' take-home</div><p>Added to your cash. Do not spend it all on flashlights.</p>',
+    btn:'TAKE IT AND RUN',cb:next})}
+function endFish(){S.scene='fishend';const c=F.catches;let h='';
+  if(c.length){h+=c.map(f=>'<div class="row"><span>'+f.n+'</span><span>'+f.w.toFixed(1)+' lb  ·  +'+f.rep+'</span></div>').join('')}
+  else h+='<p>Skunked. It happens. Still beats working.</p>';
+  h+='<div class="row"><span>Daily limit</span><span>'+F.total.toFixed(1)+' / '+F.limit+' lb</span></div>';
+  h+=F.hit?'<p><b>Limit beat. +200 rep.</b></p>':'<p>Short of the limit by '+(F.limit-F.total).toFixed(1)+' lb. Long casts pull bigger fish.</p>';
+  if(F.newPb)h+='<p><b>New personal best: '+pb.toFixed(1)+' lb.</b></p>';else if(pb)h+='<p style="font-size:13px">Personal best: '+pb.toFixed(1)+' lb</p>';
+  saveBest();dialog({kick:'COLLINS HILL PARK  ·  SUNDOWN',title:F.hit?'Beat the lake':c.length?c.length+' in the boat':'Nothing biting',html:h,
+    btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
+function startStrip(){S.strip={round:0,wins:0,rep:0};nextRace()}
+function nextRace(){startDrag();D.race=true;D.rv=[rnd(.55,.9),rnd(.35,.6),rnd(.22,.4)][S.strip.round];D.rn=RIVALS[S.strip.round]}
+function endStrip(){S.scene='stripend';const w=S.strip.wins;if(w>=3)unlock('sweep');saveBest();
+  dialog({kick:'TEST & TUNE NIGHT',title:w>=3?'Swept the strip':w?'Won '+w+' of 3':'Sent home early',
+    html:'<div class="row"><span>Rounds won</span><span>'+w+' / 3</span></div><div class="row"><span>Rep</span><span>+'+S.strip.rep+'</span></div>'+
+      (w>=3?'<p><b>Nobody left to line up against.</b></p>':'<p>Cut a better light and nail every shift. A red light is an automatic loss.</p>'),
+    btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
+function weekend(){startMicro('smore',()=>weekendStats(),true,'SATURDAY NIGHT')}
+function weekendStats(){S.scene='weekend';S.moon=0;unlock('week');const tot=DAYS.reduce((a,d)=>a+d.calls,0)+2;
+  const rank=S.done>=tot&&S.under>=12?'THE PROBLEM SOLVER':S.done>=tot?'25-YEAR VET':S.done>=12?'LEAD INSTALLER':S.done>=8?'JOURNEYMAN':'GREEN HELPER';
+  if(rank==='THE PROBLEM SOLVER')unlock('solver');saveBest();
+  dialog({low:true,kick:'SATURDAY  ·  NO RADIO  ·  FIRE’S GOING',title:rank,
+   html:'<div class="row"><span>Calls closed</span><span>'+S.done+' / '+tot+'</span></div><div class="row"><span>Solved under par</span><span>'+S.under+'</span></div>'+
+   '<div class="row"><span>Perfect passes</span><span>'+S.perfects+'</span></div><div class="row"><span>Fish caught</span><span>'+S.lbs.toFixed(1)+' lb</span></div><div class="row"><span>Fishing limits beat</span><span>'+S.limits+'</span></div><div class="row"><span>Strip rounds won</span><span>'+S.stripWins+'</span></div><div class="row"><span>Game nights extracted</span><span>'+S.extracts+'</span></div><div class="row"><span>Random bullshit handled</span><span>'+S.micros+'</span></div>'+
+   '<div class="big">'+S.rep.toLocaleString()+' REP</div><p style="font-size:13px">Best: '+best.toLocaleString()+'. Week '+(S.week+1)+' runs the clock 12% faster. You like the grind anyway.</p>',
+   btn:'MONDAY AGAIN  ·  WEEK '+(S.week+1),cb:()=>{S.week++;S.day=0;S.done=0;S.under=0;S.failed=0;S.perfects=0;S.lbs=0;S.wkStart=S.rep;S.limits=0;S.stripWins=0;S.extracts=0;S.micros=0;if(S.week>=3)unlock('week3');startDay()}})}
+
+/* ---------- drag launch ---------- */
+function startDrag(){S.scene='drag';D={ph:'pre',t:0,delay:rnd(.7,1.9),lit:0,rt:0,foul:false,gear:1,rpm:.3,shifts:[],x:0,v:0,bounce:0,fin:0,pen:0,spen:0,st:0,lbl:'',lblT:0,race:false,rv:0,rn:'',win:false,you:0}}
+function launch(d){d.ph='run';const r=d.rt;let pn;
+  if(d.foul){pn=25;d.lbl='RED LIGHT';sfx.red();if(++S.reds>=3)unlock('redlight')}else if(r<.12){pn=0;d.lbl='PERFECT LIGHT';sfx.good()}else if(r<.25){pn=3;d.lbl='GOOD LIGHT'}else if(r<.45){pn=8;d.lbl='SLEEPY'}else{pn=15;d.lbl='ASLEEP AT THE TREE'}
+  d.pen+=pn;d.lblT=1.2}
+function doShift(d,l,pn){d.shifts.push(l);d.pen+=pn;d.spen+=pn;d.gear++;d.rpm=.45;d.bounce=0;d.lbl=l;d.lblT=.9;pn?sfx.shift():sfx.good()}
+function updDrag(dt){const d=D;d.t+=dt;d.lblT=Math.max(0,d.lblT-dt);
+  if(d.ph==='pre'){if(pressed){d.ph='tree';d.t=0;sfx.click()}}
+  else if(d.ph==='tree'){const gt=d.delay+1.5,n=d.t>=gt?4:d.t>=d.delay+1?3:d.t>=d.delay+.5?2:d.t>=d.delay?1:0;
+    if(n>d.lit){d.lit=n;n===4?sfx.green():sfx.amber()}
+    if(pressed){d.foul=d.t<gt;d.rt=d.t-gt;launch(d)}else if(d.t>gt+1.5){d.rt=1.5;launch(d)}}
+  else if(d.ph==='run'){d.v=Math.min(1,d.v+dt*.35);d.x+=d.v*dt*900;
+    if(d.gear<=3){const dur=[1.5,1.9,2.3][d.gear-1];
+      if(d.bounce>0){d.bounce-=dt;if(pressed)doShift(d,'LATE',7);else if(d.bounce<=0)doShift(d,'BOUNCED',10)}
+      else{d.rpm+=dt*.7/dur;if(d.rpm>=1){d.rpm=1;d.bounce=.5}
+        if(pressed){const r=d.rpm;if(r>=.82&&r<=.94)doShift(d,'PERFECT',0);else if(r<.82)doShift(d,'EARLY',r<.6?10:5);else doShift(d,'LATE',5)}}}
+    else{d.fin+=dt;if(d.fin>1){d.ph='slip';d.st=0;d.drive=Math.max(5,15+d.pen-4*U.tires);d.perfect=d.pen===0;
+      if(d.race){d.you=Math.max(d.rt,0)+11.5+d.spen*.05;d.win=!d.foul&&d.you<11.5+d.rv;
+        if(d.win){const r=[100,150,250][S.strip.round];gain(r);S.strip.rep+=r;S.strip.wins++;S.stripWins++;sfx.win();confetti(W/2,H*.3,50)}else sfx.lose()}
+      else if(d.perfect){S.perfects++;gain(50);sfx.win();unlock('perfect');confetti(W/2,H*.3,40)}}}}
+  else if(d.ph==='slip'){d.st+=dt;if(pressed&&d.st>.5){if(d.race){if(d.win&&++S.strip.round<3)nextRace();else endStrip()}else{S.min+=d.drive;if(S.min>=600)endDay(true);else startJob()}}}
+}
+function truck(x,y,s){g.save();g.translate(x,y);g.scale(s,s);
+  g.fillStyle='#e9eef2';g.fillRect(-70,-46,92,40);g.fillRect(22,-34,44,28);g.fillStyle='#9fd4ee';g.fillRect(28,-30,24,13);
+  g.fillStyle='#ff8a1f';g.fillRect(-70,-22,92,5);g.fillStyle='#1a2430';g.font=F0(11);g.textAlign='center';g.textBaseline='middle';g.fillText('HEATING & AIR',-24,-34);
+  g.strokeStyle='#8a97a5';g.lineWidth=3;g.beginPath();g.moveTo(-66,-52);g.lineTo(16,-52);g.moveTo(-58,-52);g.lineTo(-58,-46);g.moveTo(8,-52);g.lineTo(8,-46);g.stroke();
+  g.fillStyle='#11161c';for(const wx of[-44,40]){g.beginPath();g.arc(wx,-4,13,0,TAU);g.fill()}
+  g.fillStyle='#8a97a5';for(const wx of[-44,40]){g.beginPath();g.arc(wx,-4,5,0,TAU);g.fill()}g.restore()}
+function car(x,y,s,col){g.save();g.translate(x,y);g.scale(s,s);g.fillStyle=col;g.beginPath();g.moveTo(-70,-8);g.lineTo(-66,-26);g.lineTo(-34,-30);g.lineTo(-18,-46);g.lineTo(22,-46);g.lineTo(40,-30);g.lineTo(68,-24);g.lineTo(70,-8);g.closePath();g.fill();
+  g.fillStyle='#9fd4ee';g.beginPath();g.moveTo(-14,-42);g.lineTo(20,-42);g.lineTo(32,-30);g.lineTo(-26,-30);g.closePath();g.fill();
+  g.fillStyle='#11161c';g.beginPath();g.arc(-42,-6,15,0,TAU);g.fill();g.beginPath();g.arc(44,-6,12,0,TAU);g.fill();g.fillStyle='#8a97a5';g.beginPath();g.arc(-42,-6,6,0,TAU);g.fill();g.beginPath();g.arc(44,-6,5,0,TAU);g.fill();g.restore()}
+function drawDrag(){const d=D,gy=H*.62;
+  const sk=g.createLinearGradient(0,0,0,gy);sk.addColorStop(0,d.race?'#060b18':'#16314d');sk.addColorStop(1,d.race?'#27324f':'#e8905a');g.fillStyle=sk;g.fillRect(0,0,W,gy);
+  g.fillStyle='#0e141a';for(let i=0;i<8;i++){const bx=((i*260-d.x*.15)%(W+300)+W+300)%(W+300)-150;g.fillRect(bx,gy-60-(i%3)*26,120,60+(i%3)*26)}
+  g.fillStyle='#1b2026';g.fillRect(0,gy,W,H-gy);g.fillStyle='#f2d14b';
+  for(let i=0;i<14;i++){const lx=((i*140-d.x)%(W+140)+W+140)%(W+140)-140;g.fillRect(lx,gy+(H-gy)*.42,70,5)}
+  const tx=W*.3+(d.ph==='run'||d.ph==='slip'?Math.min(W*.18,d.v*W*.18):0),sq=d.ph==='run'&&d.v<.5?-.04:0;
+  const vs=Math.min(1.5,W/520);
+  if(d.race){const prog=d.ph==='slip'?1:d.ph==='run'?clamp((d.gear-1+(d.rpm-.3)/.7)/3,0,1):0,yl=d.ph==='run'||d.ph==='slip'?Math.max(d.rt,0)+d.spen*.05+(d.foul?.6:0):0;
+    car(clamp(tx+(yl-d.rv*prog)*150,-80,W+80),gy+(H-gy)*.16,vs*.9,'#b3263a');
+    g.save();g.translate(tx,gy+(H-gy)*.42);g.rotate(sq);car(0,0,vs,'#2a6fd6');g.restore()}
+  else{g.save();g.translate(tx,gy+(H-gy)*.34);g.rotate(sq);truck(0,0,vs);g.restore()}
+  // tree
+  const px=W*.72,py=Math.max(70,gy-190);g.fillStyle='#0b0f14';g.fillRect(px-6,py,12,gy-py);g.fillRect(px-26,py,52,150);
+  for(let i=0;i<4;i++){const on=d.ph==='tree'&&d.lit>i||(i===3&&d.ph==='run'&&!d.foul&&d.t<3);
+    g.fillStyle=i<3?(on&&d.lit<4?'#ffc93c':'#4a3c14'):(on?'#4dff7a':'#12401f');if(d.foul&&i===3)g.fillStyle='#ff3348';
+    g.beginPath();g.arc(px,py+22+i*34,12,0,TAU);g.fill()}
+  // tach
+  if(d.ph==='run'&&d.gear<=3){const bw=Math.min(520,W-40),bx=(W-bw)/2,by=H-78;g.fillStyle='rgba(0,0,0,.55)';g.fillRect(bx-10,by-34,bw+20,84);
+    g.fillStyle='#232c36';g.fillRect(bx,by,bw,26);g.fillStyle='#1f8f45';g.fillRect(bx+bw*.82,by,bw*.12,26);g.fillStyle='#8f1f2c';g.fillRect(bx+bw*.94,by,bw*.06,26);
+    g.fillStyle=d.bounce>0?'#ff3348':'#fff';g.fillRect(bx+bw*d.rpm-3,by-6,6,38);
+    g.fillStyle='#eef3f7';g.font=F0(14);g.textAlign='left';g.textBaseline='alphabetic';g.fillText('GEAR '+d.gear+'  ·  SHIFT IN THE GREEN',bx,by-12)}
+  g.textAlign='center';g.textBaseline='middle';
+  if(d.ph==='pre')msg('TAP / SPACE TO STAGE',d.race?'Round '+(S.strip.round+1)+' of 3 vs the '+d.rn.toLowerCase()+'. Red light loses.':'Then hit it the instant it goes green. Jump early and you eat a red light.');
+  if(d.ph==='tree'&&d.lit<4)msg('WAIT FOR GREEN…','');
+  if(d.lblT>0){g.font=F0(Math.min(46,W*.08));g.fillStyle=/PERFECT|GOOD/.test(d.lbl)?'#7dffa0':'#ff8a1f';g.globalAlpha=Math.min(1,d.lblT*3);g.fillText(d.lbl,W/2,H*.3);g.globalAlpha=1}
+  if(d.ph==='slip'){const w=Math.min(380,W-32),x=(W-w)/2,y=Math.max(64,H/2-150);g.fillStyle='#f4f1e6';g.fillRect(x,y,w,292);g.fillStyle='#1a2430';g.textAlign='left';g.font=F0(20);
+    g.fillText('TIME SLIP',x+18,y+30);g.font=F0(15,500);
+    const rows=[['Reaction',d.foul?'RED LIGHT':d.rt.toFixed(3)+' s'],['1→2',d.shifts[0]],['2→3',d.shifts[1]],['3→4',d.shifts[2]]].concat(d.race?[['You  vs  '+d.rn,(d.foul?'DQ':d.you.toFixed(2))+'  vs  '+(11.5+d.rv).toFixed(2)]]:[['Drive time',d.drive+' min']]);
+    rows.forEach((r,i)=>{g.textAlign='left';g.fillText(r[0],x+18,y+68+i*30);g.textAlign='right';g.fillText(String(r[1]),x+w-18,y+68+i*30)});
+    g.textAlign='center';g.font=F0(16);if(d.race){g.fillStyle=d.win?'#147a34':'#a01428';g.font=F0(22);g.fillText(d.win?'WIN  ·  +'+[100,150,250][S.strip.round]+' REP':'LOSS',W/2,y+228)}
+    else{g.fillStyle=d.perfect?'#147a34':'#8a4a00';g.fillText(d.perfect?'PERFECT PASS  ·  +50 REP':'On site at '+clockStr(S.min+d.drive),W/2,y+228)}
+    g.fillStyle='#1a2430';g.font=F0(13,500);g.fillText(d.race?(d.win&&S.strip.round<2?'TAP FOR THE NEXT ROUND':'TAP TO HEAD HOME'):'TAP TO GET TO WORK',W/2,y+264)}
+}
+function msg(a,b){g.textAlign='center';g.textBaseline='middle';g.font=F0(Math.min(34,W*.065));g.fillStyle='#fff';g.fillText(a,W/2,H*.24);
+  if(b){g.font=F0(Math.min(15,W*.036),500);g.fillStyle='rgba(255,255,255,.8)';wrap(b,W/2,H*.24+40,W-30,19,Math.min(15,W*.036),'rgba(255,255,255,.8)')}}
+
+/* ---------- line set puzzle ---------- */
+const rot=m=>((m<<1)|(m>>3))&15,BIT=(dx,dy)=>dy===-1?1:dx===1?2:dy===1?4:8;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=ri(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function base(kind,par){return{kind,t:0,par:Math.round(par)+(S.today.zyn?3:0),solved:false,st:0,gainN:0,mult:1,thud:0}}
+function startJob(){({line:startLine,wire:startWire,leak:startLeak,charge:startCharge,braze:startBraze,duct:startDuct,seq:startSeq})[job.kind]();S.scene='puzzle'}
+function startLine(){const n=day().n,r0=ri(n),r1=ri(n),vis=new Uint8Array(n*n),path=[];
+  (function dfs(x,y){vis[y*n+x]=1;path.push([x,y]);if(x===n-1&&y===r1)return true;
+    for(const[dx,dy]of shuffle([[1,0],[0,1],[0,-1],[-1,0]])){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=n||ny>=n||vis[ny*n+nx])continue;if(dfs(nx,ny))return true}
+    path.pop();return false})(0,r0);
+  const cells=[];for(let i=0;i<n*n;i++){let m=pick([5,5,3,3,3,7]);for(let k=ri(4);k>0;k--)m=rot(m);cells.push({m,sol:0,lock:false,spin:0})}
+  path.forEach(([x,y],i)=>{const a=i?BIT(path[i-1][0]-x,path[i-1][1]-y):8,b=i<path.length-1?BIT(path[i+1][0]-x,path[i+1][1]-y):2,c=cells[y*n+x];
+    c.sol=a|b;c.m=c.sol;for(let k=ri(4);k>0;k--)c.m=rot(c.m)});
+  P=Object.assign(base('line',n*n*1.5),{n,r0,r1,cells,path,on:new Uint8Array(n*n)});
+  flow();if(P.solved){P.solved=false;const c=cells[r0*n];c.m=rot(c.m);flow()}}
+function flow(){const p=P,n=p.n,on=p.on;on.fill(0);const s=p.r0*n;
+  if(p.cells[s].m&8){on[s]=1;const st=[s];while(st.length){const i=st.pop(),x=i%n,y=(i-x)/n,m=p.cells[i].m;
+    for(const[dx,dy,b,o]of[[0,-1,1,4],[1,0,2,8],[0,1,4,1],[-1,0,8,2]]){if(!(m&b))continue;const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=n||ny>=n)continue;
+      const j=ny*n+nx;if(!on[j]&&(p.cells[j].m&o)){on[j]=1;st.push(j)}}}}
+  const e=p.r1*n+n-1;p.solved=!!(on[e]&&(p.cells[e].m&2))}
+function lay(){const n=P.n,top=96,bot=74,cs=Math.floor(Math.min((W-20)/(n+2.4),(H-top-bot-12)/n));return{cs,gx:(W-cs*n)/2,gy:top+(H-top-bot-cs*n)/2,bx:W/2-120,by:H-60}}
+function smack(){const p=P;if(p.solved)return;if(S.smacks<=0){if(++S.dent===5){unlock('dent');toast('You smacked it anyway. It is dented now. That dent is yours forever.')}sfx.red();return}
+  if(p.kind==='line'){const bad=p.path.map(([x,y])=>p.cells[y*p.n+x]).filter(c=>c.m!==c.sol&&!c.lock);if(!bad.length)return;
+    shuffle(bad).slice(0,3).forEach(c=>{c.m=c.sol;c.lock=true;c.spin=1});flow()}
+  else if(p.kind==='wire'){p.wires.filter(w=>!w.done).slice(0,2).forEach(w=>{w.done=true;p.terms.find(t=>t.i===w.to).used=true});p.sel=-1;p.solved=p.wires.every(w=>w.done)}
+  else if(p.kind==='leak'){const l=p.leaks.find(c=>!p.found.includes(c)),n=p.n,x=l%n,y=(l-x)/n;p.hot=[clamp(x+ri(3)-1,1,n-2),clamp(y+ri(3)-1,1,n-2)]}
+  else if(p.kind==='charge'){p.bw*=1.8}
+  else if(p.kind==='braze'){p.tol*=2;p.w*=.7}
+  else if(p.kind==='duct'){p.rooms.filter(r=>r.d!==r.sol&&!r.lock).slice(0,2).forEach(r=>{r.d=r.sol;r.lock=true});ductCalc()}
+  else{p.pos=Math.min(p.seq.length,p.pos+3);p.ph='in';p.lit=-1;p.solved=p.pos>=p.seq.length}
+  S.smacks--;p.thud=.35;sfx.smack();if(p.solved)solved()}
+function solved(){const p=P,d=day(),under=p.t<=p.par;S.streak=under?S.streak+1:0;if(under)S.under++;S.done++;
+  const mult=1+Math.min(Math.max(S.streak-1,0),8)*.25;p.gainN=Math.round((150+d.diff*25+Math.max(0,Math.round((p.par-p.t)*5)))*mult*(1+.1*U.tips));p.mult=mult;gain(p.gainN);p.st=0;p.rev=pick(under?REV_GOOD:REV_MEH);p.win=pick(WINQ);sfx.win();unlock('first');if(S.streak>=5)unlock('streak5');
+  if(job.night&&!(job.multi&&job.multi.length)){gain(500);p.gainN+=500;unlock('nightmare')}confetti(W/2,H/2,job.night?140:70)}
+function updPuzzle(dt){const p=P;p.thud=Math.max(0,p.thud-dt);if(p.kind==='line')for(const c of p.cells)c.spin=Math.max(0,c.spin-dt*7);
+  if(p.solved){p.st+=dt;if(p.st>3.2||(pressed&&p.st>.8)){if(job.multi&&job.multi.length){job.kind=job.multi.shift();startJob()}else nextCall()}return}
+  p.t+=dt;S.min+=dt*rate();if(S.min>=600){S.min=600;sfx.lose();endDay(true);return}
+  if(click&&click.x>=W/2-120&&click.x<=W/2+120&&click.y>=H-60&&click.y<=H-16){smack();return}
+  ({line:updLine,wire:updWire,leak:updLeak,charge:updCharge,braze:updBraze,duct:updDuct,seq:updSeq})[p.kind](dt);if(p.solved&&!p.gainN)solved()}
+function updLine(){const p=P;if(!click)return;const L=lay(),cx=Math.floor((click.x-L.gx)/L.cs),cy=Math.floor((click.y-L.gy)/L.cs);
+  if(cx>=0&&cy>=0&&cx<p.n&&cy<p.n){const c=p.cells[cy*p.n+cx];if(!c.lock){c.m=click.b===2?rot(rot(rot(c.m))):rot(c.m);c.spin=click.b===2?-1:1;sfx.click();flow()}}}
+/* wire the thermostat */
+function startWire(){const d=day().diff,k=d<=4?4:d<=8?5:6,sw=d>=10?2:d>=6?1:0;
+  const T0=[['R','#e23b3b','red'],['C','#3b7de2','blue'],['Y','#f2d14b','yellow'],['G','#3fbf5a','green'],['W','#f1f1f1','white'],['O','#ff8a1f','orange']].slice(0,k);
+  const map=T0.map((_,i)=>i),idx=shuffle(T0.map((_,i)=>i)),notes=[];
+  for(let s=0;s<sw;s++){const a=idx[s*2],b=idx[s*2+1];[map[a],map[b]]=[map[b],map[a]];notes.push(T0[a][2]+' and '+T0[b][2])}
+  P=Object.assign(base('wire',k*2.5+sw*5),{wires:shuffle(T0.map((t,i)=>({i,col:t[1],to:map[i],done:false}))),terms:shuffle(T0.map((t,i)=>({i,l:t[0],used:false}))),sel:-1,zap:0,
+    note:notes.length?'Last guy swapped '+notes.join(', and ')+'. Everything else is by the book.':'Wired by the book: red R, blue C, yellow Y, green G'+(k>4?', white W':'')+(k>5?', orange O':'')+'.'})}
+function wl(){const k=P.wires.length,y0=140,rh=Math.min(84,(H-y0-84)/k);return{lx:W*.24,rx:W*.76,y0,rh}}
+function updWire(dt){const p=P;p.zap=Math.max(0,p.zap-dt);if(!click)return;const L=wl(),row=Math.floor((click.y-L.y0)/L.rh);if(row<0||row>=p.wires.length)return;
+  if(click.x<W*.45){if(!p.wires[row].done){p.sel=row;sfx.click()}}
+  else if(click.x>W*.55&&p.sel>=0){const w=p.wires[p.sel],t=p.terms[row];if(t.used)return;
+    if(w.to===t.i){w.done=true;t.used=true;sfx.good();p.solved=p.wires.every(x=>x.done)}else{S.min+=10;p.zap=.5;p.thud=.3;p.zq=pick(ZAPQ);sfx.red()}p.sel=-1}}
+function drawWire(){const p=P,L=wl(),k=p.wires.length;g.textBaseline='middle';
+  g.fillStyle='#1a2430';g.fillRect(L.rx-34,L.y0-10,150,L.rh*k+20);g.strokeStyle='#2a3848';g.lineWidth=2;g.strokeRect(L.rx-34,L.y0-10,150,L.rh*k+20);
+  p.wires.forEach((w,i)=>{const y=L.y0+L.rh*(i+.5);g.strokeStyle=w.col;g.lineWidth=p.sel===i?11:7;g.lineCap='round';g.beginPath();g.moveTo(0,y);g.lineTo(L.lx,y);g.stroke();
+    if(w.done){const j=p.terms.findIndex(t=>t.i===w.to),ty=L.y0+L.rh*(j+.5);g.beginPath();g.moveTo(L.lx,y);g.bezierCurveTo(W*.5,y,W*.5,ty,L.rx,ty);g.stroke()}
+    else{g.fillStyle='#d98a4e';g.fillRect(L.lx,y-3,16,6);if(p.sel===i){g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();g.arc(L.lx+8,y,16,0,TAU);g.stroke()}}});
+  g.lineCap='butt';
+  p.terms.forEach((t,j)=>{const y=L.y0+L.rh*(j+.5);g.fillStyle=t.used?'#7dffa0':'#c9d2da';g.beginPath();g.arc(L.rx,y,11,0,TAU);g.fill();g.fillStyle='#0b1016';g.fillRect(L.rx-7,y-1.5,14,3);
+    g.fillStyle='#eef3f7';g.font=F0(26);g.textAlign='left';g.fillText(t.l,L.rx+28,y+1)});
+  g.textAlign='center';g.font=F0(Math.min(15,W*.034),500);g.fillStyle='#ffd84a';g.fillText(p.note,W/2,L.y0-30);
+  if(p.zap>0){g.fillStyle='rgba(255,84,104,'+p.zap+')';g.fillRect(0,0,W,H);g.fillStyle='#fff';g.font=F0(Math.min(30,W*.05));g.fillText((p.zq||'POPPED THE FUSE')+'  ·  +10 MIN',W/2,H/2)}}
+/* find the leak */
+function startLeak(){const d=day(),n=d.n,nl=d.diff>=8?2:1,leaks=[];while(leaks.length<nl){const c=ri(n*n);if(!leaks.includes(c))leaks.push(c)}
+  P=Object.assign(base('leak',nl*10+4),{n,leaks,found:[],probes:{},hot:null})}
+function updLeak(){const p=P;if(!click)return;const L=lay(),n=p.n,cx=Math.floor((click.x-L.gx)/L.cs),cy=Math.floor((click.y-L.gy)/L.cs);if(cx<0||cy<0||cx>=n||cy>=n)return;
+  const i=cy*n+cx;if(p.found.includes(i)||p.probes[i]!=null)return;
+  if(p.leaks.includes(i)){p.found.push(i);p.probes={};p.hot=null;sfx.good();p.solved=p.found.length===p.leaks.length}
+  else{let dm=99;for(const l of p.leaks){if(p.found.includes(l))continue;dm=Math.min(dm,Math.abs(l%n-cx)+Math.abs(Math.floor(l/n)-cy))}p.probes[i]=dm;S.min+=5;sfx.click()}}
+function drawLeak(){const p=P,n=p.n,L=lay(),cs=L.cs;g.textAlign='center';g.textBaseline='middle';
+  g.strokeStyle='#d98a4e';g.lineWidth=Math.max(3,cs*.09);g.beginPath();for(let k=0;k<n;k++){g.moveTo(L.gx+cs/2,L.gy+k*cs+cs/2);g.lineTo(L.gx+cs*n-cs/2,L.gy+k*cs+cs/2);g.moveTo(L.gx+k*cs+cs/2,L.gy+cs/2);g.lineTo(L.gx+k*cs+cs/2,L.gy+cs*n-cs/2)}g.stroke();
+  if(p.hot){g.fillStyle='rgba(255,138,31,.22)';g.fillRect(L.gx+(p.hot[0]-1)*cs,L.gy+(p.hot[1]-1)*cs,cs*3,cs*3)}
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const i=y*n+x,px=L.gx+x*cs+cs/2,py=L.gy+y*cs+cs/2,d=p.probes[i],f=p.found.includes(i);
+    g.fillStyle=f?'#7dffa0':d!=null?(d<=1?'#ff5468':d<=3?'#ff8a1f':'#3b7de2'):'#1c2733';g.beginPath();g.arc(px,py,cs*.32,0,TAU);g.fill();
+    g.strokeStyle=f||d!=null?'#0b1016':'#d98a4e';g.lineWidth=2;g.stroke();
+    if(f||d!=null){g.fillStyle='#0b1016';g.font=F0(cs*.34);g.fillText(f?'✓':String(d),px,py+1)}}
+  if(p.leaks.length>1){g.font=F0(13,500);g.fillStyle='#ffd84a';g.fillText('Two leaks. Numbers read to the nearest one. Found '+p.found.length+' of 2.',W/2,L.gy-12)}}
+/* dial in the charge */
+function startCharge(){const d=day().diff;P=Object.assign(base('charge',10),{L:.08,f:0,c:rnd(.5,.78),bw:.15-d*.008,hold:0,wob:.004+d*.0022,over:0,shown:.08})}
+function updCharge(dt){const p=P;p.over=Math.max(0,p.over-dt);p.f+=((down?.34:0)-p.f)*Math.min(1,dt*5);p.L=Math.max(0,p.L+p.f*dt-.015*dt);
+  p.shown=p.L+Math.sin(T*7)*p.wob+Math.sin(T*13)*p.wob*.6;
+  if(Math.abs(p.shown-p.c)<p.bw/2)p.hold+=dt;else p.hold=Math.max(0,p.hold-dt*2);
+  if(p.shown>p.c+p.bw/2+.1){p.L=Math.max(0,p.c-p.bw/2-.22);p.f=0;p.hold=0;p.over=1.3;p.thud=.3;S.min+=12;sfx.red()}
+  if(p.hold>=1.5)p.solved=true}
+function drawCharge(){const p=P,cx=W/2,cy=H*.56,R=Math.min(W*.36,H*.3),a0=Math.PI*.8,sp=Math.PI*1.4,A=v=>a0+clamp(v,0,1.05)*sp;
+  g.lineWidth=R*.16;g.strokeStyle='#232c36';g.beginPath();g.arc(cx,cy,R,a0,a0+sp);g.stroke();
+  g.strokeStyle='#8f1f2c';g.beginPath();g.arc(cx,cy,R,A(p.c+p.bw/2+.1),a0+sp);g.stroke();
+  g.strokeStyle='#1f8f45';g.beginPath();g.arc(cx,cy,R,A(p.c-p.bw/2),A(p.c+p.bw/2));g.stroke();
+  g.strokeStyle='#7dffa0';g.lineWidth=5;g.beginPath();g.arc(cx,cy,R*1.14,A(p.c-p.bw/2),A(p.c-p.bw/2)+(A(p.c+p.bw/2)-A(p.c-p.bw/2))*clamp(p.hold/1.5,0,1));g.stroke();
+  const a=A(p.shown);g.strokeStyle='#fff';g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*R*.95,cy+Math.sin(a)*R*.95);g.stroke();g.lineCap='butt';
+  g.fillStyle='#d98a4e';g.beginPath();g.arc(cx,cy,R*.09,0,TAU);g.fill();
+  g.textAlign='center';g.textBaseline='middle';g.font=F0(16);g.fillStyle=down?'#4fe3ff':'#93a3b5';g.fillText(down?'VALVE OPEN':'VALVE CLOSED',cx,cy+R*.45);
+  if(p.over>0){g.font=F0(Math.min(26,W*.045));g.fillStyle='#ff5468';g.fillText('OVERCHARGED  ·  RECOVER  ·  +12 MIN',cx,cy-R*1.3)}}
+/* braze the joints */
+const adiff=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
+function startBraze(){const d=day().diff,k=4+Math.floor(d/3),js=[];let tries=0;
+  while(js.length<k&&tries++<600){const a=rnd(0,TAU);if(js.every(j=>adiff(a,j.a)>.5))js.push({a,done:false})}
+  P=Object.assign(base('braze',js.length*2+4),{js,a:0,w:1.7+d*.12,tol:.21-d*.008,zap:0,dir:1,rev:d>=6})}
+function updBraze(dt){const p=P;p.zap=Math.max(0,p.zap-dt);p.a=(p.a+p.w*p.dir*dt+TAU)%TAU;if(!pressed)return;
+  const j=p.js.find(j=>!j.done&&adiff(p.a,j.a)<p.tol);
+  if(j){j.done=true;sfx.good();if(p.rev)p.dir=-p.dir;p.solved=p.js.every(x=>x.done)}else{S.min+=6;p.zap=.4;p.thud=.25;p.zq=pick(COLDQ);sfx.red()}}
+function drawBraze(){const p=P,cx=W/2,cy=H*.53,R=Math.min(W*.34,H*.27);
+  g.lineWidth=R*.13;g.strokeStyle='#d98a4e';g.beginPath();g.arc(cx,cy,R,0,TAU);g.stroke();
+  for(const j of p.js){g.strokeStyle=j.done?'#4fe3ff':'#3a2414';g.lineWidth=R*.17;g.beginPath();g.arc(cx,cy,R,j.a-p.tol,j.a+p.tol);g.stroke();
+    g.fillStyle=j.done?'#4fe3ff':'#ffd84a';g.beginPath();g.arc(cx+Math.cos(j.a)*R*1.2,cy+Math.sin(j.a)*R*1.2,5,0,TAU);g.fill()}
+  const tx=cx+Math.cos(p.a)*R,ty=cy+Math.sin(p.a)*R,fl=g.createRadialGradient(tx,ty,2,tx,ty,R*.2);fl.addColorStop(0,'#fff');fl.addColorStop(.35,'#6fb8ff');fl.addColorStop(1,'rgba(111,184,255,0)');
+  g.fillStyle=fl;g.beginPath();g.arc(tx,ty,R*.2,0,TAU);g.fill();
+  g.textAlign='center';g.textBaseline='middle';g.font=F0(20);g.fillStyle='#eef3f7';g.fillText(p.js.filter(j=>j.done).length+' / '+p.js.length,cx,cy-8);
+  g.font=F0(12,500);g.fillStyle='#93a3b5';g.fillText('TAP / SPACE',cx,cy+16);
+  if(p.zap>0){g.font=F0(Math.min(28,W*.05));g.fillStyle='#ff5468';g.fillText((p.zq||'COLD JOINT')+'  ·  +6 MIN',cx,cy-R*1.35)}}
+/* balance the ducts */
+function ductCalc(){const p=P;let t=0;for(const r of p.rooms)t+=r.d*r.k;for(const r of p.rooms)r.fl=t?r.d*r.k/t:0;p.solved=p.rooms.every(r=>Math.abs(r.fl-r.tg)<.012)}
+function startDuct(){const d=day().diff,n=d<=4?3:d<=8?4:5,nm=['LIVING','KITCHEN','MASTER','BED 2','BONUS'];
+  for(;;){const rooms=[];for(let i=0;i<n;i++)rooms.push({nm:nm[i],k:1,sol:1+ri(6),d:3,lock:false,fl:0,tg:0});
+    if(rooms.reduce((a,r)=>a+r.sol,0)!==(n>4?20:10))continue;
+    let t=0;for(const r of rooms)t+=r.sol*r.k;for(const r of rooms)r.tg=r.sol*r.k/t;P=Object.assign(base('duct',n*7),{rooms});ductCalc();if(!P.solved)break}}
+function dl(){const n=P.rooms.length,cw=Math.min(150,(W-30)/n),top=118,bot=H-178;return{cw,x0:(W-cw*n)/2,top,bot,by:H-166}}
+function updDuct(){const p=P;if(!click)return;const L=dl(),i=Math.floor((click.x-L.x0)/L.cw);if(i<0||i>=p.rooms.length||click.y<L.by||click.y>L.by+46)return;
+  const r=p.rooms[i];if(r.lock)return;const up=click.x-L.x0-i*L.cw>L.cw/2,nd=clamp(r.d+(up?1:-1),1,6);if(nd!==r.d){r.d=nd;sfx.click();ductCalc()}}
+function drawDuct(){const p=P,L=dl(),bh=L.bot-L.top;g.textAlign='center';g.textBaseline='middle';
+  p.rooms.forEach((r,i)=>{const x=L.x0+i*L.cw,w=L.cw-14,ok=Math.abs(r.fl-r.tg)<.012,sc=v=>Math.min(1,v/.62)*bh;
+    g.fillStyle='#161f2a';g.fillRect(x+7,L.top,w,bh);g.fillStyle=ok?'#1f8f45':r.fl>r.tg?'#c2552d':'#3b7de2';g.fillRect(x+7,L.bot-sc(r.fl),w,sc(r.fl));
+    g.fillStyle='#ffd84a';g.fillRect(x+2,L.bot-sc(r.tg)-2,w+10,4);
+    g.fillStyle='#eef3f7';g.font=F0(Math.min(14,L.cw*.14));g.fillText(r.nm,x+L.cw/2,L.top-14);
+    g.font=F0(12,500);g.fillStyle=ok?'#7dffa0':'#93a3b5';g.fillText(Math.round(r.fl*100)+'%  /  needs '+Math.round(r.tg*100)+'%',x+L.cw/2,L.top+16);
+    g.fillStyle=r.lock?'#1c2b22':'#232c36';g.fillRect(x+7,L.by,w/2-2,46);g.fillRect(x+9+w/2,L.by,w/2-2,46);
+    g.fillStyle=r.lock?'#7dffa0':'#eef3f7';g.font=F0(26);g.fillText('−',x+7+w/4,L.by+23);g.fillText('+',x+9+w*.75,L.by+23);
+    for(let k=0;k<6;k++){g.fillStyle=k<r.d?'#ff8a1f':'#2a3848';g.fillRect(x+7+k*(w/6)+1,L.by+52,w/6-2,6)}})}
+/* startup sequence */
+const PADS=[['THERMOSTAT','#3b7de2',330],['CONTACTOR','#ffd84a',415],['FAN','#3fbf5a',494],['COMPRESSOR','#ff5468',659]];
+function startSeq(){const d=day().diff,len=3+Math.floor(d/2),seq=[];for(let i=0;i<len;i++)seq.push(ri(4));
+  P=Object.assign(base('seq',len*1.7+4),{seq,pos:0,ph:'show',st2:-.6,lit:-1,litT:0,zap:0})}
+function pl(){const sz=Math.min(210,W*.4,(H-250)/2),gap=14;return{sz,gap,x0:W/2-sz-gap/2,y0:118+((H-250)-(sz*2+gap))/2+10}}
+function padAt(x,y){const L=pl();for(let i=0;i<4;i++){const px=L.x0+(i%2)*(L.sz+L.gap),py=L.y0+Math.floor(i/2)*(L.sz+L.gap);if(x>=px&&x<=px+L.sz&&y>=py&&y<=py+L.sz)return i}return -1}
+function updSeq(dt){const p=P;p.zap=Math.max(0,p.zap-dt);p.litT=Math.max(0,p.litT-dt);
+  if(p.ph==='show'){p.st2+=dt;const i=Math.floor(p.st2/.6);
+    if(p.st2>=0&&i<p.seq.length){const li=p.st2-i*.6<.42?p.seq[i]:-1;if(li!==p.lit){p.lit=li;if(li>=0)tone('triangle',PADS[li][2],PADS[li][2],.3,.07)}}
+    else if(i>=p.seq.length){p.ph='in';p.lit=-1}}
+  else if(click){const pad=padAt(click.x,click.y);if(pad<0)return;p.lit=pad;p.litT=.2;
+    if(pad===p.seq[p.pos]){p.pos++;tone('triangle',PADS[pad][2],PADS[pad][2],.2,.07);if(p.pos>=p.seq.length)p.solved=true}
+    else{S.min+=8;p.zap=.4;p.thud=.25;sfx.red();p.pos=0;p.ph='show';p.st2=-.7;p.lit=-1}}}
+function drawSeq(){const p=P,L=pl();g.textAlign='center';g.textBaseline='middle';
+  for(let i=0;i<4;i++){const px=L.x0+(i%2)*(L.sz+L.gap),py=L.y0+Math.floor(i/2)*(L.sz+L.gap),on=p.lit===i&&(p.ph==='show'||p.litT>0);
+    g.globalAlpha=on?1:.28;g.fillStyle=PADS[i][1];g.fillRect(px,py,L.sz,L.sz);g.globalAlpha=1;g.strokeStyle=PADS[i][1];g.lineWidth=2;g.strokeRect(px,py,L.sz,L.sz);
+    g.fillStyle=on?'#0b1016':'#eef3f7';g.font=F0(Math.min(16,L.sz*.11));g.fillText(PADS[i][0],px+L.sz/2,py+L.sz/2)}
+  g.font=F0(16);g.fillStyle=p.ph==='show'?'#ffd84a':'#7dffa0';g.fillText(p.ph==='show'?'WATCH…':'REPEAT IT  ·  '+p.pos+' / '+p.seq.length,W/2,L.y0-18);
+  if(p.zap>0){g.fillStyle='rgba(255,84,104,'+p.zap+')';g.fillRect(0,0,W,H)}}
+function unit(x,y,w,h,label,fan){g.fillStyle='#c9d2da';g.fillRect(x,y,w,h);g.strokeStyle='#5c6975';g.lineWidth=2;g.strokeRect(x,y,w,h);
+  if(fan){g.beginPath();g.arc(x+w/2,y+h/2,Math.min(w,h)*.32,0,TAU);g.stroke();for(let i=0;i<4;i++){const a=T*3+i*TAU/4;g.beginPath();g.moveTo(x+w/2,y+h/2);g.lineTo(x+w/2+Math.cos(a)*w*.3,y+h/2+Math.sin(a)*h*.3);g.stroke()}}
+  else{g.beginPath();for(let i=1;i<4;i++){g.moveTo(x+w*.15,y+h*i/4);g.lineTo(x+w*.85,y+h*i/4)}g.stroke()}
+  g.fillStyle='#93a3b5';g.font=F0(Math.max(9,Math.min(11,w*.2)),500);g.textAlign='center';g.textBaseline='top';g.fillText(label,x+w/2,y+h+4)}
+function drawPuzzle(){const p=P,L={by:H-60,bx:W/2-120};g.fillStyle='#0d131a';g.fillRect(0,0,W,H);
+  const sh=p.thud>0?rnd(-6,6)*p.thud*3:0;g.save();g.translate(sh,sh*.6);({line:drawLine,wire:drawWire,leak:drawLeak,charge:drawCharge,braze:drawBraze,duct:drawDuct,seq:drawSeq})[p.kind]();g.restore();
+  g.textAlign='center';g.textBaseline='middle';g.font=F0(Math.min(14,W*.031),500);g.fillStyle='#93a3b5';const hk=Math.floor(p.t/6);if(hk%3&&!p.solved){if(p.hkN!==hk){p.hkN=hk;p.hq=pick(HECK)}wrap('🧓  '+p.hq,W/2,72,W-16,15,Math.max(12,Math.min(15,W*.034)),'#ffd84a')}else wrap((job.night?'NIGHTMARE JOB '+(3-(job.multi?job.multi.length:0))+' OF 3  ·  ':'')+KINDS[p.kind].toUpperCase()+'  ·  '+HINTS[p.kind],W/2,72,W-16,15,Math.max(11,Math.min(14,W*.031)),'#93a3b5');
+  drawBar(p,L)}
+function drawLine(){const p=P,n=p.n,L=lay(),cs=L.cs;
+  const y0=L.gy+p.r0*cs,y1=L.gy+p.r1*cs,src=p.cells[p.r0*n].m&8,pw=Math.max(5,cs*.2);
+  g.lineCap='butt';g.lineWidth=pw;g.strokeStyle=src?'#4fe3ff':'#d98a4e';g.beginPath();g.moveTo(L.gx-cs*.3,y0+cs/2);g.lineTo(L.gx,y0+cs/2);g.stroke();
+  g.strokeStyle=p.solved?'#4fe3ff':'#d98a4e';g.beginPath();g.moveTo(L.gx+cs*n,y1+cs/2);g.lineTo(L.gx+cs*n+cs*.3,y1+cs/2);g.stroke();
+  unit(L.gx-cs*1.15,y0+cs*.1,cs*.85,cs*.8,'CONDENSER',true);unit(L.gx+cs*n+cs*.3,y1+cs*.05,cs*.85,cs*.9,'AIR HANDLER',false);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const i=y*n+x,c=p.cells[i],px=L.gx+x*cs,py=L.gy+y*cs,on=p.on[i];
+    g.fillStyle=c.lock?'#1c2b22':'#161f2a';g.fillRect(px+1.5,py+1.5,cs-3,cs-3);
+    g.save();g.translate(px+cs/2,py+cs/2);g.rotate(-c.spin*Math.PI/2);
+    g.strokeStyle=on?'#4fe3ff':'#d98a4e';g.lineWidth=pw;if(on){g.shadowColor='#4fe3ff';g.shadowBlur=p.solved?18:8}
+    g.beginPath();if(c.m&1){g.moveTo(0,0);g.lineTo(0,-cs/2)}if(c.m&2){g.moveTo(0,0);g.lineTo(cs/2,0)}if(c.m&4){g.moveTo(0,0);g.lineTo(0,cs/2)}if(c.m&8){g.moveTo(0,0);g.lineTo(-cs/2,0)}g.stroke();
+    g.fillStyle=on?'#4fe3ff':'#d98a4e';g.beginPath();g.arc(0,0,pw*.62,0,TAU);g.fill();g.shadowBlur=0;g.restore();
+    if(c.lock){g.fillStyle='#7dffa0';g.beginPath();g.arc(px+cs-9,py+9,3,0,TAU);g.fill()}}}
+function drawBar(p,L){
+  g.textBaseline='middle';const left=Math.max(0,p.par-p.t);g.font=F0(13,500);g.textAlign='left';g.fillStyle=left>0?'#7dffa0':'#93a3b5';
+  if(W>640)g.fillText(left>0?'PAR  '+left.toFixed(0)+'s left for bonus':'OVER PAR  ·  streak resets',16,L.by+22);
+  if(W>640){g.textAlign='right';g.fillStyle='#93a3b5';g.fillText('STREAK '+S.streak+(p.kind==='line'?'  ·  right-click spins back':''),W-16,L.by+22)}
+  const can=S.smacks>0;g.fillStyle=can?'#ff8a1f':'#2a3848';g.fillRect(L.bx,L.by,240,44);g.fillStyle=can?'#1a0d00':'#93a3b5';g.textAlign='center';g.font=F0(15);
+  g.fillText(can?'SMACK IT  (H)  ·  '+S.smacks+' LEFT':'NO SMACKS LEFT TODAY',L.bx+120,L.by+23);
+  if(W<=640){g.font=F0(11,500);g.fillStyle=left>0?'#7dffa0':'#93a3b5';g.fillText(left>0?'PAR '+left.toFixed(0)+'s':'OVER PAR',W/2,L.by-12)}
+  if(p.solved){g.fillStyle='rgba(6,9,13,.55)';g.fillRect(0,H/2-70,W,180);g.textAlign='center';g.font=F0(Math.min(44,W*.085));g.fillStyle='#7dffa0';g.fillText(p.win||'FIGURED IT OUT',W/2,H/2-16);
+    g.font=F0(18);g.fillStyle='#fff';g.fillText('+'+p.gainN+' REP'+(p.mult>1?'   ·   x'+p.mult.toFixed(2)+' STREAK':'')+'   ·   '+p.t.toFixed(1)+'s',W/2,H/2+30);
+    wrap(p.rev||'',W/2,H/2+66,Math.min(W-30,700),20,Math.min(15,W*.034),'#ffd84a')}
+}
+
+/* ---------- fishing ---------- */
+function startFish(){S.scene='fish';F={limit:LIMITS[S.day],total:0,hit:false,newPb:false,ft2:0,t:60,ph:'idle',pw:0,pd:1,cast:.5,ft:0,wait:0,bt:0,cur:.3,cv:0,zone:.5,zt:0,ztg:.5,prog:.3,fish:null,msg:'TAP TO START YOUR CAST',msgT:99,catches:[],sh:0}}
+function fmsg(m,t){F.msg=m;F.msgT=t||1.6}
+function updFish(dt){const f=F;f.msgT-=dt;if(f.ph!=='fight'&&f.ph!=='show')f.t=Math.max(0,f.t-dt);
+  if(f.t<=0&&f.ph!=='fight'&&f.ph!=='show'){endFish();return}
+  if(f.ph==='idle'){if(pressed){f.ph='power';f.pw=0;f.pd=1;fmsg('TAP AGAIN TO LET IT FLY',99)}}
+  else if(f.ph==='power'){f.pw+=f.pd*dt*1.7;if(f.pw>=1){f.pw=1;f.pd=-1}if(f.pw<=0){f.pw=0;f.pd=1}if(pressed){f.cast=f.pw;f.ph='fly';f.ft=.5;fmsg(f.cast>.85?'BOMBED IT':'',1)}}
+  else if(f.ph==='fly'){f.ft-=dt;if(f.ft<=0){f.ph='wait';f.wait=rnd(1.2,3.8);fmsg('Wait for it…',99)}}
+  else if(f.ph==='wait'){f.wait-=dt;if(pressed){f.ph='idle';fmsg('Reeled in early. Nothing. Cast again.',99)}else if(f.wait<=0){f.ph='bite';f.bt=.75;sfx.bite();fmsg('SET THE HOOK!',1)}}
+  else if(f.ph==='bite'){f.bt-=dt;if(pressed){const k=pick(FISH),w=(k.min+(k.max-k.min)*Math.pow(Math.random(),2.2-f.cast*1.2))*(1+.15*U.rod);
+      f.fish={n:k.n,c:k.c,w,sp:k.sp*(.5+.4*w/k.max)};if(Math.random()<.12){const j=pick(JUNK);f.fish={n:j[0],e:j[1],c:'rgba(0,0,0,0)',w:0,sp:.15,junk:true}}else if(Math.random()<.04)f.fish={n:'The Lake Monster',c:'#2f4a3c',w:rnd(14,19),sp:.72,legend:true};f.ph='fight';f.prog=.4;f.cur=.4;f.cv=0;f.zone=.45;f.ztg=.45;f.zt=1;f.ft2=0;fmsg(f.fish.legend?'SOMETHING BIG. Hold on to the damn rod.':'HOLD to reel, let off to give line. Stay on the fish.',3)}
+    else if(f.bt<=0){f.ph='idle';fmsg('Missed it. Shit. Cast again.',99)}}
+  else if(f.ph==='fight'){const k=f.fish;f.ft2+=dt;f.zt-=dt;if(f.zt<=0){f.zt=rnd(.9,1.8);f.ztg=rnd(.2,.8)}
+    f.zone+=clamp(f.ztg-f.zone,-k.sp*dt,k.sp*dt);f.cv+=(down?2.3:-2.0)*dt;f.cv*=Math.pow(.06,dt);f.cur+=f.cv*dt;
+    if(f.cur<0){f.cur=0;f.cv=0}if(f.cur>1){f.cur=1;f.cv=0}
+    const inz=Math.abs(f.cur-f.zone)<fz();f.prog+=(inz?.34:f.ft2<1.2?0:-.16)*dt;
+    if(f.prog>=1){const rep=Math.round(k.w*20)+10;f.catches.push({n:k.n,w:k.w,rep});S.lbs+=k.w;gain(rep);f.ph='show';f.sh=2;sfx.win();f.total+=k.w;confetti(W/2,H*.4,k.legend?160:40);if(k.junk)unlock('boot');if(k.legend)unlock('monster');else if(k.w>=8)unlock('lunker');
+      if(k.w>pb){pb=k.w;f.newPb=true;try{localStorage.setItem('problemSolverPB',String(pb))}catch(e){}}
+      if(!f.hit&&f.total>=f.limit){f.hit=true;f.hitNow=true;S.limits++;gain(200);unlock('limit')}else f.hitNow=false}
+    else if(f.prog<=0){f.ph='idle';sfx.lose();fmsg('Snapped off. Damn. Cast again.',99)}}
+  else if(f.ph==='show'){f.sh-=dt;if(f.sh<=0||(pressed&&f.sh<1.5)){f.ph='idle';fmsg('TAP TO CAST',99)}}
+}
+function drawFish(){const f=F,k=1-f.t/60,wy=H*.52;
+  const sk=g.createLinearGradient(0,0,0,wy);sk.addColorStop(0,'rgb('+Math.round(40-25*k)+','+Math.round(70-45*k)+','+Math.round(120-60*k)+')');
+  sk.addColorStop(1,'rgb('+Math.round(250-70*k)+','+Math.round(160-70*k)+','+Math.round(90-10*k)+')');g.fillStyle=sk;g.fillRect(0,0,W,wy);
+  g.fillStyle='#ffd9a0';g.beginPath();g.arc(W*.7,wy-40+k*70,34,0,TAU);g.fill();
+  g.fillStyle='#0f1c16';g.beginPath();g.moveTo(0,wy);for(let x=0;x<=W;x+=40)g.lineTo(x,wy-26-Math.sin(x*.013)*14-Math.sin(x*.05)*6);g.lineTo(W,wy);g.fill();
+  const wg=g.createLinearGradient(0,wy,0,H);wg.addColorStop(0,'rgb('+Math.round(200-90*k)+','+Math.round(130-60*k)+','+Math.round(100-20*k)+')');wg.addColorStop(1,'#0a1a2a');g.fillStyle=wg;g.fillRect(0,wy,W,H-wy);
+  g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;for(let i=0;i<9;i++){const y=wy+18+i*(H-wy)/10,o=Math.sin(T*.8+i)*20;g.beginPath();g.moveTo(W*.1+o+i*30,y);g.lineTo(W*.1+o+i*30+90,y);g.moveTo(W*.55-o+i*12,y+6);g.lineTo(W*.55-o+i*12+120,y+6);g.stroke()}
+  g.fillStyle='#0b120e';g.beginPath();g.moveTo(0,H);g.lineTo(0,H*.8);g.quadraticCurveTo(W*.16,H*.76,W*.26,H);g.fill();
+  // rod + line
+  const rx=W*.09,ry=H*.8,bend=f.ph==='fight'?.35:f.ph==='power'?-.5*f.pw:0,tx=rx+Math.cos(-1.05+bend)*H*.3,ty=ry+Math.sin(-1.05+bend)*H*.3;
+  g.strokeStyle='#1c1c1c';g.lineWidth=4;g.beginPath();g.moveTo(rx,ry);g.quadraticCurveTo(rx+H*.1,ry-H*.2,tx,ty);g.stroke();
+  const dist=.3+f.cast*.55,bx=W*(.25+dist*.6),by=wy+(H-wy)*(.75-dist*.6);
+  if(f.ph==='wait'||f.ph==='bite'||f.ph==='fight'){const dip=f.ph==='bite'?8:f.ph==='fight'?10+Math.sin(T*20)*3:Math.sin(T*2.5)*2,fx=f.ph==='fight'?(f.zone-.5)*120:0;
+    g.strokeStyle='rgba(255,255,255,.6)';g.lineWidth=1;g.beginPath();g.moveTo(tx,ty);g.lineTo(bx+fx,by+dip);g.stroke();
+    if(f.ph!=='fight'){g.fillStyle='#fff';g.beginPath();g.arc(bx,by+dip,7,0,TAU);g.fill();g.fillStyle='#ff3348';g.beginPath();g.arc(bx,by+dip,7,Math.PI,TAU);g.fill()}
+    g.strokeStyle='rgba(255,255,255,.35)';g.beginPath();g.ellipse(bx+fx,by+dip+4,14+(T*20%14),4+(T*6%4),0,0,TAU);g.stroke();
+    if(f.ph==='bite'){g.font=F0(40);g.fillStyle='#ffd84a';g.textAlign='center';g.textBaseline='middle';g.fillText('!',bx,by-34)}}
+  if(f.ph==='power'){const w=Math.min(300,W-60),x=(W-w)/2,y=H-70;g.fillStyle='rgba(0,0,0,.5)';g.fillRect(x-6,y-6,w+12,34);g.fillStyle='#232c36';g.fillRect(x,y,w,22);
+    g.fillStyle='#1f8f45';g.fillRect(x+w*.85,y,w*.15,22);g.fillStyle='#ff8a1f';g.fillRect(x,y,w*f.pw,22)}
+  if(f.ph==='fight'){const h=Math.min(340,H-190),x=Math.min(W-64,W*.84),y=(H-h)/2+20;g.fillStyle='rgba(0,0,0,.55)';g.fillRect(x-34,y-10,84,h+20);
+    g.fillStyle='#232c36';g.fillRect(x,y,28,h);g.fillStyle='rgba(125,255,160,.45)';g.fillRect(x,y+h*clamp(1-f.zone-fz(),0,1),28,h*Math.min(fz()*2,1-clamp(1-f.zone-fz(),0,1)));
+    g.fillStyle='#fff';g.fillRect(x-4,y+h*(1-f.cur)-3,36,6);
+    g.fillStyle='#232c36';g.fillRect(x-22,y,10,h);g.fillStyle=f.prog>.5?'#7dffa0':'#ff8a1f';g.fillRect(x-22,y+h*(1-f.prog),10,h*f.prog)}
+  g.textAlign='center';g.textBaseline='middle';
+  if(f.ph==='show'){const c=f.catches[f.catches.length-1],s=Math.min(2.2,.9+c.w*.14),cx=W/2,cy=H*.4;g.fillStyle='rgba(6,9,13,.6)';g.fillRect(0,cy-90,W,190);
+    g.fillStyle=f.fish.c;g.beginPath();g.ellipse(cx,cy-20,46*s,17*s,0,0,TAU);g.fill();g.beginPath();g.moveTo(cx-40*s,cy-20);g.lineTo(cx-64*s,cy-20-16*s);g.lineTo(cx-64*s,cy-20+16*s);g.fill();
+    g.fillStyle='#0b0f14';g.beginPath();g.arc(cx+30*s,cy-24,3,0,TAU);g.fill();
+    if(f.fish.junk)em(f.fish.e,cx,cy-20,64);
+    g.fillStyle='#fff';g.font=F0(24);g.fillText(c.n+'  ·  '+c.w.toFixed(1)+' lb',cx,cy+50);g.font=F0(16);g.fillStyle='#7dffa0';g.fillText('+'+c.rep+' REP'+(f.hitNow?'   ·   LIMIT BEAT  +200':''),cx,cy+80)}
+  else if(f.msgT>0&&f.msg){g.font=F0(Math.min(24,W*.05));g.fillStyle='#fff';g.shadowColor='#000';g.shadowBlur=8;g.fillText(f.msg,W/2,H*.2);g.shadowBlur=0}
+}
+
+/* ---------- random-ass micro games ---------- */
+let M=null;
+function em(t,x,y,sz,col){g.font=F0(sz);g.textAlign='center';g.textBaseline='middle';g.fillStyle=col||'#fff';g.fillText(t,x,y)}
+function wrap(t,x,y,mw,lh,sz,col){g.font=F0(sz,500);g.textAlign='center';g.textBaseline='middle';g.fillStyle=col||'#eef3f7';const ws=String(t).split(' '),ls=[];let l='';
+  for(const w of ws){const n=l?l+' '+w:w;if(l&&g.measureText(n).width>mw){ls.push(l);l=w}else l=n}if(l)ls.push(l);ls.forEach((q,i)=>g.fillText(q,x,y+(i-(ls.length-1)/2)*lh))}
+function pbar(k,col){const w=Math.min(420,W-60),x=(W-w)/2,y=H-44;g.fillStyle='#232c36';g.fillRect(x,y,w,16);g.fillStyle=col||'#ff8a1f';g.fillRect(x,y,w*clamp(k,0,1),16)}
+const dq=()=>day().diff;
+const MICRO={
+ wasp:{bg:'yard',t:'WASPS IN THE CONDENSER',i:'Smack every one of the bastards.',lim:8,
+  w:["Zero stings. The wasps will tell stories about you.","All dead. You feel nothing. This is the job."],l:["Stung on the neck. And the hand. And somehow the ankle.","They won. It's their condenser now."],
+  init(m){m.w=[];const n=5+Math.floor(dq()/3);for(let k=0;k<n;k++)m.w.push({x:rnd(.2,.8)*W,y:rnd(.3,.75)*H,a:rnd(0,TAU),v:rnd(110,190)+dq()*7,d:false})},
+  upd(m,dt){for(const w of m.w){if(w.d)continue;w.a+=rnd(-4,4)*dt;w.x+=Math.cos(w.a)*w.v*dt;w.y+=Math.sin(w.a)*w.v*dt;if(w.x<30||w.x>W-30)w.a=Math.PI-w.a;if(w.y<120||w.y>H-60)w.a=-w.a;w.x=clamp(w.x,30,W-30);w.y=clamp(w.y,120,H-60)}
+    if(click)for(const w of m.w)if(!w.d&&Math.hypot(w.x-click.x,w.y-click.y)<40){w.d=true;sfx.click();break}
+    if(m.w.every(w=>w.d))mdone(true)},
+  draw(m){unit(W/2-70,H/2-60,140,120,'',true);for(const w of m.w){g.globalAlpha=w.d?.3:1;em(w.d?'💥':'🐝',w.x+(w.d?0:rnd(-2,2)),w.y+(w.d?0:rnd(-2,2)),32)}g.globalAlpha=1}},
+ dog:{bg:'yard',t:'DOG GOT YOUR GLOVE',i:'Catch the little shit. Three times.',lim:10,
+  w:["Got the glove back. It's wet. It's so wet.","The dog respects you now. That's a bond for life."],l:["The dog owns that glove now. You work one-handed.","Outrun by a corgi. Tell no one."],
+  init(m){m.x=W/2;m.y=H/2;m.tx=m.x;m.ty=m.y;m.p=.6;m.n=0},
+  upd(m,dt){m.p-=dt;if(m.p<=0){m.tx=rnd(60,W-60);m.ty=rnd(140,H-70);m.p=rnd(.55,.95)-dq()*.02}
+    const dx=m.tx-m.x,dy=m.ty-m.y,d=Math.hypot(dx,dy),v=(480+dq()*22)*dt;if(d>v){m.x+=dx/d*v;m.y+=dy/d*v}else{m.x=m.tx;m.y=m.ty}
+    if(click&&Math.hypot(click.x-m.x,click.y-m.y)<52){m.n++;m.p=0;sfx.good();if(m.n>=3)mdone(true)}},
+  draw(m){em('🐕',m.x,m.y,48);em('🧤',m.x+24,m.y+8,20);em(m.n+' / 3',W/2,H-50,22)}},
+ bolt:{bg:'garage',t:'SEIZED BOLT',i:'MASH IT. Space or tap like you mean it.',lim:5,
+  w:["It broke loose. So did something in your shoulder.","Righty tighty, lefty holy shit it moved."],l:["Rounded it off. It's a circle now. Congrats on the circle.","That bolt has been there since 1987 and it will outlive you."],
+  init(m){m.n=0;m.need=15+dq()},upd(m){if(pressed){m.n++;sfx.click();if(m.n>=m.need)mdone(true)}},
+  draw(m){g.save();g.translate(W/2,H/2);g.rotate(-m.n/m.need*1.6);em('🔧',0,0,Math.min(170,W*.32));g.restore();em('🔩',W/2,H/2+10,40);pbar(m.n/m.need)}},
+ catch:{bg:'house',t:"NEW GUY'S ON THE LADDER",i:'Catch what he drops. Miss three and it lands on your foot.',lim:14,
+  w:["Caught it all, including his sandwich. He's very grateful about the sandwich.","Reflexes of a man who's worked under a lot of new guys."],l:["Wrench to the boot. Steel toe. Still counts.","He dropped the whole bag. He said 'heads up' after."],
+  init(m){m.it=[];m.sp=.3;m.n=0;m.miss=0;m.cx=W/2},
+  upd(m,dt){m.cx=keys.a||keys.arrowleft?m.cx-560*dt:keys.d||keys.arrowright?m.cx+560*dt:m.cx+(mx-m.cx)*Math.min(1,dt*14);m.cx=clamp(m.cx,60,W-60);
+    m.sp-=dt;if(m.sp<=0){m.sp=rnd(.6,1)-dq()*.02;m.it.push({x:rnd(60,W-60),y:100,v:rnd(250,340)+dq()*9,e:pick(['🔧','🔨','🪛','🔩','🥪','📱'])})}
+    for(let k=m.it.length-1;k>=0;k--){const o=m.it[k];o.y+=o.v*dt;
+      if(o.y>H-78&&o.y<H-28&&Math.abs(o.x-m.cx)<66){m.it.splice(k,1);m.n++;sfx.click();if(m.n>=6){mdone(true);return}}
+      else if(o.y>H){m.it.splice(k,1);m.miss++;sfx.red();if(m.miss>=3){mdone(false);return}}}},
+  draw(m){for(const o of m.it)em(o.e,o.x,o.y,36);g.fillStyle='#d98a4e';g.fillRect(m.cx-62,H-52,124,12);g.fillRect(m.cx-62,H-72,8,30);g.fillRect(m.cx+54,H-72,8,30);em('Caught '+m.n+' / 6      Dropped '+m.miss+' / 3',W/2,124,16,'#93a3b5')}},
+ tenmm:{bg:'garage',t:'FIND THE 10MM',i:"It's in here somewhere. Probably.",lim:7,
+  w:["Found it. Mark the date. This will never happen again.","It was in the first place you looked. Suspicious."],l:["It's gone. It was always gone. Buy another set.","Found four 11s and a 3/8. The 10mm has ascended."],
+  init(m){m.cols=W>560?6:4;m.rows=W>560?3:5;const n=m.cols*m.rows,o=['8mm','9mm','11mm','12mm','13mm','14mm','15mm','16mm','17mm','18mm','19mm','1/2"','3/8"','7/16"'],win=ri(n);m.s=[];
+    for(let k=0;k<n;k++)m.s.push({v:k===win?'10mm':pick(o),c:k%m.cols,r:Math.floor(k/m.cols),ro:rnd(-.5,.5),bad:false})},
+  pos(m,q){const cw=Math.min(118,(W-30)/m.cols),ch=Math.min(104,(H-210)/m.rows);return[W/2+(q.c-(m.cols-1)/2)*cw,140+ch*(q.r+.5),Math.min(cw,ch)*.42]},
+  upd(m){if(!click)return;for(const q of m.s){const[x,y,r]=MICRO.tenmm.pos(m,q);if(Math.hypot(click.x-x,click.y-y)<r+4){if(q.v==='10mm')mdone(true);else{m.t+=1;q.bad=true;sfx.red()}return}}},
+  draw(m){for(const q of m.s){const[x,y,r]=MICRO.tenmm.pos(m,q);g.fillStyle=q.bad?'#5a2530':'#aab4be';g.beginPath();g.arc(x,y,r,0,TAU);g.fill();g.fillStyle='#232c36';g.beginPath();g.arc(x,y,r*.68,0,TAU);g.fill();
+    g.save();g.translate(x,y);g.rotate(q.ro);em(q.v,0,0,r*.36);g.restore()}}},
+ park:{bg:'street',t:'PARK THE TRUCK',i:'Hit it to brake. Stop in the box. Mind the mailbox.',lim:7,
+  w:["Nailed it. Nobody saw. Of course nobody saw.","Perfect. The mailbox lives to see another day."],l:["The mailbox is in a better place now. The neighbor's yard.","That's technically parked. It's also technically a lawn."],
+  init(m){m.x=-80;m.v=W*.4+dq()*W*.012;m.tol=64-dq()*2;m.sx=Math.min(rnd(.5,.78)*W,W-m.tol-116);m.st=false;m.sl=0},
+  upd(m,dt){if(!m.st){m.x+=m.v*dt;if(pressed){m.st=true;m.sl=.25}else if(m.x>W+80)mdone(false)}else{m.sl-=dt;m.x+=m.v*dt*Math.max(0,m.sl)*2;if(m.sl<=0)mdone(Math.abs(m.x-m.sx)<m.tol)}},
+  draw(m){const y=H*.6;g.fillStyle='#1b2026';g.fillRect(0,y-16,W,96);g.strokeStyle='#f2d14b';g.lineWidth=4;g.setLineDash([10,8]);g.strokeRect(m.sx-m.tol-72,y-72,(m.tol+72)*2,88);g.setLineDash([]);em('📬',m.sx+m.tol+104,y-34,38);truck(m.x,y+14,1)}},
+ joist:{bg:'attic',t:'ATTIC WALK',i:'Step when your boot is over a joist. Not the drywall.',lim:11,
+  w:["Light on your feet for a guy carrying forty pounds of tools.","Made it. The ceiling remains a ceiling."],l:["You are now in the customer's living room. Feet first.","One leg through the drywall. Customer's kid waved at it."],
+  init(m){m.a=0;m.n=0;m.px=.5;m.w=1.5+dq()*.09;m.bw=.078-dq()*.002},
+  upd(m,dt){m.a+=dt*m.w;m.px=.5+.42*Math.sin(m.a);if(pressed){if([.2,.4,.6,.8].some(j=>Math.abs(j-m.px)<m.bw)){m.n++;sfx.click();if(m.n>=4)mdone(true)}else mdone(false)}},
+  draw(m){const y=H*.55,x0=W*.06,w=W*.88;g.fillStyle='#e8d9b0';g.fillRect(x0,y,w,70);g.fillStyle='#8a5a2b';for(const j of[.2,.4,.6,.8])g.fillRect(x0+w*(j-m.bw),y-8,w*m.bw*2,86);em('🥾',x0+w*m.px,y-34,42);em('Steps '+m.n+' / 4',W/2,H-60,18,'#93a3b5')}},
+ slots:{sp:1,bg:'store',t:'GAS STATION LUNCH',i:'Hit it to stop each reel. Match some or regret everything.',lim:20,w:[''],l:[''],
+  init(m){m.r=[0,1,2].map(()=>({p:rnd(0,6),s:-1}));m.k=0;m.f=['🌭','🍕','🌯','🥚','🍩','🥤']},
+  upd(m,dt){for(const r of m.r)if(r.s<0)r.p=(r.p+dt*(9+dq()*.4))%6;
+    if(pressed||m.t>5+m.k*2){const r=m.r[m.k];r.s=Math.floor(r.p);sfx.click();m.k++;
+      if(m.k>=3){const[a,b,c]=m.r.map(r=>r.s);if(a===b&&b===c){m.q='Three of a kind. The roller dogs are FRESH today. Miracle.';mdone(true)}
+        else if(a===b||b===c||a===c){m.q='Two out of three. Edible. Barely. You have had worse. Yesterday.';mdone(true)}
+        else{m.q='A hot dog, an egg, and regret. You will feel this at two o\'clock.';mdone(false)}}}},
+  draw(m){const sz=Math.min(140,W*.26);m.r.forEach((r,i)=>{const x=W/2+(i-1)*(sz+14);g.fillStyle='#f4f1e6';g.fillRect(x-sz/2,H/2-sz/2,sz,sz);g.strokeStyle=r.s>=0?'#7dffa0':'#ff8a1f';g.lineWidth=4;g.strokeRect(x-sz/2,H/2-sz/2,sz,sz);em(m.f[Math.floor(r.p)%6],x,H/2+4,sz*.6)})}},
+ filter:{bg:'wall',t:'PULL THE FILTER',i:'HOLD to pull. Let go in the green. Do not breathe in.',lim:8,
+  w:["Clean pull. That filter was installed during a different presidency.","Out in one piece. It's gray. It's supposed to be white."],l:["Let go too early. It's wedged in there sideways now.","Half came out. The other half is the house's problem."],
+  init(m){m.v=0;m.go=false},
+  upd(m,dt){if(down){m.go=true;m.v+=dt*(.5+dq()*.03);if(m.v>=1){m.q='It disintegrated. Into your mouth. Twenty years of dog.';mdone(false)}}else if(m.go)mdone(m.v>=.8&&m.v<=.95)},
+  draw(m){const h=Math.min(360,H-260),x=W/2-70,y=(H-h)/2+30;g.fillStyle='#232c36';g.fillRect(x,y,140,h);g.fillStyle='#1f8f45';g.fillRect(x,y+h*.05,140,h*.15);g.fillStyle='#8f1f2c';g.fillRect(x,y,140,h*.05);
+    g.fillStyle='#6b6257';g.fillRect(x+16,y+h*(1-m.v),108,Math.max(8,h*m.v));g.strokeStyle='#3a342c';g.lineWidth=2;for(let k=1;k<8;k++){g.beginPath();g.moveTo(x+16+k*13.5,y+h*(1-m.v));g.lineTo(x+16+k*13.5,y+h);g.stroke()}em(m.v>.5?'🤢':'😐',W/2+130,y+h/2,46)}},
+ stat:{bg:'wall',t:'THERMOSTAT WAR',i:'Somebody keeps cranking it down. Tap it back to 72 and hold the line.',lim:10,
+  w:["72 and holding. You taped a note to it. In caps.","Victory. She's already eyeing it again."],l:["It's 60 in here. It's 60 forever. She won.","You lost a thermostat war to a woman in a cardigan."],
+  init(m){m.v=62;m.sb=1.4;m.ok=0;m.fl=0},
+  upd(m,dt){if(pressed){m.v=Math.min(72,m.v+2);sfx.click()}m.fl=Math.max(0,m.fl-dt);m.sb-=dt;if(m.sb<=0){m.sb=rnd(1.4,2.2)-dq()*.04;m.v=Math.max(60,m.v-4-ri(3)*2);m.fl=.5;sfx.red()}
+    if(m.v>=72){m.ok+=dt;if(m.ok>=2.5)mdone(true)}},
+  draw(m){const r=Math.min(130,W*.26);g.fillStyle='#e9eef2';g.beginPath();g.arc(W/2,H/2,r,0,TAU);g.fill();g.fillStyle='#10161e';g.beginPath();g.arc(W/2,H/2,r*.8,0,TAU);g.fill();em(m.v+'°',W/2,H/2,r*.7,m.v>=72?'#7dffa0':'#4fe3ff');
+    if(m.fl>0)em('🧓 "I\'M HOT"',W/2,H/2-r-34,24,'#ff5468');pbar(m.ok/2.5,'#7dffa0')}},
+ breaker:{bg:'garage',t:'WHICH BREAKER?',i:'Nothing is labeled. Flip them until the unit shuts off.',lim:10,
+  w:["Found it. You labeled it. In pen. Like a hero.","Unit's off. Only took out half the house getting there."],l:["You gave up and killed the main. Every clock in the house is blinking 12:00."],
+  init(m){m.b=[];for(let k=0;k<12;k++)m.b.push(false);m.tg=ri(12);m.msg=''},
+  pos(k){const rh=Math.min(58,(H-300)/6);return[W/2+(k%2?78:-78),170+rh*(Math.floor(k/2)+.5),rh]},
+  upd(m){if(!click)return;for(let k=0;k<12;k++){const[x,y,rh]=MICRO.breaker.pos(k);if(Math.abs(click.x-x)<70&&Math.abs(click.y-y)<rh/2){if(m.b[k])return;m.b[k]=true;sfx.click();if(k===m.tg)mdone(true);else{m.msg=pick(BRK);sfx.red()}return}}},
+  draw(m){const rh=MICRO.breaker.pos(0)[2];g.fillStyle='#59626c';g.fillRect(W/2-170,150,340,rh*6+40);g.fillStyle='#39424c';g.fillRect(W/2-158,162,316,rh*6+16);
+    for(let k=0;k<12;k++){const[x,y]=MICRO.breaker.pos(k);g.fillStyle='#10161e';g.fillRect(x-64,y-rh/2+5,128,rh-10);g.fillStyle=m.b[k]?'#ff5468':'#c9d2da';g.fillRect(x+(m.b[k]?(k%2?22:-54):(k%2?-54:22)),y-rh/2+11,32,rh-22)}
+    wrap(m.msg,W/2,170+rh*6+62,Math.min(W-40,560),24,Math.min(19,W*.042),'#ffd84a')}},
+ tape:{bg:'garage',t:'MEASURE TWICE',i:'Hit it when the tape reads the number. You get one cut.',lim:9,
+  w:["Dead on. Cut once. Somewhere a carpenter felt a chill.","Perfect. Did not even need the board stretcher."],l:["Cut it short. Again. Send the new guy to the truck for the board stretcher.","Off by an inch. An inch is a mile in sheet metal."],
+  init(m){m.v=0;m.tg=rnd(.45,.9)},
+  upd(m,dt){m.v+=dt*(.27+dq()*.012);if(pressed)mdone(Math.abs(m.v-m.tg)<.024);else if(m.v>=1)mdone(false)},
+  draw(m){const x0=40,w=W-80,y=H*.56;g.fillStyle='#8a5a2b';g.fillRect(x0,y+34,w,60);g.fillStyle='#f2d14b';g.fillRect(x0,y,w*m.v,30);g.fillStyle='#1a1a1a';for(let k=0;k<=72*m.v;k++)g.fillRect(x0+w*k/72,y,k%12?1:3,k%12?(k%6?8:14):30);
+    g.fillStyle='#ff5468';g.fillRect(x0+w*m.tg-2,y-16,4,126);em('CUT AT '+(m.tg*72).toFixed(1)+'"',W/2,y-110,Math.min(40,W*.08),'#ff5468');em((m.v*72).toFixed(1)+'"',W/2,y-58,Math.min(34,W*.07))}},
+ coffee:{sp:1,bg:'wall',t:'POUR THE COFFEE',i:'HOLD to pour. Stop between the lines. This decides your whole day.',lim:8,
+  w:["Perfect cup. The clock fears you today.","Black, hot, and full. Unlike the new guy."],l:["Half a cup. You'll be half a person till ten.","Not enough coffee. The day wins round one."],
+  init(m){m.v=0;m.go=false},
+  upd(m,dt){if(down){m.go=true;m.v+=dt*.5;if(m.v>=1){m.q='Overflowed. It is in your lap. It is very hot in your lap.';mdone(false)}}else if(m.go)mdone(m.v>=.75&&m.v<=.95)},
+  draw(m){const w=Math.min(190,W*.4),h=w*1.15,x=W/2-w/2,y=H/2-h/2+30;g.fillStyle='#e9eef2';g.fillRect(x-8,y-8,w+16,h+16);g.fillRect(x+w+8,y+h*.25,w*.22,h*.4);g.fillStyle='#10161e';g.fillRect(x,y,w,h);g.fillRect(x+w+8,y+h*.32,w*.12,h*.26);
+    g.fillStyle='#3a2414';g.fillRect(x,y+h*(1-m.v),w,h*m.v);g.fillStyle='#7dffa0';g.fillRect(x-14,y+h*.25,w+28,3);g.fillRect(x-14,y+h*.05,w+28,3);
+    if(down&&m.ph==='play'){g.fillStyle='#3a2414';g.fillRect(W/2-6,60,12,y+h*(1-m.v)-60)}}},
+ smore:{sp:1,bg:'camp',t:'ROAST IT',i:'HOLD it over the fire. Pull it when it is golden. Not before. Not after.',lim:10,
+  w:["Golden. Perfect. You'd like to see a line set do THAT.","Textbook. You ate it in one bite like an animal."],l:["Raw. You ate it anyway. Nobody's judging. The raccoon is judging."],
+  init(m){m.v=0;m.go=false},
+  upd(m,dt){if(down){m.go=true;m.v+=dt*.4;if(m.v>=1){m.q='It is on fire. You are waving it around. Now the tent is involved.';mdone(false)}}else if(m.go)mdone(m.v>=.68&&m.v<=.9)},
+  draw(m){const[fx,fy]=campFire(),on=down&&m.ph==='play',x=fx+(on?0:120),y=fy-(on?74:110),v=m.v,c=v<.68?'rgb('+Math.round(250-v*60)+','+Math.round(245-v*110)+','+Math.round(235-v*200)+')':v<.9?'#d9a14e':'#2a1a10';
+    g.strokeStyle='#6b4a2a';g.lineWidth=5;g.beginPath();g.moveTo(x+170,y+90);g.lineTo(x,y);g.stroke();g.fillStyle=c;g.fillRect(x-17,y-14,34,28);if(v>=.9&&on)em('🔥',x,y-22,30);pbar(m.v,v<.68?'#e9eef2':v<.9?'#d9a14e':'#ff5468')}},
+ petdog:{sp:1,bg:'yard',t:'PET THE DOG',i:'No timer trick. No catch. Just pet the dog.',lim:7,w:["Good boy. Best part of the day, no contest.","He leaned on your leg. You would die for him now."],l:[''],
+  init(m){m.n=0},upd(m){if(pressed){m.n++;tone('sine',500+m.n*12,700+m.n*12,.1,.04);floater('❤️',W/2+rnd(-90,90),H/2-60,'#ff5468')}if(m.t>=6.7)mdone(true)},
+  draw(m){em('🐕',W/2+Math.sin(T*14)*(pressed?10:3),H/2+10,Math.min(170,W*.36));em('Pets: '+m.n,W/2,H-60,20)}}
+};
+const BG={
+ yard(){const y=H*.6,k=g.createLinearGradient(0,0,0,y);k.addColorStop(0,'#1c3550');k.addColorStop(1,'#56789a');g.fillStyle=k;g.fillRect(0,0,W,y);g.fillStyle='#8f9488';for(let x=0;x<W;x+=34){g.fillRect(x+4,y-62,22,62)}g.fillRect(0,y-40,W,7);g.fillStyle='#1f3a24';g.fillRect(0,y,W,H-y);g.fillStyle='#27492d';for(let i=0;i<40;i++)g.fillRect((i*197)%W,y+((i*89)%(H-y)),14,3)},
+ street(){const y=H*.6-16,k=g.createLinearGradient(0,0,0,y);k.addColorStop(0,'#1c3550');k.addColorStop(1,'#56789a');g.fillStyle=k;g.fillRect(0,0,W,y);g.fillStyle='#22384a';for(let i=0;i<5;i++){const x=i*W/5+20;g.fillRect(x,y-110,W/5-50,110);g.beginPath();g.moveTo(x-12,y-110);g.lineTo(x+(W/5-50)/2,y-160);g.lineTo(x+W/5-38,y-110);g.fill()}g.fillStyle='#1f3a24';g.fillRect(0,y+96,W,H-y)},
+ house(){g.fillStyle='#31465a';g.fillRect(0,0,W,H);g.strokeStyle='rgba(0,0,0,.18)';g.lineWidth=2;g.beginPath();for(let y=130;y<H;y+=26){g.moveTo(0,y);g.lineTo(W,y)}g.stroke();g.fillStyle='#8a97a5';g.fillRect(W*.82,60,8,H);g.fillRect(W*.82+70,60,8,H);for(let y=120;y<H;y+=46)g.fillRect(W*.82,y,78,6)},
+ attic(){g.fillStyle='#2a1d12';g.fillRect(0,0,W,H);g.strokeStyle='#4a321c';g.lineWidth=14;g.beginPath();for(let x=-H;x<W;x+=150){g.moveTo(x,H*.5);g.lineTo(x+H*.45,56)}g.stroke();g.fillStyle='#9c5f6e';g.fillRect(0,H*.55+70,W,H);g.fillStyle='#b4707f';for(let i=0;i<50;i++){g.beginPath();g.arc((i*173)%W,H*.55+84+((i*61)%50),22,0,TAU);g.fill()}},
+ garage(){g.fillStyle='#1a2028';g.fillRect(0,0,W,H);g.fillStyle='#252d38';for(let y=130;y<H*.8;y+=26)for(let x=14;x<W;x+=26)g.fillRect(x,y,3,3);g.fillStyle='#3a2a1c';g.fillRect(0,H*.84,W,H*.16);g.fillStyle='#4a3626';g.fillRect(0,H*.84,W,8)},
+ store(){g.fillStyle='#232830';g.fillRect(0,0,W,H);g.fillStyle='#2c323c';for(let y=140;y<H*.5;y+=70)g.fillRect(0,y,W,8);const y0=H*.74;for(let x=0;x<W;x+=48)for(let y=y0;y<H;y+=48){g.fillStyle=((x+y-y0)/48)%2<1?'#3a404a':'#2a2f37';g.fillRect(x,y,48,48)}},
+ wall(){g.fillStyle='#2c3340';g.fillRect(0,0,W,H);g.fillStyle='#222834';g.fillRect(0,H*.72,W,H*.28);g.fillStyle='#3a4352';g.fillRect(0,H*.72,W,8)},
+ camp(){camp()}
+};
+const FX=[],FL=[];let fade=0,lastScene='',star=0;
+function confetti(x,y,n,cols){for(let i=0;i<n;i++){const a=rnd(0,TAU),v=rnd(120,560);FX.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-220,l:rnd(.7,1.4),c:pick(cols||['#ff8a1f','#4fe3ff','#7dffa0','#ffd84a','#ff5468']),s:rnd(4,8),r:rnd(0,TAU)})}if(FX.length>600)FX.splice(0,FX.length-600)}
+function floater(t,x,y,c){FL.push({t,x,y,l:1.4,c});if(FL.length>12)FL.shift()}
+function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const p=FX[i];p.vy+=900*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.r+=dt*9;p.l-=dt;if(p.l<=0){FX.splice(i,1);continue}
+    g.globalAlpha=Math.min(1,p.l*2);g.fillStyle=p.c;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);g.restore()}
+  for(let i=FL.length-1;i>=0;i--){const f=FL[i];f.y-=36*dt;f.l-=dt;if(f.l<=0){FL.splice(i,1);continue}g.globalAlpha=Math.min(1,f.l*1.6);em(f.t,f.x,f.y,18,f.c)}
+  g.globalAlpha=1;if(S.scene!==lastScene){lastScene=S.scene;fade=.28}if(fade>0){fade-=dt;g.fillStyle='rgba(6,9,13,'+clamp(fade/.28,0,1)+')';g.fillRect(0,0,W,H)}}
+function campFire(){const wide=W>900;return[wide?W*.36:W*.58,H*.62+46]}
+/* secrets */
+const KON=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];let kbuf=[],tbuf='';
+window.addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();kbuf.push(k);if(kbuf.length>10)kbuf.shift();
+  if(kbuf.length===10&&kbuf.every((x,i)=>x===KON[i])){kbuf=[];S.smacks+=3;unlock('konami');toast('BIG WRENCH ENERGY. +3 smacks.')}
+  if(k.length===1){tbuf=(tbuf+k).slice(-4);if(tbuf==='10mm'){tbuf='';unlock('pocket');toast('It was in your pocket the whole time.')}}});
+function startMicro(kind,cb,free,lbl){S.scene='micro';M={kind,t:0,ph:'intro',intro:1.7,cb,free:!!free,lbl:lbl||'',won:false,q:'',dn:0,rw:0};MICRO[kind].init(M)}
+function mdone(w){const m=M;if(!m||m.ph!=='play')return;m.ph='done';m.won=w;m.dn=2.6;const d=MICRO[m.kind];if(!m.q)m.q=pick(w?d.w:d.l);
+  if(w){m.rw=60+dq()*6;gain(m.rw);S.micros++;sfx.win();confetti(W/2,H/2,50);if(m.kind==='tenmm')unlock('tenmm');if(m.kind==='petdog')unlock('goodboy')}
+  else{sfx.lose();if(++S.mlost>=10)unlock('shit');if(!m.free){if(m.kind==='slots'&&S.today.tums){m.nopen=true;toast('Antacids. Your stomach filed a complaint and it was denied.')}else if(S.today.vit){S.today.vit=0;m.nopen=true;toast('Vitamin I kicked in. No time lost.')}else S.min=Math.min(599,S.min+(U.luck?5:10))}}}
+function updMicro(dt){const m=M,d=MICRO[m.kind];
+  if(m.ph==='intro'){m.intro-=dt;if(m.intro<=0)m.ph='play'}
+  else if(m.ph==='play'){m.t+=dt;d.upd(m,dt);if(m.ph==='play'&&m.t>=d.lim)mdone(false)}
+  else{m.dn-=dt;if(m.dn<=0||(pressed&&m.dn<1.9)){const cb=m.cb;cb(m.won)}}}
+function drawMicro(){const m=M,d=MICRO[m.kind];g.fillStyle='#10161e';g.fillRect(0,0,W,H);
+  if(m.ph==='intro'){em('RANDOM BULLSHIT',W/2,H*.3,14,'#ff8a1f');em(d.t,W/2,H*.4,Math.min(46,W*.075));wrap(d.i,W/2,H*.52,Math.min(W-40,620),26,Math.min(19,W*.042),'#93a3b5');return}
+  if(BG[d.bg])BG[d.bg]();d.draw(m);g.fillStyle='rgba(6,9,13,.6)';g.fillRect(0,55,W,68);em(d.t,W/2,76,Math.min(16,W*.036),'#ff8a1f');wrap(d.i,W/2,101,W-16,14,Math.max(11,Math.min(13,W*.03)),'#eef3f7');g.fillStyle='#ff8a1f';g.fillRect(0,50,W*clamp(1-m.t/d.lim,0,1),5);
+  if(m.ph==='done'){g.fillStyle='rgba(6,9,13,.82)';g.fillRect(0,H/2-100,W,200);em(m.won?'NAILED IT':'WELL, SHIT',W/2,H/2-56,Math.min(46,W*.09),m.won?'#7dffa0':'#ff5468');
+    wrap(m.q,W/2,H/2+4,Math.min(W-40,640),25,Math.min(18,W*.04));em(m.won?'+'+m.rw+' REP':m.free||m.nopen?'':'+'+(U.luck?5:10)+' MIN ON THE CLOCK',W/2,H/2+70,15,'#ff8a1f')}}
+
+/* ---------- game night ---------- */
+function startGame(){S.scene='game';G={t:45,x:W/2,y:H/2,hp:3,inv:0,b:[],e:[],pt:[],k:0,rep:0,sp:.5,ft:0,aim:0,over:0,win:false}}
+function endGame(){S.scene='gameend';const q=G;saveBest();
+  dialog({kick:'GAME NIGHT',title:q.win?'Extracted':'Squad wiped',html:'<div class="row"><span>Kills</span><span>'+q.k+'</span></div><div class="row"><span>Rep</span><span>+'+q.rep+'</span></div>'+
+    (q.win?'<p><b>Held the line the full 45 seconds.</b></p>':'<p>Three hits and you are out. Keep moving and do not get boxed in.</p>'),
+    btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
+function updGame(dt){const q=G;for(let i=q.pt.length-1;i>=0;i--){const o=q.pt[i];o.x+=o.vx*dt;o.y+=o.vy*dt;o.l-=dt;if(o.l<=0)q.pt.splice(i,1)}
+  if(q.over){q.over+=dt;if(q.over>1.8)endGame();return}
+  q.t-=dt;q.inv=Math.max(0,q.inv-dt);const dif=day().diff;
+  let vx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),vy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);
+  if(touch&&down){const dx=mx-q.x,dy=my-q.y,d=Math.hypot(dx,dy);if(d>14){vx=dx/d;vy=dy/d}}
+  const l=Math.hypot(vx,vy)||1;q.x=clamp(q.x+vx/l*270*dt,14,W-14);q.y=clamp(q.y+vy/l*270*dt,66,H-14);
+  let near=null,nd=1e9;for(const e of q.e){const d=Math.hypot(e.x-q.x,e.y-q.y);if(d<nd){nd=d;near=e}}
+  if(touch){if(near)q.aim=Math.atan2(near.y-q.y,near.x-q.x)}else q.aim=Math.atan2(my-q.y,mx-q.x);
+  q.ft-=dt;if(q.ft<=0&&(!touch||near)){q.ft=.13;q.b.push({x:q.x,y:q.y,vx:Math.cos(q.aim)*720,vy:Math.sin(q.aim)*720,l:1});tone('square',600,220,.05,.012)}
+  q.sp-=dt;if(q.sp<=0){q.sp=Math.max(.2,.85-dif*.035-(45-q.t)*.008);const sd=ri(4),big=Math.random()<.15;
+    q.e.push({x:sd===0?-20:sd===1?W+20:rnd(0,W),y:sd===2?46:sd===3?H+20:rnd(60,H),hp:big?4:1,r:big?18:11,big,v:(big?55:85)+dif*6+rnd(0,25),fl:0})}
+  for(let i=q.b.length-1;i>=0;i--){const b=q.b[i];b.x+=b.vx*dt;b.y+=b.vy*dt;b.l-=dt;let gone=b.l<=0||b.x<0||b.x>W||b.y<50||b.y>H;
+    if(!gone)for(const e of q.e){if(e.hp>0&&Math.hypot(e.x-b.x,e.y-b.y)<e.r+4){e.hp--;e.fl=.08;gone=true;
+      if(e.hp<=0){q.k++;const r=e.big?15:5;q.rep+=r;gain(r);for(let k=0;k<10;k++){const a=rnd(0,TAU),v=rnd(60,260);q.pt.push({x:e.x,y:e.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:rnd(.2,.5)})}}break}}
+    if(gone)q.b.splice(i,1)}
+  for(let i=q.e.length-1;i>=0;i--){const e=q.e[i];if(e.hp<=0){q.e.splice(i,1);continue}e.fl=Math.max(0,e.fl-dt);const dx=q.x-e.x,dy=q.y-e.y,d=Math.hypot(dx,dy)||1;e.x+=dx/d*e.v*dt;e.y+=dy/d*e.v*dt;
+    if(d<e.r+12&&q.inv<=0){q.hp--;q.inv=1.1;sfx.red();if(q.hp<=0){q.over=.01;q.win=false;sfx.lose();return}}}
+  if(q.t<=0){q.t=0;q.win=true;q.over=.01;const r=150+dif*30;q.rep+=r;gain(r);S.extracts++;sfx.win();unlock('extract');confetti(W/2,H/2,80)}}
+function drawGame(){const q=G;g.fillStyle='#080c14';g.fillRect(0,0,W,H);g.strokeStyle='rgba(79,227,255,.08)';g.lineWidth=1;g.beginPath();
+  for(let x=0;x<W;x+=48){g.moveTo(x,50);g.lineTo(x,H)}for(let y=50;y<H;y+=48){g.moveTo(0,y);g.lineTo(W,y)}g.stroke();
+  g.fillStyle='#ffb13d';for(const o of q.pt)g.fillRect(o.x-1.5,o.y-1.5,3,3);
+  for(const e of q.e){g.fillStyle=e.fl>0?'#fff':e.big?'#ff8a1f':'#ff5468';g.beginPath();const n=e.big?6:3,ro=Math.atan2(q.y-e.y,q.x-e.x);
+    for(let k=0;k<n;k++){const a=ro+k/n*TAU;k?g.lineTo(e.x+Math.cos(a)*e.r,e.y+Math.sin(a)*e.r):g.moveTo(e.x+Math.cos(a)*e.r,e.y+Math.sin(a)*e.r)}g.fill()}
+  g.strokeStyle='#aef9ff';g.lineWidth=3;g.beginPath();for(const b of q.b){g.moveTo(b.x,b.y);g.lineTo(b.x-b.vx*.02,b.y-b.vy*.02)}g.stroke();
+  if(q.hp>0){g.globalAlpha=q.inv>0?.5+.4*Math.sin(T*40):1;g.save();g.translate(q.x,q.y);g.rotate(q.aim);g.fillStyle='#0a1622';g.strokeStyle='#4fe3ff';g.lineWidth=2.5;
+    g.beginPath();g.moveTo(16,0);g.lineTo(-10,-11);g.lineTo(-5,0);g.lineTo(-10,11);g.closePath();g.fill();g.stroke();g.restore();g.globalAlpha=1}
+  for(let i=0;i<3;i++){g.fillStyle=i<q.hp?'#ff5468':'#2a3848';g.fillRect(16+i*26,62,20,8)}
+  g.textAlign='center';g.textBaseline='middle';
+  if(q.over){g.font=F0(Math.min(54,W*.09));g.fillStyle=q.win?'#7dffa0':'#ff5468';g.fillText(q.win?'EXTRACTED':'SQUAD WIPED',W/2,H/2)}
+  else if(q.t>41){g.font=F0(Math.min(18,W*.04),500);g.fillStyle='#eef3f7';g.fillText(touch?'Drag to move. It fires on its own.':'WASD to move, mouse to aim. It fires on its own. Survive 45 seconds.',W/2,H*.82)}}
+
+/* ---------- backdrops ---------- */
+function backdrop(){const k=clamp(S.min/600,0,1),dawn=k<.12,dusk=k>.9,sk=g.createLinearGradient(0,0,0,H);sk.addColorStop(0,dawn||dusk?'#1a2440':'#1d4468');sk.addColorStop(1,dawn?'#c9744a':dusk?'#d98a5a':'#7fb0cf');g.fillStyle=sk;g.fillRect(0,0,W,H);
+  const gy=H*.74;g.fillStyle='#16212c';for(let i=0;i<9;i++){const bw=W/9,hh=70+(i*53%80);g.fillRect(i*bw+6,gy-hh,bw-12,hh)}
+  g.fillStyle='#1c2733';g.fillRect(W*.56,gy-170,W*.34,170);g.fillStyle='#ff8a1f';g.fillRect(W*.56,gy-170,W*.34,9);g.fillStyle='#0b1016';g.fillRect(W*.6,gy-110,W*.1,110);g.fillRect(W*.74,gy-110,W*.1,110);
+  g.fillStyle='#1b2026';g.fillRect(0,gy,W,H-gy);g.fillStyle='#f2d14b';for(let x=20;x<W;x+=140)g.fillRect(x,gy+(H-gy)*.6,70,5);truck(W*.2,gy+52,Math.min(1.7,W/460))}
+function camp(){const sk=g.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#050a18');sk.addColorStop(1,'#111d33');g.fillStyle=sk;g.fillRect(0,0,W,H);
+  for(let i=0;i<140;i++){const hx=Math.sin(i*12.9898)*43758.5453,hy=Math.sin(i*78.233)*12543.137,x=(hx-Math.floor(hx))*W,y=(hy-Math.floor(hy))*H*.6;g.globalAlpha=.4+.6*Math.abs(Math.sin(T*.8+i));g.fillStyle='#fff';g.fillRect(x,y,i%7?1.4:2.4,i%7?1.4:2.4)}g.globalAlpha=1;
+  const mnx=W>900?W*.46:W*.8;g.fillStyle='#f3f0df';g.beginPath();g.arc(mnx,H*.16,26,0,TAU);g.fill();g.fillStyle='#07101f';g.beginPath();g.arc(mnx+11,H*.16-5,23,0,TAU);g.fill();
+  if(star>0){star-=1/60;const q=1-star/1.4;g.strokeStyle='rgba(255,255,255,'+(1-q)+')';g.lineWidth=3;g.beginPath();g.moveTo(W*(.1+q*.5),H*(.08+q*.2));g.lineTo(W*(.1+q*.5)-90,H*(.08+q*.2)-36);g.stroke()}
+  const gy=H*.62;g.fillStyle='#07100c';g.beginPath();g.moveTo(0,gy);for(let x=0;x<=W;x+=24)g.lineTo(x,gy-30-(x*37%50)-Math.sin(x*.02)*20);g.lineTo(W,gy);g.fill();g.fillRect(0,gy,W,H-gy);
+  const tx=W>900?W*.16:W*.3,ty=gy+40;g.fillStyle='#24384a';g.beginPath();g.moveTo(tx-90,ty);g.lineTo(tx,ty-90);g.lineTo(tx+90,ty);g.fill();g.fillStyle='#0d1822';g.beginPath();g.moveTo(tx-18,ty);g.lineTo(tx,ty-52);g.lineTo(tx+18,ty);g.fill();
+  const fx=campFire()[0],fy=gy+46,gl=g.createRadialGradient(fx,fy,4,fx,fy,190);gl.addColorStop(0,'rgba(255,150,50,.45)');gl.addColorStop(1,'rgba(255,150,50,0)');g.fillStyle=gl;g.fillRect(fx-200,fy-200,400,400);
+  g.strokeStyle='#3a2414';g.lineWidth=9;g.lineCap='round';g.beginPath();g.moveTo(fx-30,fy+6);g.lineTo(fx+30,fy-4);g.moveTo(fx-30,fy-4);g.lineTo(fx+30,fy+6);g.stroke();g.lineCap='butt';
+  for(let i=0;i<5;i++){const a=T*6+i*1.7,h=34+Math.sin(a)*12-i*4;g.fillStyle=['#ff5a1f','#ff8a1f','#ffb13d','#ffd84a','#fff3b0'][i];g.beginPath();g.moveTo(fx-20+i*4,fy);g.quadraticCurveTo(fx+Math.sin(a*.7)*10,fy-h*1.7,fx+20-i*4,fy);g.fill()}
+  for(let i=0;i<8;i++){const q=(T*.5+i/8)%1;g.globalAlpha=1-q;g.fillStyle='#ffb13d';g.fillRect(fx+Math.sin(i*3+T)*26*q,fy-40-q*130,2,2)}g.globalAlpha=1}
+function hud(){const d=day();g.fillStyle='rgba(6,9,13,.85)';g.fillRect(0,0,W,48);g.fillStyle='#ff8a1f';g.fillRect(0,48,W,2);g.textBaseline='middle';
+  g.font=F0(13);g.textAlign='left';g.fillStyle='#93a3b5';g.fillText(W>640?'ALPINE0_0  ·  WK '+S.week+'  ·  '+d.nm+'  ·  DIFFICULTY '+d.diff:d.nm.slice(0,3)+'  ·  D'+d.diff,14,25);
+  g.textAlign='center';g.font=F0(22);g.fillStyle=S.min>510?'#ff5468':'#eef3f7';g.fillText(S.scene==='fish'?Math.ceil(F.t)+'s  ·  '+F.total.toFixed(1)+' / '+F.limit+' LB':S.scene==='game'?Math.ceil(G.t)+'s  ·  '+G.k+' KILLS':S.scene==='micro'&&M.lbl?M.lbl:S.scene==='drag'&&D.race?'ROUND '+(S.strip.round+1)+' OF 3':clockStr(S.min),W/2,25);
+  g.textAlign='right';g.font=F0(16);g.fillStyle='#ff8a1f';g.fillText(S.rep.toLocaleString()+' REP',W-14,25);
+  if(S.scene==='fish'){g.fillStyle=F.hit?'#7dffa0':'#4fe3ff';g.fillRect(0,48,W*clamp(F.total/F.limit,0,1),2)}
+  else if(S.scene==='game'){g.fillStyle='#4fe3ff';g.fillRect(0,48,W*clamp(1-G.t/45,0,1),2)}
+  else if(!(S.scene==='drag'&&D.race)){g.fillStyle='#ff8a1f';g.fillRect(0,48,W*clamp(S.min/600,0,1),2);g.fillStyle='#2a3848';g.fillRect(W*clamp(S.min/600,0,1),48,W,2)}}
+
+/* ---------- input / loop ---------- */
+window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k===' '||k==='enter'){e.preventDefault();if(dlgOpen){if(!e.repeat)closeDlg();return}if(!e.repeat){down=true;pressed=true}}
+  if(k==='m')muted=!muted;if(k==='h'&&S.scene==='puzzle'&&!dlgOpen)smack()});
+window.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')down=false;keys[e.key.toLowerCase()]=false});
+window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if(k.startsWith('arrow'))e.preventDefault()});
+cv.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
+cv.addEventListener('pointerdown',e=>{e.preventDefault();mx=e.clientX;my=e.clientY;touch=e.pointerType==='touch';down=true;pressed=true;click={x:e.clientX,y:e.clientY,b:e.button}});
+window.addEventListener('pointerup',()=>{down=false});window.addEventListener('blur',()=>{down=false;for(const k in keys)keys[k]=false});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+let last=0;
+function frame(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;T+=dt;
+  if(!dlgOpen){if(S.scene==='drag')updDrag(dt);else if(S.scene==='puzzle')updPuzzle(dt);else if(S.scene==='fish')updFish(dt);else if(S.scene==='game')updGame(dt);else if(S.scene==='micro')updMicro(dt)}
+  if(S.scene==='weekend'&&click&&Math.hypot(click.x-(W>900?W*.46:W*.8),click.y-H*.16)<50&&++S.moon===3){star=1.4;unlock('wish');toast('The moon heard you. It is thinking about it.')}
+  pressed=false;click=null;
+  g.setTransform(DPR,0,0,DPR,0,0);
+  if(S.scene==='drag'&&D){drawDrag();hud()}else if(S.scene==='puzzle'&&P){drawPuzzle();hud()}else if((S.scene==='fish'||S.scene==='fishend')&&F){drawFish();if(S.scene==='fish')hud()}
+  else if((S.scene==='game'||S.scene==='gameend')&&G){drawGame();if(S.scene==='game')hud()}
+  else if(S.scene==='micro'&&M){drawMicro();hud()}
+  else if(S.scene==='weekend')camp();else backdrop();
+  drawFX(dt);
+  requestAnimationFrame(frame)}
+title();requestAnimationFrame(frame);
+void {S,get P(){return P},get D(){return D},get F(){return F},get open(){return dlgOpen},close:closeDlg,get T(){return T},get G(){return G},get M(){return M},mdone,U,buy,unlock,ACHV,shopIds:CNT.concat(JNK).map(x=>x.id),go:{payday(){S.rep=4200;payday(()=>radio())},shop(){S.cash=1500;shop(()=>radio())},ach:achScreen,title,job(k){job={town:'Dacula',nm:'Test',ds:'',kind:k};startJob()},micro(k){startMicro(k,()=>radio())},fish:startFish,game:startGame,strip:startStrip,weekend,endDay,radio,between,event(i){event(EVENTS[i])},garage:startGarage,drag:startDrag},keys,dl:()=>dl(),pl:()=>pl(),aim(x,y){mx=x;my=y},press(h){pressed=true;down=!!h},hold(v){down=v},
+  tap(x,y){click={x,y,b:0};pressed=true},lay:()=>lay(),smack};
+})();
+</script>
+</body>
+</html>
