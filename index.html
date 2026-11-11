@@ -46,11 +46,27 @@
   #btn2,#btn3,#btn4{display:none;margin-top:10px;font-family:inherit;font-weight:700;font-size:17px;letter-spacing:.12em;color:var(--ink);background:transparent;border:1px solid var(--or);border-radius:7px;padding:12px 26px;cursor:pointer;width:100%}
   #btn2.on,#btn3.on,#btn4.on{display:block}
   #btn2:hover,#btn2:focus-visible,#btn3:hover,#btn3:focus-visible,#btn4:hover,#btn4:focus-visible{background:rgba(255,138,31,.15);outline:none}
+  [hidden]{display:none!important}
+  #pauseButton{position:fixed;right:12px;top:58px;z-index:6;width:44px;height:44px;background:#121a24;color:#ff8a1f;border:1px solid #ff8a1f;border-radius:8px;font-size:23px;cursor:pointer}
+  #pausePanel{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(6,9,13,.88);padding:20px}
+  .pauseCard{width:100%;max-width:420px;background:#121a24;border:1px solid #2a3848;border-top:4px solid #ff8a1f;border-radius:10px;padding:24px}
+  .pauseCard h2{margin:0;color:#ff8a1f;font-size:30px}.pauseCard p{color:#93a3b5}
+  .pauseCard button{width:100%;min-height:48px;margin:8px 0;background:#ff8a1f;color:#1a0d00;font-family:inherit;font-weight:700;font-size:16px;border:0;border-radius:7px;cursor:pointer}
+  .pauseCard button:focus-visible,#pauseButton:focus-visible{outline:3px solid #4fe3ff;outline-offset:3px}
+  .setting{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid #2a3848}.setting input{accent-color:#ff8a1f;max-width:60%}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="toast"></div>
+<button id="pauseButton" aria-label="Pause and settings" hidden>Ⅱ</button>
+<div id="pausePanel" role="dialog" aria-modal="true" aria-labelledby="pauseTitle" hidden>
+ <div class="pauseCard"><h2 id="pauseTitle">PAUSED</h2><p>Your clock is stopped.</p>
+ <button id="resumeGame">RESUME</button>
+ <label class="setting"><span>Sound</span><input id="soundEnabled" type="checkbox" checked></label>
+ <label class="setting"><span>Volume</span><input id="soundVolume" type="range" min="0" max="100" value="70"></label>
+ <p id="saveStatus" role="status"></p><button id="saveQuit">SAVE &amp; QUIT TO TITLE</button></div>
+</div>
 <div id="ov"><div id="dlg"><div id="kick"></div><h1 id="ttl"></h1><div id="body"></div><button id="btn"></button><button id="btn2"></button><button id="btn3"></button><button id="btn4"></button></div></div>
 <script>
 (()=>{
@@ -64,9 +80,10 @@ window.addEventListener('resize',resize);resize();
 const F0=(s,w)=>(w||700)+' '+s+'px "Chakra Petch","Segoe UI",sans-serif';
 
 /* ---------- audio / storage ---------- */
-let ac=null,muted=false;
+let ac=null,muted=false,volume=.7,paused=false,ready=false,saveElapsed=0,lastDialog=null,returnFocus=null;
+try{const a=JSON.parse(localStorage.getItem('problemSolverSettings')||'null');if(a){muted=!!a.muted;volume=clamp(Number(a.volume)||0,0,1)}}catch(e){}
 function initAudio(){if(ac)return;try{const C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C()}catch(e){ac=null}}
-function tone(type,f0,f1,dur,vol,delay){if(!ac||muted)return;try{const t=ac.currentTime+(delay||0),o=ac.createOscillator(),v=ac.createGain();
+function tone(type,f0,f1,dur,vol,delay){if(!ac||muted||paused)return;vol*=volume;try{const t=ac.currentTime+(delay||0),o=ac.createOscillator(),v=ac.createGain();
   o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
   v.gain.setValueAtTime(vol,t);v.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(v);v.connect(ac.destination);o.start(t);o.stop(t+dur+.02)}catch(e){}}
 const sfx={click(){tone('square',420,300,.04,.03)},amber(){tone('sine',520,520,.12,.06)},green(){tone('sine',1040,1040,.3,.07)},
@@ -220,7 +237,35 @@ function nextToast(){const m=toastQ.shift();if(!m){toastBusy=false;return}toastB
 function unlock(id){if(ACHV.has(id))return;const a=ACH.find(x=>x[0]===id);if(!a)return;ACHV.add(id);try{localStorage.setItem('problemSolverAch',JSON.stringify([...ACHV]))}catch(e){}
   toast('🏆 '+(a[3]?'SECRET  ·  ':'')+a[1]+'  ·  '+a[2]);tone('triangle',784,784,.12,.06);tone('triangle',1175,1175,.3,.06,.12)}
 const KEEP=['week','day','rep','cash','streak','done','under','failed','perfects','lbs','limits','stripWins','extracts','micros','mlost','reds','seen','buff','junkN','wkStart'];
-function save(){try{const o={};for(const k of KEEP)o[k]=S[k];localStorage.setItem('problemSolverSave',JSON.stringify({S:o,U}))}catch(e){}}
+function callbackKey(fn){return fn?fn.resumeKey||fn.name:null}
+function action(id,data){const fn=value=>runAction(id,data,value);fn.resumeKey={id,data};return fn}
+function restoreCallback(key){if(!key)return null;if(typeof key==='object')return action(key.id,key.data);return CALLBACKS[key]||null}
+function runAction(id,data,value){
+ if(id==='coffee'){S.buzz=value;if(value)toast('Caffeinated. The clock runs 7% slower today.');radio()}
+ else if(id==='garage'){S.gar.w+=value?1:0;S.gar.i++;nextGar()}
+ else if(id==='event')evPick(data.opt,data.event);
+ else if(id==='shopDone'){save();restoreCallback(data)()}
+ else if(id==='openShop')shop(action('nextDay'));
+ else if(id==='nextDay'){if(S.day>=DAYS.length-1)weekend();else{S.day++;startDay()}}
+ else if(id==='nextWeek'){S.week++;S.day=0;S.done=0;S.under=0;S.failed=0;S.perfects=0;S.lbs=0;S.wkStart=S.rep;S.limits=0;S.stripWins=0;S.extracts=0;S.micros=0;if(S.week>=3)unlock('week3');startDay()}
+}
+function save(){if(!ready||S.scene==='title'||S.scene==='ach')return false;
+ try{const runtime={P,D,F,G,M:M?{...M,cb:callbackKey(M.cb)}:null,job,T,mx,my,touch,dialog:dlgOpen?lastDialog:null,shopNext:callbackKey(shopNext),shopMsg,shopFree};
+ localStorage.setItem('problemSolverSave',JSON.stringify({version:2,S,U,runtime},(_,v)=>ArrayBuffer.isView(v)?Array.from(v):v));return true}catch(e){return false}}
+function restoreGame(sv){
+ Object.assign(S,S0(),sv.S);S.day=clamp(S.day|0,0,4);Object.assign(U,sv.U||{});
+ if(sv.version!==2||!sv.runtime){startDay();return}
+ const r=sv.runtime;P=r.P;D=r.D;F=r.F;G=r.G;M=r.M;job=r.job;T=r.T||0;mx=r.mx||0;my=r.my||0;touch=!!r.touch;shopNext=restoreCallback(r.shopNext);shopMsg=r.shopMsg||'';shopFree=!!r.shopFree;
+ if(P&&P.kind==='line')P.on=Uint8Array.from(P.on);
+ if(M)M.cb=restoreCallback(M.cb);
+ if(r.dialog){const o={...r.dialog};for(const k of ['cb','cb2','cb3','cb4'])o[k]=restoreCallback(o[k]);dialog(o)}
+ clearInput();last=0;
+}
+function clearInput(){if(S.scene==='micro'&&M&&M.ph==='play'&&M.go&&['filter','coffee','smore'].includes(M.kind))M.awaitHold=true;down=false;pressed=false;click=null;for(const k in keys)keys[k]=false}
+function pauseGame(){if(paused||S.scene==='title'||S.scene==='ach')return;paused=true;clearInput();returnFocus=document.activeElement;$('pausePanel').hidden=false;$('soundEnabled').checked=!muted;$('soundVolume').value=Math.round(volume*100);$('saveStatus').textContent=save()?'Progress saved.':'Could not save. Keep this tab open to preserve progress.';$('resumeGame').focus()}
+function resumeGame(){paused=false;$('pausePanel').hidden=true;clearInput();last=0;if(returnFocus&&returnFocus.focus)returnFocus.focus()}
+function saveSettings(){try{localStorage.setItem('problemSolverSettings',JSON.stringify({muted,volume}))}catch(e){}}
+
 function loadSave(){try{return JSON.parse(localStorage.getItem('problemSolverSave')||'null')}catch(e){return null}}
 function fresh(){Object.assign(S,S0());for(const k in U)U[k]=0}
 let P=null,D=null,F=null,G=null,job=null,T=0,mx=0,my=0,touch=false;const keys={};
@@ -233,20 +278,20 @@ function clockStr(m){m=Math.min(600,Math.floor(m));let h=6+Math.floor(m/60),mm=m
 /* ---------- dialog ---------- */
 function dialog(o){$('kick').textContent=o.kick||'';$('ttl').textContent=o.title;$('body').innerHTML=o.html;$('btn').textContent=o.btn;
   $('btn2').textContent=o.btn2||'';$('btn2').className=o.btn2?'on':'';dlgCb2=o.cb2||null;$('btn3').textContent=o.btn3||'';$('btn3').className=o.btn3?'on':'';dlgCb3=o.cb3||null;$('btn4').textContent=o.btn4||'';$('btn4').className=o.btn4?'on':'';dlgCb4=o.cb4||null;
-  $('ov').className=o.low?'low':'';dlgOpen=true;dlgCb=o.cb;down=false;pressed=false}
-function closeDlg(alt){if(!dlgOpen)return;initAudio();if(ac&&ac.state==='suspended'){try{ac.resume()}catch(e){}}
+  $('ov').className=o.low?'low':'';dlgOpen=true;dlgCb=o.cb;down=false;pressed=false;lastDialog={...o};for(const k of ['cb','cb2','cb3','cb4'])lastDialog[k]=callbackKey(o[k]);}
+function closeDlg(alt){if(paused||!dlgOpen)return;initAudio();if(ac&&ac.state==='suspended'){try{ac.resume()}catch(e){}}
   dlgOpen=false;$('ov').className='hide';const cb=alt===4&&dlgCb4?dlgCb4:alt===3&&dlgCb3?dlgCb3:alt===true&&dlgCb2?dlgCb2:dlgCb;dlgCb=null;dlgCb2=null;dlgCb3=null;dlgCb4=null;pressed=false;down=false;if(cb)cb()}
 $('btn').addEventListener('click',()=>closeDlg());$('btn2').addEventListener('click',()=>closeDlg(true));$('btn3').addEventListener('click',()=>closeDlg(3));$('btn4').addEventListener('click',()=>closeDlg(4));
 
 /* ---------- flow ---------- */
-function title(){S.scene='title';const sv=loadSave(),has=!!(sv&&sv.S&&(sv.S.week>1||sv.S.day>0||sv.S.rep>0));
+function title(){S.scene='title';const sv=loadSave(),has=!!(sv&&sv.S&&(sv.S.week>1||sv.S.day>0||sv.S.rep>0||sv.version===2));
   dialog({kick:'ALPINE0_0  ·  25 YEARS IN THE TRADE',title:'THE PROBLEM SOLVER',
   html:"<p>You're <b>Alpine0_0</b>, install supervisor. When a crew can't figure it out, the radio goes off and it's your problem now.</p>"+
   "<ul><li><b>Launch</b> the truck off the line to get there fast.</li><li><b>Fix it</b> before the clock runs out. Seven kinds of calls, and Friday ends with the Nightmare Job.</li>"+
   "<li><b>Random bullshit</b> happens between calls. That's the job.</li><li><b>4:00 PM</b>, you're off: fish, race, squad up, or wrench on the project car.</li>"+
   "<li><b>Spend what you earn</b> at the hardware store on the way home.</li></ul><p>Monday's a warm-up. Friday is difficulty 10. There are secrets. I'm not telling you where.</p>"+
   (best?"<p>Best rep: <b>"+best.toLocaleString()+"</b></p>":"")+"<p style='font-size:13px'>Space / click / tap does everything. H to smack it. M to mute.</p>",
-  btn:has?'CONTINUE  ·  WEEK '+sv.S.week+'  ·  '+DAYS[clamp(sv.S.day|0,0,4)].nm:'CLOCK IN  ·  6:00 AM',cb:()=>{if(has){Object.assign(S,S0(),sv.S);S.day=clamp(S.day|0,0,4);Object.assign(U,sv.U||{})}else fresh();startDay()},
+  btn:has?'CONTINUE  ·  WEEK '+sv.S.week+'  ·  '+DAYS[clamp(sv.S.day|0,0,4)].nm:'CLOCK IN  ·  6:00 AM',cb:()=>{if(has)restoreGame(sv);else{fresh();startDay()}},
   btn2:has?'NEW GAME':'',cb2:()=>{fresh();startDay()},btn3:'ACHIEVEMENTS  ·  '+ACHV.size+' / '+ACH.length,cb3:achScreen})}
 function achScreen(){S.scene='ach';dialog({kick:ACHV.size+' OF '+ACH.length+' UNLOCKED',title:'Achievements',html:ACH.map(a=>{const h=ACHV.has(a[0]);
     return '<div class="ach'+(h?'':' no')+'"><span>'+(h?'🏆':'🔒')+'</span><div><b>'+(h||!a[3]?a[1]:'???')+'</b><small>'+(h||!a[3]?a[2]:'Secret. Go find it.')+'</small></div></div>'}).join(''),btn:'BACK',cb:title})}
@@ -273,7 +318,7 @@ function shop(next,keep){S.scene='shop';shopNext=next;if(!keep){shopMsg=pick(SHO
   const cn=CNT.map(u=>shopRow(u.nm,u.ds,u.id,S.buff[u.id]?'GOT IT':'$'+u.c,!!S.buff[u.id]||S.cash<u.c)).join('');
   const jk=JNK.map(u=>shopRow(u.nm,u.ds,u.id,u.c?'$'+u.c:'FREE',S.cash<u.c||(u.id==='burner'&&shopFree))).join('');
   dialog({kick:'ON THE WAY HOME  ·  HARDWARE STORE',title:'$'+S.cash.toLocaleString()+' to blow',html:'<div class="q">'+shopMsg+'</div><div class="sec">UPGRADES  ·  PERMANENT</div>'+up+
-    '<div class="sec">BEHIND THE COUNTER  ·  GOOD FOR TOMORROW</div>'+cn+'<div class="sec">STUFF YOU DO NOT NEED</div>'+jk,btn:'DONE SHOPPING',cb:()=>{save();next()}})}
+    '<div class="sec">BEHIND THE COUNTER  ·  GOOD FOR TOMORROW</div>'+cn+'<div class="sec">STUFF YOU DO NOT NEED</div>'+jk,btn:'DONE SHOPPING',cb:action('shopDone',callbackKey(next))})}
 function buy(id){if(S.scene!=='shop')return;const u=UPG.find(x=>x.id===id),c=CNT.find(x=>x.id===id),j=JNK.find(x=>x.id===id);
   if(u){const lv=U[id];if(lv>=u.max||S.cash<u.cost[lv])return;S.cash-=u.cost[lv];U[id]++;shopMsg='Good tools are an investment. That is what you will tell the wife.';if(UPG.every(x=>U[x.id]>=x.max))unlock('maxed')}
   else if(c){if(S.buff[id]||S.cash<c.c)return;S.cash-=c.c;S.buff[id]=1;shopMsg=c.q}
@@ -285,10 +330,10 @@ function buy(id){if(S.scene!=='shop')return;const u=UPG.find(x=>x.id===id),c=CNT
   else return;sfx.good();shop(shopNext,true)}
 $('body').addEventListener('click',e=>{const b=e.target&&e.target.closest?e.target.closest('[data-buy]'):null;if(b)buy(b.getAttribute('data-buy'))});
 let ttlN=0;$('ttl').addEventListener('click',()=>{if(S.scene==='title'&&++ttlN===10){unlock('clicker');toast('Stop that.')}});
-function startDay(){S.call=0;S.min=0;S.dayRep=0;S.lunch=false;S.buzz=false;S.kinds=shuffle(['line','wire','leak','charge','braze','duct','seq']);save();S.today=S.buff||{};S.buff={};S.smacks=1+U.smack+(S.today.powder?1:0);
+function startDay(){S.call=0;S.min=0;S.dayRep=0;S.lunch=false;S.buzz=false;S.kinds=shuffle(['line','wire','leak','charge','braze','duct','seq']);S.today=S.buff||{};S.buff={};S.smacks=1+U.smack+(S.today.powder?1:0);
   if(S.today.ten)toast('The 10mm you bought last night is already gone.');
   if(S.today.gas){S.buzz=true;toast('44 ounces in. You can hear colors. Clock runs slower today.');radio();return}
-  startMicro('coffee',w=>{S.buzz=w;if(w)toast('Caffeinated. The clock runs 7% slower today.');radio()},true)}
+  startMicro('coffee',action('coffee'),true)}
 function radio(){S.scene='radio';const d=day(),kd=S.kinds[S.call%7],j=pick(Math.random()<.8?JOBK[kd]:JOBS);job={town:pick(TOWNS),nm:j[0],ds:j[1],kind:kd,ex:pick(EXCUSE),cu:pick(CUST)};let line=pick(BOSS);sfx.radio();
   if(d.diff===10&&S.call===d.calls-1){job.multi=S.kinds.filter(k=>k!==job.kind).slice(0,2);job.night=true;job.nm='THE NIGHTMARE JOB';job.ds='The whole system is wrong. Three problems, one house, no breaks.';
     line="This is the one. Everything that can be wrong is wrong. If anybody can fix it, it's you. If you can't, lie to me."}
@@ -298,23 +343,23 @@ function radio(){S.scene='radio';const d=day(),kd=S.kinds[S.call%7],j=pick(Math.
 function gain(n){S.rep=Math.max(0,S.rep+n);S.dayRep+=n;if(n>0)S.cash+=n;if(n&&!dlgOpen)floater((n>0?'+':'')+n,W-70,78+FL.length*20,n>0?'#ff8a1f':'#ff5468')}
 function nextCall(){S.call++;if(S.call>=day().calls)endDay(false);else between()}
 function between(){const r=Math.random();
-  if(!S.lunch&&S.min>=270){S.lunch=true;startMicro('slots',()=>radio(),false,'LUNCH BREAK');return}
+  if(!S.lunch&&S.min>=270){S.lunch=true;startMicro('slots',radio,false,'LUNCH BREAK');return}
   const rare=RARE.filter(e=>!S.seen.includes(e.ach));
   if(rare.length&&r<.12){const e=pick(rare);S.seen.push(e.ach);event(e);return}
-  if(r<.52){if(Math.random()<.12){startMicro('petdog',()=>radio(),true);return}
-    if(!S.mdeck.length)S.mdeck=shuffle(Object.keys(MICRO).filter(k=>!MICRO[k].sp));startMicro(S.mdeck.pop(),()=>radio())}
+  if(r<.52){if(Math.random()<.12){startMicro('petdog',radio,true);return}
+    if(!S.mdeck.length)S.mdeck=shuffle(Object.keys(MICRO).filter(k=>!MICRO[k].sp));startMicro(S.mdeck.pop(),radio)}
   else if(r<.92){if(!S.edeck.length)S.edeck=shuffle(EVENTS.map((_,i)=>i));event(EVENTS[S.edeck.pop()])}
   else radio()}
 function evPick(opt,e){if(e&&e.ach)unlock(e.ach);const o=pick(opt.o);gain(o[1]||0);S.min=Math.min(599,S.min+(o[2]||0));S.smacks+=o[3]||0;
   const bits=[];if(o[1])bits.push((o[1]>0?'+':'')+o[1]+' rep');if(o[2])bits.push('+'+o[2]+' min');if(o[3])bits.push('+1 smack');
   dialog({kick:bits.join('  ·  ')||'NO HARM DONE',title:'Well.',html:'<p style="font-size:17px;color:#eef3f7">'+o[0]+'</p>',btn:'BACK TO IT',cb:radio})}
-function event(e){S.scene='event';dialog({kick:e.ach?'MEANWHILE  ·  ???':'MEANWHILE',title:e.t,html:'<p style="font-size:17px;color:#eef3f7">'+e.h+'</p>',btn:e.a.l,cb:()=>evPick(e.a,e),btn2:e.b.l,cb2:()=>evPick(e.b,e)})}
+function event(e){S.scene='event';dialog({kick:e.ach?'MEANWHILE  ·  ???':'MEANWHILE',title:e.t,html:'<p style="font-size:17px;color:#eef3f7">'+e.h+'</p>',btn:e.a.l,cb:action('event',{opt:e.a,event:e}),btn2:e.b.l,cb2:action('event',{opt:e.b,event:e})})}
 function startGarage(){S.gar={i:0,w:0,deck:shuffle(Object.keys(MICRO).filter(k=>!MICRO[k].sp)).slice(0,5)};nextGar()}
 function nextGar(){const q=S.gar;if(q.i>=5){S.scene='garend';const all=q.w>=5;if(all){gain(200);unlock('garage')}saveBest();
     dialog({kick:'GARAGE NIGHT  ·  THE PROJECT CAR',title:all?'It runs. IT RUNS.':q.w>=3?'Closer than yesterday':'It fought back',
       html:'<div class="row"><span>Random bullshit handled</span><span>'+q.w+' / 5</span></div>'+(all?'<p><b>Clean sweep. +200 rep.</b> You revved it once. The neighbors know.</p>':'<p>Still on jack stands. It has been on jack stands since the last administration.</p>'),
       btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
-  else startMicro(q.deck[q.i],w=>{q.w+=w?1:0;q.i++;nextGar()},true,'GARAGE NIGHT  ·  '+(q.i+1)+' OF 5')}
+  else startMicro(q.deck[q.i],action('garage'),true,'GARAGE NIGHT  ·  '+(q.i+1)+' OF 5')}
 function endDay(late){S.scene='dayend';const d=day();let h='';if(!late){if(S.day===4)unlock('d10');if(S.smacks>=1+U.smack)unlock('nosmack')}
   if(late){const left=d.calls-S.call;S.failed+=left;S.streak=0;gain(-150*left);
     h+='<p><b>4:00 PM.</b> '+left+' call'+(left>1?'s':'')+' rolled to tomorrow. That stings: <b>−'+(150*left)+' rep</b>.</p>'}
@@ -324,7 +369,7 @@ function endDay(late){S.scene='dayend';const d=day();let h='';if(!late){if(S.day
      '<div class="row"><span>Under-par streak</span><span>'+S.streak+'</span></div><div class="row"><span>Days since the new guy broke something</span><span>0</span></div>'+
      '<p style="margin-top:14px;font-size:13px">Text from the wife:</p><div class="txt">'+pick(WIFE)+'</div>';
   saveBest();dialog({kick:d.nm+'  ·  OFF THE CLOCK',title:late?'Out of daylight':'Day handled',html:h,btn:'GRAB THE CURADO  ·  GO FISHING',cb:startFish,btn2:'TEST & TUNE NIGHT  ·  HIT THE STRIP',cb2:startStrip,btn3:'GAME NIGHT  ·  SQUAD UP',cb3:startGame,btn4:'GARAGE NIGHT  ·  5 RANDOM-ASS GAMES',cb4:startGarage})}
-function afterEvening(){const go=()=>shop(()=>{if(S.day>=DAYS.length-1)weekend();else{S.day++;startDay()}});if(S.day>=DAYS.length-1)payday(go);else go()}
+function afterEvening(){const go=action('openShop');if(S.day>=DAYS.length-1)payday(go);else go()}
 function payday(next){S.scene='payday';const gross=Math.max(0,S.rep-S.wkStart),tax=Math.round(gross*.24),tool=Math.round(gross*.3),gas=Math.round(gross*.2),net=Math.max(25,gross-tax-tool-gas-25);S.cash+=net;
   const r=(a,b)=>'<div class="row"><span>'+a+'</span><span>'+b+'</span></div>';
   dialog({kick:'FRIDAY  ·  DIRECT DEPOSIT',title:'Payday',html:r('Gross pay','$'+gross.toLocaleString())+r('Taxes','−$'+tax.toLocaleString())+r('Tool truck guy (you still owe $4,000)','−$'+tool.toLocaleString())+
@@ -345,7 +390,7 @@ function endStrip(){S.scene='stripend';const w=S.strip.wins;if(w>=3)unlock('swee
     html:'<div class="row"><span>Rounds won</span><span>'+w+' / 3</span></div><div class="row"><span>Rep</span><span>+'+S.strip.rep+'</span></div>'+
       (w>=3?'<p><b>Nobody left to line up against.</b></p>':'<p>Cut a better light and nail every shift. A red light is an automatic loss.</p>'),
     btn:S.day>=DAYS.length-1?"THAT'S THE WEEK":'TOMORROW  ·  6:00 AM',cb:afterEvening})}
-function weekend(){startMicro('smore',()=>weekendStats(),true,'SATURDAY NIGHT')}
+function weekend(){startMicro('smore',weekendStats,true,'SATURDAY NIGHT')}
 function weekendStats(){S.scene='weekend';S.moon=0;unlock('week');const tot=DAYS.reduce((a,d)=>a+d.calls,0)+2;
   const rank=S.done>=tot&&S.under>=12?'THE PROBLEM SOLVER':S.done>=tot?'25-YEAR VET':S.done>=12?'LEAD INSTALLER':S.done>=8?'JOURNEYMAN':'GREEN HELPER';
   if(rank==='THE PROBLEM SOLVER')unlock('solver');saveBest();
@@ -353,7 +398,7 @@ function weekendStats(){S.scene='weekend';S.moon=0;unlock('week');const tot=DAYS
    html:'<div class="row"><span>Calls closed</span><span>'+S.done+' / '+tot+'</span></div><div class="row"><span>Solved under par</span><span>'+S.under+'</span></div>'+
    '<div class="row"><span>Perfect passes</span><span>'+S.perfects+'</span></div><div class="row"><span>Fish caught</span><span>'+S.lbs.toFixed(1)+' lb</span></div><div class="row"><span>Fishing limits beat</span><span>'+S.limits+'</span></div><div class="row"><span>Strip rounds won</span><span>'+S.stripWins+'</span></div><div class="row"><span>Game nights extracted</span><span>'+S.extracts+'</span></div><div class="row"><span>Random bullshit handled</span><span>'+S.micros+'</span></div>'+
    '<div class="big">'+S.rep.toLocaleString()+' REP</div><p style="font-size:13px">Best: '+best.toLocaleString()+'. Week '+(S.week+1)+' runs the clock 12% faster. You like the grind anyway.</p>',
-   btn:'MONDAY AGAIN  ·  WEEK '+(S.week+1),cb:()=>{S.week++;S.day=0;S.done=0;S.under=0;S.failed=0;S.perfects=0;S.lbs=0;S.wkStart=S.rep;S.limits=0;S.stripWins=0;S.extracts=0;S.micros=0;if(S.week>=3)unlock('week3');startDay()}})}
+   btn:'MONDAY AGAIN  ·  WEEK '+(S.week+1),cb:action('nextWeek')})}
 
 /* ---------- drag launch ---------- */
 function startDrag(){S.scene='drag';D={ph:'pre',t:0,delay:rnd(.7,1.9),lit:0,rt:0,foul:false,gear:1,rpm:.3,shifts:[],x:0,v:0,bounce:0,fin:0,pen:0,spen:0,st:0,lbl:'',lblT:0,race:false,rv:0,rn:'',win:false,you:0}}
@@ -780,7 +825,7 @@ function drawFX(dt){for(let i=FX.length-1;i>=0;i--){const p=FX[i];p.vy+=900*dt;p
 function campFire(){const wide=W>900;return[wide?W*.36:W*.58,H*.62+46]}
 /* secrets */
 const KON=['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];let kbuf=[],tbuf='';
-window.addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();kbuf.push(k);if(kbuf.length>10)kbuf.shift();
+window.addEventListener('keydown',e=>{if(paused)return;const k=(e.key||'').toLowerCase();kbuf.push(k);if(kbuf.length>10)kbuf.shift();
   if(kbuf.length===10&&kbuf.every((x,i)=>x===KON[i])){kbuf=[];S.smacks+=3;unlock('konami');toast('BIG WRENCH ENERGY. +3 smacks.')}
   if(k.length===1){tbuf=(tbuf+k).slice(-4);if(tbuf==='10mm'){tbuf='';unlock('pocket');toast('It was in your pocket the whole time.')}}});
 function startMicro(kind,cb,free,lbl){S.scene='micro';M={kind,t:0,ph:'intro',intro:1.7,cb,free:!!free,lbl:lbl||'',won:false,q:'',dn:0,rw:0};MICRO[kind].init(M)}
@@ -789,11 +834,11 @@ function mdone(w){const m=M;if(!m||m.ph!=='play')return;m.ph='done';m.won=w;m.dn
   else{sfx.lose();if(++S.mlost>=10)unlock('shit');if(!m.free){if(m.kind==='slots'&&S.today.tums){m.nopen=true;toast('Antacids. Your stomach filed a complaint and it was denied.')}else if(S.today.vit){S.today.vit=0;m.nopen=true;toast('Vitamin I kicked in. No time lost.')}else S.min=Math.min(599,S.min+(U.luck?5:10))}}}
 function updMicro(dt){const m=M,d=MICRO[m.kind];
   if(m.ph==='intro'){m.intro-=dt;if(m.intro<=0)m.ph='play'}
-  else if(m.ph==='play'){m.t+=dt;d.upd(m,dt);if(m.ph==='play'&&m.t>=d.lim)mdone(false)}
+  else if(m.ph==='play'){if(m.awaitHold){if(!down)return;m.awaitHold=false}m.t+=dt;d.upd(m,dt);if(m.ph==='play'&&m.t>=d.lim)mdone(false)}
   else{m.dn-=dt;if(m.dn<=0||(pressed&&m.dn<1.9)){const cb=m.cb;cb(m.won)}}}
 function drawMicro(){const m=M,d=MICRO[m.kind];g.fillStyle='#10161e';g.fillRect(0,0,W,H);
   if(m.ph==='intro'){em('RANDOM BULLSHIT',W/2,H*.3,14,'#ff8a1f');em(d.t,W/2,H*.4,Math.min(46,W*.075));wrap(d.i,W/2,H*.52,Math.min(W-40,620),26,Math.min(19,W*.042),'#93a3b5');return}
-  if(BG[d.bg])BG[d.bg]();d.draw(m);g.fillStyle='rgba(6,9,13,.6)';g.fillRect(0,55,W,68);em(d.t,W/2,76,Math.min(16,W*.036),'#ff8a1f');wrap(d.i,W/2,101,W-16,14,Math.max(11,Math.min(13,W*.03)),'#eef3f7');g.fillStyle='#ff8a1f';g.fillRect(0,50,W*clamp(1-m.t/d.lim,0,1),5);
+  if(BG[d.bg])BG[d.bg]();d.draw(m);g.fillStyle='rgba(6,9,13,.6)';g.fillRect(0,55,W,68);em(d.t,W/2,76,Math.min(16,W*.036),'#ff8a1f');wrap(m.awaitHold?'HOLD TO CONTINUE':d.i,W/2,101,W-16,14,Math.max(11,Math.min(13,W*.03)),'#eef3f7');g.fillStyle='#ff8a1f';g.fillRect(0,50,W*clamp(1-m.t/d.lim,0,1),5);
   if(m.ph==='done'){g.fillStyle='rgba(6,9,13,.82)';g.fillRect(0,H/2-100,W,200);em(m.won?'NAILED IT':'WELL, SHIT',W/2,H/2-56,Math.min(46,W*.09),m.won?'#7dffa0':'#ff5468');
     wrap(m.q,W/2,H/2+4,Math.min(W-40,640),25,Math.min(18,W*.04));em(m.won?'+'+m.rw+' REP':m.free||m.nopen?'':'+'+(U.luck?5:10)+' MIN ON THE CLOCK',W/2,H/2+70,15,'#ff8a1f')}}
 
@@ -858,28 +903,39 @@ function hud(){const d=day();g.fillStyle='rgba(6,9,13,.85)';g.fillRect(0,0,W,48)
   else if(!(S.scene==='drag'&&D.race)){g.fillStyle='#ff8a1f';g.fillRect(0,48,W*clamp(S.min/600,0,1),2);g.fillStyle='#2a3848';g.fillRect(W*clamp(S.min/600,0,1),48,W,2)}}
 
 /* ---------- input / loop ---------- */
-window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k===' '||k==='enter'){e.preventDefault();if(dlgOpen){if(!e.repeat)closeDlg();return}if(!e.repeat){down=true;pressed=true}}
-  if(k==='m')muted=!muted;if(k==='h'&&S.scene==='puzzle'&&!dlgOpen)smack()});
+window.addEventListener('keydown',e=>{if(paused)return;const k=e.key.toLowerCase();if(k===' '||k==='enter'){e.preventDefault();if(dlgOpen){if(!e.repeat)closeDlg();return}if(!e.repeat){down=true;pressed=true}}
+  if(k==='m'){muted=!muted;saveSettings()}if(k==='h'&&S.scene==='puzzle'&&!dlgOpen)smack()});
 window.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')down=false;keys[e.key.toLowerCase()]=false});
-window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if(k.startsWith('arrow'))e.preventDefault()});
+window.addEventListener('keydown',e=>{if(paused)return;const k=e.key.toLowerCase();keys[k]=true;if(k.startsWith('arrow'))e.preventDefault()});
 cv.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY});
-cv.addEventListener('pointerdown',e=>{e.preventDefault();mx=e.clientX;my=e.clientY;touch=e.pointerType==='touch';down=true;pressed=true;click={x:e.clientX,y:e.clientY,b:e.button}});
-window.addEventListener('pointerup',()=>{down=false});window.addEventListener('blur',()=>{down=false;for(const k in keys)keys[k]=false});
+cv.addEventListener('pointerdown',e=>{if(paused)return;e.preventDefault();mx=e.clientX;my=e.clientY;touch=e.pointerType==='touch';down=true;pressed=true;click={x:e.clientX,y:e.clientY,b:e.button}});
+window.addEventListener('pointerup',()=>{down=false});window.addEventListener('blur',pauseGame);
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 let last=0;
-function frame(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;T+=dt;
-  if(!dlgOpen){if(S.scene==='drag')updDrag(dt);else if(S.scene==='puzzle')updPuzzle(dt);else if(S.scene==='fish')updFish(dt);else if(S.scene==='game')updGame(dt);else if(S.scene==='micro')updMicro(dt)}
-  if(S.scene==='weekend'&&click&&Math.hypot(click.x-(W>900?W*.46:W*.8),click.y-H*.16)<50&&++S.moon===3){star=1.4;unlock('wish');toast('The moon heard you. It is thinking about it.')}
+function frame(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;if(!paused)T+=dt;
+  if(!paused&&!dlgOpen){if(S.scene==='drag')updDrag(dt);else if(S.scene==='puzzle')updPuzzle(dt);else if(S.scene==='fish')updFish(dt);else if(S.scene==='game')updGame(dt);else if(S.scene==='micro')updMicro(dt)}
+  if(!paused&&S.scene==='weekend'&&click&&Math.hypot(click.x-(W>900?W*.46:W*.8),click.y-H*.16)<50&&++S.moon===3){star=1.4;unlock('wish');toast('The moon heard you. It is thinking about it.')}
   pressed=false;click=null;
   g.setTransform(DPR,0,0,DPR,0,0);
   if(S.scene==='drag'&&D){drawDrag();hud()}else if(S.scene==='puzzle'&&P){drawPuzzle();hud()}else if((S.scene==='fish'||S.scene==='fishend')&&F){drawFish();if(S.scene==='fish')hud()}
   else if((S.scene==='game'||S.scene==='gameend')&&G){drawGame();if(S.scene==='game')hud()}
   else if(S.scene==='micro'&&M){drawMicro();hud()}
   else if(S.scene==='weekend')camp();else backdrop();
-  drawFX(dt);
+  drawFX(paused?0:dt);
+  $('pauseButton').hidden=S.scene==='title'||S.scene==='ach';
+  if(!paused){saveElapsed+=dt;if(saveElapsed>=.5){saveElapsed=0;save()}}
   requestAnimationFrame(frame)}
-title();requestAnimationFrame(frame);
-void {S,get P(){return P},get D(){return D},get F(){return F},get open(){return dlgOpen},close:closeDlg,get T(){return T},get G(){return G},get M(){return M},mdone,U,buy,unlock,ACHV,shopIds:CNT.concat(JNK).map(x=>x.id),go:{payday(){S.rep=4200;payday(()=>radio())},shop(){S.cash=1500;shop(()=>radio())},ach:achScreen,title,job(k){job={town:'Dacula',nm:'Test',ds:'',kind:k};startJob()},micro(k){startMicro(k,()=>radio())},fish:startFish,game:startGame,strip:startStrip,weekend,endDay,radio,between,event(i){event(EVENTS[i])},garage:startGarage,drag:startDrag},keys,dl:()=>dl(),pl:()=>pl(),aim(x,y){mx=x;my=y},press(h){pressed=true;down=!!h},hold(v){down=v},
+const CALLBACKS={startDrag,radio,afterEvening,startFish,startStrip,startGame,startGarage,weekendStats,title};
+$('pauseButton').addEventListener('click',pauseGame);
+$('resumeGame').addEventListener('click',resumeGame);
+$('saveQuit').addEventListener('click',()=>{if(save()){resumeGame();title()}else $('saveStatus').textContent='Could not save. Keep this tab open to preserve progress.'});
+$('soundEnabled').addEventListener('change',()=>{muted=!$('soundEnabled').checked;saveSettings()});
+$('soundVolume').addEventListener('input',()=>{volume=clamp(Number($('soundVolume').value)/100,0,1);saveSettings()});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(paused)resumeGame();else pauseGame()}else if(paused&&e.key==='Tab'){const controls=[$('resumeGame'),$('soundEnabled'),$('soundVolume'),$('saveQuit')],i=controls.indexOf(document.activeElement);e.preventDefault();controls[(i+(e.shiftKey?-1:1)+controls.length)%controls.length].focus()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame()});
+window.addEventListener('pagehide',save);
+ready=true;title();requestAnimationFrame(frame);
+void {S,get P(){return P},get D(){return D},get F(){return F},get open(){return dlgOpen},close:closeDlg,get T(){return T},get G(){return G},get M(){return M},mdone,U,buy,unlock,ACHV,shopIds:CNT.concat(JNK).map(x=>x.id),go:{payday(){S.rep=4200;payday(radio)},shop(){S.cash=1500;shop(radio)},ach:achScreen,title,job(k){job={town:'Dacula',nm:'Test',ds:'',kind:k};startJob()},micro(k){startMicro(k,radio)},fish:startFish,game:startGame,strip:startStrip,weekend,endDay,radio,between,event(i){event(EVENTS[i])},garage:startGarage,drag:startDrag},keys,dl:()=>dl(),pl:()=>pl(),aim(x,y){mx=x;my=y},press(h){pressed=true;down=!!h},hold(v){down=v},
   tap(x,y){click={x,y,b:0};pressed=true},lay:()=>lay(),smack};
 })();
 </script>
