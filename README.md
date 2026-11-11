@@ -4,7 +4,13 @@ A week in the life of an HVAC install supervisor. Drag-race the work truck to th
 
 **Play:** https://iallmost-code.github.io/problem-solver/
 
-Single HTML file, no build step.
+Single HTML file, no build step. All game art and the cover typeface are embedded.
+
+**The 3:59 Edition** adds [The Callback Files](https://iallmost-code.github.io/problem-solver/#files). Work 18 tickets across six puzzle types: pack the van, crack the parts locker, plot a fuel-limited route, fix the dispatch sign, reconstruct a dodgy run sheet, and push cases into their bays. Play at your own pace, take a hint or reset the board. Your best ticket scores stay on this browser.
+
+**The 3:59 Shift** is a daily three-call gauntlet worth 300 points. Its end-of-shift receipt lets you copy your score and a link that gives another player exactly the same three calls, even on a different day. A miss costs 10 points and the first hint costs 15. Neither practice nor the daily shift touches your campaign save. In the workweek, optional Tuesday and Friday callbacks pay cash and reputation.
+
+The edition also includes original garage and chapter artwork, 6 more break-room skits (14 total), and 12 new branching events. Start with **Clock in** for the campaign, **Callback Files** for the puzzles, or **Daily Gauntlet** for the three-call challenge.
 
 The **Clocked-In & Fed-Up Edition** adds an illustrated sunrise depot, redesigned menus, comic character portraits, eight break-room skits, and more than 130 additional boss comments, excuses, reviews, partner messages, and random events. All character identities and locations are fictional, including text restored from older saves.
 
@@ -26,5 +32,5 @@ Press **Escape** or tap **Ⅱ** to pause. The menu includes Resume, sound on/off
 Run regression checks with Node.js (no dependencies):
 
 ```sh
-node --test test-expansion.cjs
+node --test test-expansion.cjs test-callback.cjs
 ```
