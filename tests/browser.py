@@ -52,7 +52,8 @@ def solve(p,id,model):
             act(p,'case-'+str(i))
             for n in range((4-model['turns'][i])%4):action(p,'rotate')
             cells=[(x,y) for y,row in enumerate(model['map']) for x,ch in enumerate(row) if ch==chr(65+i)]
-            act(p,'cell-'+str(min(x for x,y in cells))+'-'+str(min(y for x,y in cells)))
+            row=min(y for x,y in cells)
+            act(p,'cell-'+str(min(x for x,y in cells if y==row))+'-'+str(row))
     finish(p)
 
 with sync_playwright() as pw:

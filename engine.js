@@ -9,7 +9,7 @@
     {id:'braze',name:'Hot Enough?',tag:'HEAT CONTROL',hint:'Hold the torch to heat. Release to cool. Keep the needle in orange to finish the seam.',time:'20 sec',color:'#e6886d'},
     {id:'air',name:'Airflow Politics',tag:'BALANCE PUZZLE',hint:'Adjust the three dampers until every room matches its target. Then test the system.',time:'30–60 sec',color:'#95b875'},
     {id:'memory',name:'Board Meeting',tag:'SEQUENCE MEMORY',hint:'Watch the board flash, then tap the pads in the same order. Three rounds.',time:'30 sec',color:'#b29acb'},
-    {id:'pack',name:'Shut the Damn Doors',tag:'SPATIAL PUZZLE',hint:'Pick a case, rotate it, then place its top-left corner on the van floor. Tap cargo to retrieve it.',time:'30–90 sec',color:'#d9ab73'}
+    {id:'pack',name:'Shut the Damn Doors',tag:'SPATIAL PUZZLE',hint:'Pick a case, rotate it, then place its first square on the van floor. Tap cargo to retrieve it.',time:'30–90 sec',color:'#d9ab73'}
   ];
   const jokes={
     drive:{win:['Truck survived. The coffee filed a fucking complaint.','Perfect commute. Dispatch has added three stops.','You shifted better than management shifts blame.'],lose:['That light was red, you impatient bastard.','The gearbox just updated its résumé.','The van is fine. Your dignity left at the second shift.']},
@@ -38,7 +38,7 @@
     }
     s.flow=on;return on[s.exit*s.n+s.n-1]&&!!(s.tiles[s.exit*s.n+s.n-1]&2);
   }
-  function norm(cells){const x=Math.min(...cells.map(p=>p[0])),y=Math.min(...cells.map(p=>p[1]));return cells.map(p=>[p[0]-x,p[1]-y])}
+  function norm(cells){const x=Math.min(...cells.map(p=>p[0])),y=Math.min(...cells.map(p=>p[1]));return cells.map(p=>[p[0]-x,p[1]-y]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])}
   function shape(s,id,turn=s.turns[id]){let cells=[];s.map.forEach((row,y)=>Array.from(row).forEach((v,x)=>{if(v===String.fromCharCode(65+id))cells.push([x,y])}));cells=norm(cells);for(let i=0;i<turn;i++)cells=norm(cells.map(([x,y])=>[-y,x]));return cells}
   function occupied(s,x,y){return s.placed.findIndex((p,id)=>p&&shape(s,id,p[2]).some(([dx,dy])=>p[0]+dx===x&&p[1]+dy===y))}
   function airValues(s){const total=s.dampers.reduce((a,n,i)=>a+n*s.weights[i],0);return s.dampers.map((n,i)=>Math.round(100*n*s.weights[i]/total))}
@@ -94,7 +94,7 @@
     if(s.id==='pack'){
       if((m=/^case-(\d+)$/.exec(cmd))&&+m[1]<s.count){s.selected=+m[1];s.placed[s.selected]=null;s.event='tap'}
       if(cmd==='rotate')s.turns[s.selected]=(s.turns[s.selected]+1)%4;
-      if((m=/^cell-(\d+)-(\d+)$/.exec(cmd))){const x=+m[1],y=+m[2],hit=occupied(s,x,y);{const i=s.selected,form=shape(s,i);if(form.some(([dx,dy])=>!s.map[y+dy]?.[x+dx]||s.map[y+dy][x+dx]==='#'||occupied(s,x+dx,y+dy)>=0)){if(hit>=0){s.placed[hit]=null;s.selected=hit;return true}s.note='That doesn’t fit. The van is not made of fucking wishes.';s.event='bad';s.shake=.18}else{s.placed[i]=[x,y,s.turns[i]];s.moves++;s.event='good';const next=s.placed.indexOf(null);if(next<0)finish(s,true);else s.selected=next}}}
+      if((m=/^cell-(\d+)-(\d+)$/.exec(cmd))){const x=+m[1],y=+m[2],hit=occupied(s,x,y);{const i=s.selected,form=shape(s,i),origin=x-form[0][0];if(form.some(([dx,dy])=>!s.map[y+dy]?.[origin+dx]||s.map[y+dy][origin+dx]==='#'||occupied(s,origin+dx,y+dy)>=0)){if(hit>=0){s.placed[hit]=null;s.selected=hit;return true}s.note='That doesn’t fit. The van is not made of fucking wishes.';s.event='bad';s.shake=.18}else{s.placed[i]=[origin,y,s.turns[i]];s.moves++;s.event='good';const next=s.placed.indexOf(null);if(next<0)finish(s,true);else s.selected=next}}}
     }
     return true;
   }
@@ -105,7 +105,7 @@
       if(s.phase==='tree'&&s.phaseTime>s.delay+2){s.errors++;finish(s,false)}
       if(s.phase==='run'){
         s.speed=Math.min(1,s.speed+dt*.22);s.distance+=s.speed*dt*180;
-        if(s.gear<4){s.rpm+=dt*.33;if(s.rpm>1.12){s.errors++;s.note='Limiter. That sound is expensive.';s.gear++;s.rpm=.12;s.event='bad'}}
+        if(s.gear<4){s.rpm+=dt*.33;if(s.rpm>1.12){s.errors++;s.shifts.push(false);s.note='Limiter. That sound is expensive.';s.gear++;s.rpm=.12;s.event='bad'}}
         if(s.distance>=1000){if(s.shifts.length<3)s.errors+=3-s.shifts.length;finish(s,s.quality>=4)}
       }
     }

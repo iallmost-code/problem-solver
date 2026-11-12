@@ -30,7 +30,7 @@ function begin(id,keepRun=false){
 }
 function addAction(cmd,label,alt=false){const b=document.createElement('button');b.type='button';b.className='action'+(alt?' alt':'');b.dataset.action=cmd;b.textContent=label;$('actions').append(b)}
 function beginRun(){run={ids:shuffledGames().slice(0,5),index:0,results:[]};begin(run.ids[0],true)}
-function send(cmd){if(!state||paused||state.done)return;if(cmd==='restart'){begin(state.id,!!run);return}PS.action(state,cmd);if(state.event)sound(state.event);syncScene();if(state.done)finish()}
+function send(cmd){if(!state||paused||state.done)return;if(cmd==='restart'){begin(state.id,!!run);return}PS.action(state,cmd);if(state.event&&!state.done)sound(state.event);syncScene();if(state.done)finish()}
 function releaseTorch(){if(state?.id==='braze')PS.action(state,'torch-off');$('actions').querySelector('[data-action="torch"]')?.classList.remove('held')}
 function sizeCanvas(){if(!state)return;const canvas=$('scene'),rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;const d=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*d);canvas.height=Math.round(rect.height*d);targetsKey=''}
 function worldHeight(){const rect=$('scene').getBoundingClientRect();return Math.round(1000*rect.height/Math.max(1,rect.width))}
@@ -76,7 +76,7 @@ window.addEventListener('keyup',e=>{if(e.key===' ')releaseTorch()});
 $('actions').addEventListener('keydown',e=>{if(e.key===' '&&e.target.dataset.action==='torch'){e.preventDefault();if(!e.repeat)send('torch-on')}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});window.addEventListener('resize',()=>{sizeCanvas();syncScene(true)});
 function frame(time){const dt=Math.min(.05,last?(time-last)/1000:0);last=time;if(!paused)animation+=dt;
- if(state){if(!paused&&!state.done){const eventBefore=state.event;PS.tick(state,dt);if(state.event&&state.event!==eventBefore)sound(state.event);if(state.done)finish()}syncScene()}
+ if(state){if(!paused&&!state.done){const eventBefore=state.event;PS.tick(state,dt);if(state.event&&state.event!==eventBefore&&!state.done)sound(state.event);if(state.done)finish()}syncScene()}
  else if(!reduced||time%1000<60){for(const p of previews){if(p.state.id==='drive')p.state.distance=animation*45;if(p.state.id==='braze'){p.state.held=true;p.state.heat=.6;p.state.progress=(animation*.08)%1}if(p.state.id==='memory'){p.state.flash=Math.floor(animation*1.5)%4}const ctx=p.canvas.getContext('2d');ctx.setTransform(p.canvas.width/1000,0,0,p.canvas.height/650,0,0);PSArt.paint(ctx,p.state,animation,650)}}
  requestAnimationFrame(frame)
 }
