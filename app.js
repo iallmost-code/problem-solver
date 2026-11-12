@@ -18,7 +18,7 @@ function renderCards(){
 function showHome(){releaseTorch();state=null;run=null;paused=false;shownResult=false;$('home').hidden=false;$('play').hidden=true;$('result').hidden=true;$('paused').hidden=true;targetsKey='';renderCards();history.replaceState(null,'',location.pathname+location.search);window.scrollTo(0,0)}
 function begin(id,keepRun=false){
  if(!keepRun)run=null;state=PS.make(id,seed());paused=false;shownResult=false;lastPhase='';lastNote='';targetsKey='';$('home').hidden=true;$('play').hidden=false;$('result').hidden=true;$('paused').hidden=true;
- const spec=PS.catalog.find(g=>g.id===id);$('gameName').textContent=spec.name;$('gameTag').textContent=spec.tag;$('instruction').textContent=spec.hint;$('gameBest').textContent=Number.isFinite(records.best[id])?'BEST '+records.best[id]:'BEST —';$('feedback').textContent=id==='memory'?'Watch the board. Then repeat it.':id==='pack'?'Pick a case. Make the van somebody else’s problem.':'Let’s see what the last guy did.';$('runLabel').textContent=run?'SHITSHOW '+(run.index+1)+' / 5':'FREE PLAY';
+ $('play').dataset.seed=String(state.seed);const spec=PS.catalog.find(g=>g.id===id);$('gameName').textContent=spec.name;$('gameTag').textContent=spec.tag;$('instruction').textContent=spec.hint;$('gameBest').textContent=Number.isFinite(records.best[id])?'BEST '+records.best[id]:'BEST —';$('feedback').textContent=id==='memory'?'Watch the board. Then repeat it.':id==='pack'?'Pick a case. Make the van somebody else’s problem.':'Let’s see what the last guy did.';$('runLabel').textContent=run?'SHITSHOW '+(run.index+1)+' / 5':'FREE PLAY';
  $('actions').replaceChildren();
  if(id==='drive')addAction('go','STAGE THE TRUCK');
  if(id==='leak')addAction('seal','SEAL SELECTED JOINT');

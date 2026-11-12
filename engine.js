@@ -50,7 +50,7 @@
       const n=4;s.n=n;s.start=Math.floor(r()*n);s.exit=Math.floor(r()*n);s.tiles=Array.from({length:n*n},()=>[3,5,6,9,10,12][Math.floor(r()*6)]);
       const path=[];let y=s.start;for(let x=0;x<n;x++){path.push([x,y]);if(x<n-1){const next=x===n-2?s.exit:Math.floor(r()*n);while(y!==next){y+=Math.sign(next-y);path.push([x,y])}}}
       s.solution=s.tiles.slice();path.forEach(([x,y],i)=>{const bit=(dx,dy)=>dx<0?8:dx>0?2:dy<0?1:4;const prev=i?path[i-1]:[-1,y],next=i<path.length-1?path[i+1]:[n,y];s.solution[y*n+x]=bit(prev[0]-x,prev[1]-y)|bit(next[0]-x,next[1]-y)});
-      s.tiles=s.solution.map(m=>{for(let i=0,k=Math.floor(r()*4);i<k;i++)m=rotate(m);return m});s.turns=Array(n*n).fill(0);if(checkPipe(s)){s.tiles[0]=rotate(s.tiles[0]);s.tiles[s.start*n]=rotate(s.tiles[s.start*n]);checkPipe(s)}
+      s.tiles=s.solution.map(m=>{for(let i=0,k=Math.floor(r()*4);i<k;i++)m=rotate(m);return m});s.turns=Array(n*n).fill(0);if(checkPipe(s)){for(let tries=0;tries<4&&checkPipe(s);tries++)s.tiles[s.start*n]=rotate(s.tiles[s.start*n]);checkPipe(s)}
     }
     if(id==='wire'){
       const codes=['R','C','G','Y'];s.order=shuffle([0,1,2,3],r);s.codes=codes;s.links=[-1,-1,-1,-1];s.selected=-1;s.names=['POWER','COMMON','FAN','COOL'];

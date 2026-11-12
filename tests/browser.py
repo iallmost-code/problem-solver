@@ -26,7 +26,7 @@ def solve(p,id,model):
     elif id=='wire':
         for i in range(4):act(p,'lead-'+str(i));act(p,'port-'+str(model['order'].index(i)))
     elif id=='pipe':
-        cmds=p.evaluate('seed=>{const s=PS.make("pipe",seed),out=[];for(let i=0;i<s.tiles.length&&!s.done;i++)for(let n=0;n<4&&s.tiles[i]!==s.solution[i]&&!s.done;n++){out.push("tile-"+i);PS.action(s,"tile-"+i)}return out}',SEED)
+        cmds=p.evaluate('seed=>{const s=PS.make("pipe",seed),out=[];for(let i=0;i<s.tiles.length&&!s.done;i++)for(let n=0;n<4&&s.tiles[i]!==s.solution[i]&&!s.done;n++){out.push("tile-"+i);PS.action(s,"tile-"+i)}return out}',int(p.locator('#play').get_attribute('data-seed')))
         for cmd in cmds:act(p,cmd)
     elif id=='leak':
         act(p,'joint-0');act(p,'joint-'+str(model['target']));action(p,'seal')
@@ -40,7 +40,7 @@ def solve(p,id,model):
             for i in range(r+2):act(p,'pad-'+str(model['sequence'][i]))
             if r<3:wait(p,5200)
     elif id=='braze':
-        b=p.locator('[data-action="torch"]');r=b.bounding_box();p.mouse.move(r['x']+r['width']/2,r['y']+r['height']/2)
+        b=p.locator('[data-action="torch"]');b.scroll_into_view_if_needed();r=b.bounding_box();p.mouse.move(r['x']+r['width']/2,r['y']+r['height']/2)
         p.mouse.down();wait(p,2000)
         before=p.locator('#scene').screenshot();wait(p,100);after=p.locator('#scene').screenshot();assert before!=after,'torch must visibly animate'
         p.mouse.up()
@@ -68,9 +68,9 @@ with sync_playwright() as pw:
             p.locator('[data-game="'+id+'"]').click();wait(p,100)
             assert p.locator('body').evaluate('e=>e.scrollWidth<=window.innerWidth+1'),'horizontal overflow'
             if id=='braze':
-                r=p.locator('[data-action="torch"]').bounding_box();p.mouse.move(r['x']+r['width']/2,r['y']+r['height']/2);p.mouse.down();wait(p,1800);screenshot(p,id+'-'+size+'.png');p.mouse.up();action(p,'restart');wait(p,100)
+                p.locator('[data-action="torch"]').scroll_into_view_if_needed();r=p.locator('[data-action="torch"]').bounding_box();p.mouse.move(r['x']+r['width']/2,r['y']+r['height']/2);p.mouse.down();wait(p,1800);screenshot(p,id+'-'+size+'.png');p.mouse.up();action(p,'restart');wait(p,100)
             else:screenshot(p,id+'-'+size+'.png')
-            model=p.evaluate('(x)=>PS.make(x.id,x.seed)',{'id':id,'seed':SEED if id!='braze' else (SEED*1664525+1013904223)&0xffffffff})
+            model=p.evaluate('(x)=>PS.make(x.id,x.seed)',{'id':id,'seed':int(p.locator('#play').get_attribute('data-seed'))})
             if id=='drive':
                 p.locator('#pause').click();clock=p.locator('#gameClock').inner_text();wait(p,3000);assert p.locator('#gameClock').inner_text()==clock;p.locator('#resume').click()
             solve(p,id,model)
