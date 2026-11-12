@@ -1,36 +1,16 @@
-# The Problem Solver
+# The Problem Solver — On Break
 
-A week in the life of an HVAC install supervisor. Drag-race the work truck to the job, fix seven kinds of broken systems before 4:00 PM, survive the random bullshit in between, then fish, race, game, or wrench on the project car until it's time to clock in again.
+[Play the arcade](https://iallmost-code.github.io/problem-solver/).
 
-**Play:** https://iallmost-code.github.io/problem-solver/
+Eight immediate-play HVAC minigames: Truck It, Pipe Dreams, Crossed Wires, Sniff Test, Hot Enough?, Airflow Politics, Board Meeting, and Shut the Damn Doors. Choose a game, pick a random problem, or play a shuffled five-game set. Short comments and result jokes replace dialogue/story screens. No fishing.
 
-Single HTML file, no build step. All game art and the cover typeface are embedded.
+Gameplay art is rendered and animated in Canvas: truck suspension, spinning wheels, parallax roads, flowing pipe circuits, flexing leads, detector pulses, torch flame/sparks/molten seam, rotating fans, airflow particles, and flashing board pads. Native buttons overlay the scene for keyboard and touch input. Play uses no network dependencies. Local best scores and sound settings use a new storage key; the previous edition is archived on `archive/before-arcade-rebuild-20261112`.
 
-**The 3:59 Edition** adds [The Callback Files](https://iallmost-code.github.io/problem-solver/#files). Work 18 tickets across six puzzle types: pack the van, crack the parts locker, plot a fuel-limited route, fix the dispatch sign, reconstruct a dodgy run sheet, and push cases into their bays. Play at your own pace, take a hint or reset the board. Your best ticket scores stay on this browser.
+Controls appear above each scene. Space launches/shifts the truck or holds the torch when the page has focus. Keys 1–4 repeat the board pads. Escape pauses. Switching tabs pauses the active game. The pause and result panels support keyboard navigation. Browser storage saves best scores and sound preferences, not unfinished rounds.
 
-**The 3:59 Shift** is a daily three-call gauntlet worth 300 points. Its end-of-shift receipt lets you copy your score and a link that gives another player exactly the same three calls, even on a different day. A miss costs 10 points and the first hint costs 15. Neither practice nor the daily shift touches your campaign save. In the workweek, optional Tuesday and Friday callbacks pay cash and reputation.
+Open `index.html` directly with the accompanying files or serve this directory with `python -m http.server`. No build or install step is needed to play.
 
-The edition also includes original garage and chapter artwork, 6 more break-room skits (14 total), and 12 new branching events. Start with **Clock in** for the campaign, **Callback Files** for the puzzles, or **Daily Gauntlet** for the three-call challenge.
+Rule checks: `node --test tests/rules.cjs`.
+Browser acceptance: install Python Playwright, serve this directory on port 8790, then `python tests/browser.py`. It exercises all eight games on desktop and phone viewports, verifies actual animation frames and pause/replay, and captures screenshots.
 
-The **Clocked-In & Fed-Up Edition** adds an illustrated sunrise depot, redesigned menus, comic character portraits, eight break-room skits, and more than 130 additional boss comments, excuses, reviews, partner messages, and random events. All character identities and locations are fictional, including text restored from older saves.
-
-Six new quick games join the workday and Garage Night rotation:
-
-- **Controller Exorcism:** correct stick drift with trim controls.
-- **GPU Cable Shitshow:** match keyed PSU leads to the right sockets.
-- **Quit Blaming the Stat:** diagnose the fault from service evidence.
-- **Baitcaster Birds Nest:** untangle loops in dependency order.
-- **Duct Pressure Politics:** route the exact flow through a valve manifold.
-- **Tool Truck Accounting:** find the lowest total price, including fees.
-
-**After-Hours Arcade** lets you choose any micro-game without changing campaign cash, reputation, or the saved workweek. **Break Room Theater** lets you watch every skit. New puzzles pause on very short screens and ask you to rotate or resize before continuing.
-
-Progress autosaves every half second and when you pause or leave the page. Continue restores your current job or activity, clock, cash, upgrades, and dialog choices. Earlier saves still load at the start of their saved day. Saves stay in the same browser and device; clearing browser data removes them.
-
-Press **Escape** or tap **Ⅱ** to pause. The menu includes Resume, sound on/off, volume, and Save & Quit to Title. Switching apps or tabs pauses automatically. After resuming a hold-based micro-game, hold again when prompted to continue. **M** toggles sound during play.
-
-Run regression checks with Node.js (no dependencies):
-
-```sh
-node --test test-expansion.cjs test-callback.cjs
-```
+The included display typeface is Barlow Condensed, under SIL OFL. See `assets/FONT-LICENSE.txt`.
